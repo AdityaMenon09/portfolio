@@ -274,9 +274,10 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
 .conclusion p:last-child{margin-bottom:0}
 .conclusion b{color:var(--ink)}
 .conclusion .caveat{font-size:.85rem;opacity:.85}
-/* apoptosis overlay only under MEHP */
+/* apoptosis overlay + lost cells, only under MEHP */
 .apopt{display:none}
 #cellStage.mehp .apopt{display:block}
+#cellStage.mehp .melost{display:none}
 
 /* ---------- responsive ---------- */
 @media(max-width:860px){
@@ -315,6 +316,7 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
   <p class="role reveal">Biotechnology postgraduate specializing in <b>stem cell biology</b>, <b>bioinformatics</b>, and <b>toxicology</b> — with hands-on work in WGS analysis and in&nbsp;vitro developmental models.</p>
   <div class="hero-cta reveal">
     <a href="#projects" class="btn primary">Explore my work <span>→</span></a>
+    <a href="Aditya_Menon_Resume.pdf" download class="btn ghost">⭳ Download résumé</a>
     <a href="#contact" class="btn ghost">Get in touch</a>
   </div>
   <div class="hero-meta reveal">
@@ -407,52 +409,69 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
             </g>
           </g></g>
 
-          <!-- DAY 4 : mesoderm commitment — immunofluorescence, mesoderm markers (violet) -->
+          <!-- DAY 4 : mesoderm — migratory mesenchymal (spindle) cells, T/BRA+ (violet) -->
           <g class="cg" id="p2">
-            <circle cx="160" cy="160" r="90" fill="rgba(10,14,30,.55)" stroke="rgba(139,123,255,.4)" stroke-width="2"/>
-            <!-- faint cell bodies -->
-            <g fill="rgba(139,123,255,.10)" stroke="rgba(139,123,255,.28)" stroke-width="1.2">
-              <circle cx="160" cy="116" r="22"/><circle cx="124" cy="136" r="22"/><circle cx="196" cy="136" r="22"/>
-              <circle cx="112" cy="172" r="22"/><circle cx="208" cy="172" r="22"/><circle cx="140" cy="198" r="22"/>
-              <circle cx="180" cy="198" r="22"/><circle cx="160" cy="162" r="22"/>
-            </g>
-            <!-- marker-positive nuclei glowing (some cells positive) -->
-            <g fill="#a99bff" filter="url(#fluor)">
-              <circle cx="160" cy="116" r="9"/><circle cx="196" cy="136" r="9"/>
-              <circle cx="112" cy="172" r="9"/><circle cx="180" cy="198" r="9"/><circle cx="160" cy="162" r="9"/>
-            </g>
-            <!-- not-yet-positive nuclei (dim) -->
-            <g fill="rgba(200,195,255,.35)">
-              <circle cx="124" cy="136" r="7"/><circle cx="208" cy="172" r="7"/><circle cx="140" cy="198" r="7"/>
-            </g>
+            <circle cx="160" cy="160" r="94" fill="none" stroke="rgba(139,123,255,.22)" stroke-width="2" stroke-dasharray="4 9"/>
+            <!-- persistent mesoderm cells (remain under MEHP) -->
+            <g class="mcell">
+              <ellipse cx="150" cy="152" rx="40" ry="12" transform="rotate(5 150 152)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
+              <circle cx="150" cy="152" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
+            <g class="mcell">
+              <ellipse cx="112" cy="116" rx="34" ry="11" transform="rotate(-30 112 116)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
+              <circle cx="112" cy="116" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
+            <g class="mcell">
+              <ellipse cx="206" cy="132" rx="34" ry="11" transform="rotate(26 206 132)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
+              <circle cx="206" cy="132" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
+            <g class="mcell">
+              <ellipse cx="132" cy="204" rx="34" ry="11" transform="rotate(-14 132 204)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
+              <circle cx="132" cy="204" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
+            <!-- cells lost under MEHP (fewer T/BRA+ cells) -->
+            <g class="mcell melost">
+              <ellipse cx="206" cy="196" rx="34" ry="11" transform="rotate(18 206 196)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
+              <circle cx="206" cy="196" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
+            <g class="mcell melost">
+              <ellipse cx="94" cy="176" rx="32" ry="11" transform="rotate(44 94 176)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
+              <circle cx="94" cy="176" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
+            <g class="mcell melost">
+              <ellipse cx="172" cy="104" rx="32" ry="11" transform="rotate(-8 172 104)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
+              <circle cx="172" cy="104" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
             <!-- apoptotic bodies (MEHP only) -->
             <g class="apopt" fill="#f2b134" opacity=".85">
-              <circle cx="206" cy="198" r="4"/><circle cx="215" cy="204" r="2.6"/><circle cx="209" cy="210" r="2.2"/>
+              <circle cx="204" cy="196" r="4"/><circle cx="213" cy="202" r="2.6"/><circle cx="96" cy="176" r="3.4"/>
             </g>
           </g>
 
-          <!-- DAY 6 : cardiac mesoderm — immunofluorescence, cardiac markers (pink), no beat -->
+          <!-- DAY 6 : cardiac mesoderm — cohesive aligned progenitor cluster, MESP1+ (pink), T+MESP1+ double-positive -->
           <g class="cg" id="p3">
-            <circle cx="160" cy="160" r="90" fill="rgba(28,10,16,.6)" stroke="rgba(255,93,115,.42)" stroke-width="2"/>
-            <!-- faint cell bodies -->
-            <g fill="rgba(255,93,115,.10)" stroke="rgba(255,93,115,.3)" stroke-width="1.2">
-              <circle cx="160" cy="116" r="22"/><circle cx="124" cy="136" r="22"/><circle cx="196" cy="136" r="22"/>
-              <circle cx="112" cy="172" r="22"/><circle cx="208" cy="172" r="22"/><circle cx="140" cy="198" r="22"/>
-              <circle cx="180" cy="198" r="22"/><circle cx="160" cy="162" r="22"/>
-            </g>
-            <!-- cardiac-marker-positive nuclei glowing (most cells positive) -->
-            <g fill="#ff8a99" filter="url(#fluor)">
-              <circle cx="160" cy="116" r="9"/><circle cx="124" cy="136" r="9"/><circle cx="196" cy="136" r="9"/>
-              <circle cx="112" cy="172" r="9"/><circle cx="140" cy="198" r="9"/>
-              <circle cx="180" cy="198" r="9"/><circle cx="160" cy="162" r="9"/>
-            </g>
-            <g fill="rgba(255,200,208,.35)">
-              <circle cx="208" cy="172" r="7"/>
-            </g>
+            <ellipse cx="160" cy="160" rx="100" ry="80" fill="rgba(28,10,16,.45)" stroke="rgba(255,93,115,.35)" stroke-width="2"/>
+            <!-- persistent cells (remain under MEHP) -->
+            <g class="mcell">
+              <ellipse cx="126" cy="128" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
+              <circle cx="126" cy="128" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
+            <g class="mcell">
+              <ellipse cx="114" cy="160" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
+              <circle cx="114" cy="160" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
+            <!-- double-positive T+MESP1+ (violet ring + pink core) -->
+            <g class="mcell">
+              <ellipse cx="160" cy="160" rx="32" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
+              <circle cx="160" cy="160" r="9.5" fill="#a99bff" filter="url(#fluor)"/><circle cx="160" cy="160" r="5" fill="#ff8a99"/></g>
+            <g class="mcell">
+              <ellipse cx="140" cy="192" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
+              <circle cx="140" cy="192" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
+            <!-- cells lost under MEHP (fewer MESP1+ and fewer double-positive) -->
+            <g class="mcell melost">
+              <ellipse cx="192" cy="128" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
+              <circle cx="192" cy="128" r="9.5" fill="#a99bff" filter="url(#fluor)"/><circle cx="192" cy="128" r="5" fill="#ff8a99"/></g>
+            <g class="mcell melost">
+              <ellipse cx="206" cy="160" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
+              <circle cx="206" cy="160" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
+            <g class="mcell melost">
+              <ellipse cx="184" cy="192" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
+              <circle cx="184" cy="192" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
             <!-- apoptotic bodies (MEHP only) -->
             <g class="apopt" fill="#f2b134" opacity=".85">
-              <circle cx="206" cy="196" r="4.5"/><circle cx="216" cy="202" r="3"/><circle cx="210" cy="210" r="2.4"/>
-              <circle cx="120" cy="118" r="4"/><circle cx="112" cy="124" r="2.4"/>
+              <circle cx="192" cy="128" r="4.4"/><circle cx="200" cy="134" r="2.8"/>
+              <circle cx="206" cy="160" r="4"/><circle cx="184" cy="192" r="3.4"/>
             </g>
           </g>
         </svg>
@@ -663,6 +682,7 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
   <p class="reveal">I'm open to research collaborations, PhD opportunities, and roles in developmental biology, toxicology, and bioinformatics. Reach out — I'd love to talk.</p>
   <div class="contact-links reveal">
     <a href="mailto:menonadi10@gmail.com" class="btn primary">✉ menonadi10@gmail.com</a>
+    <a href="Aditya_Menon_Resume.pdf" download class="btn ghost">⭳ Download résumé</a>
     <a href="https://www.linkedin.com/in/adityamenon09" target="_blank" rel="noopener" class="btn ghost">in LinkedIn</a>
     <a href="https://github.com/AdityaMenon09" target="_blank" rel="noopener" class="btn ghost">⌨ GitHub</a>
   </div>
@@ -765,12 +785,12 @@ const PROTO=[
    assess:'Pluripotency wanes as EBs form and cells begin to specify into germ layers.'},
   {day:'Day 4',svg:'p2',label:'Mesoderm commitment',tech:'Immunofluorescence · T/BRACHYURY',glow:'rgba(139,123,255,.20)',
    title:'Mesoderm specification',
-   proc:'A media change refreshes the ascorbic-acid treatment. Cells commit to mesoderm, shown as T/BRACHYURY-positive nuclei lighting up under immunofluorescence. T/BRACHYURY is a pan-mesoderm marker. Not yet cardiac.',
+   proc:'A media change refreshes the ascorbic-acid treatment. Cells commit to mesoderm and spread out as migratory, spindle-shaped mesenchyme, with T/BRACHYURY-positive nuclei lit up by immunofluorescence. T/BRACHYURY is a pan-mesoderm marker. Not yet cardiac.',
    markers:['T / BRACHYURY'],
    assess:'T/BRACHYURY marks pan-mesoderm — the route toward heart tissue.'},
   {day:'Day 6',svg:'p3',label:'Cardiac mesoderm',tech:'Fixed in 4% PFA · MESP1',glow:'rgba(255,93,115,.22)',
    title:'Cardiac mesoderm',
-   proc:'Cells are fixed in 4% PFA and stained. MESP1 (a cardiac mesoderm marker) lights up, and T⁺MESP1⁺ double-positive cells mark the transition from mesoderm to cardiac mesoderm — cardiac-specified, though not yet mature contractile cardiomyocytes.',
+   proc:'Cells are fixed in 4% PFA and stained. MESP1-positive cells organize into a cohesive, aligned cardiac-mesoderm cluster; T⁺MESP1⁺ double-positive cells (violet ring + pink core) mark the transition from mesoderm to cardiac mesoderm — cardiac-specified, though not yet mature contractile cardiomyocytes.',
    markers:['MESP1','T⁺MESP1⁺'],
    assess:'MESP1 and the T⁺MESP1⁺ transition population are the endpoint readout of cardiac lineage commitment.'}
 ];
