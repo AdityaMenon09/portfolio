@@ -141,39 +141,58 @@ h2.section-title{font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.08;margin-bo
 .tl-card li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:2px;background:var(--accent);transform:rotate(45deg);opacity:.8}
 .tl-card li b{color:var(--ink)}
 
-/* lab */
+/* lab — thesis protocol walkthrough */
 .lab{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,3vw,30px);position:relative;overflow:hidden}
 .lab::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(500px 260px at 30% 10%,rgba(47,227,194,.08),transparent 60%)}
-.lab-stage{position:relative;display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:22px}
-.labcell-wrap{width:min(260px,70vw);aspect-ratio:1;position:relative;border-radius:50%;transition:box-shadow .3s}
-.labcell-wrap.armed{box-shadow:0 0 0 3px var(--sig,var(--accent)),0 0 40px -6px var(--sig,var(--glow))}
-#labCell{width:100%;height:100%;display:block;overflow:visible}
-.lab .lcg{opacity:0;transform:scale(.55);transform-origin:130px 130px;transition:opacity .55s,transform .55s cubic-bezier(.2,.8,.2,1);pointer-events:none}
-.lab .lcg.show{opacity:1;transform:scale(1)}
-.lmem{fill:url(#labMem);stroke:rgba(47,227,194,.6);stroke-width:2}
-.lnuc{fill:#0c8f78;opacity:.85}.lnpl{fill:#eafffb;opacity:.9}
+/* condition toggle */
+.cond{display:inline-flex;gap:4px;padding:4px;background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;margin-bottom:20px;position:relative;z-index:1}
+.cond-btn{padding:8px 18px;border-radius:999px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s}
+.cond-btn.active{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#04120f}
+.cond-btn.active[data-cond="mehp"]{background:linear-gradient(120deg,var(--cardiac),#ffa233);color:#2a0a10}
+/* day timeline */
+.daystrip{position:relative;display:flex;justify-content:space-between;margin:6px 4px 24px;z-index:1}
+.daystrip::before{content:"";position:absolute;top:11px;left:6%;right:6%;height:2px;background:var(--panel-2)}
+.daystrip .dfill{content:"";position:absolute;top:11px;left:6%;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:width .5s cubic-bezier(.3,.7,.2,1)}
+.day{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:var(--muted);font-weight:700;font-size:.82rem;flex:1}
+.day .dnode{width:24px;height:24px;border-radius:50%;background:var(--bg-soft);border:2px solid var(--line);transition:.3s;display:grid;place-items:center;font-size:.7rem}
+.day.done .dnode{border-color:var(--accent);background:var(--accent);color:#04120f}
+.day.active .dnode{border-color:var(--accent);background:var(--accent);color:#04120f;box-shadow:0 0 0 5px rgba(47,227,194,.18);transform:scale(1.12)}
+.day.active{color:var(--ink)}
+/* body */
+.lab-body{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;position:relative;z-index:1}
+.proto-stage{display:flex;flex-direction:column;align-items:center;gap:12px}
+.proto-wrap{width:min(230px,60vw);aspect-ratio:1;position:relative;transition:filter .5s,opacity .5s}
+.proto-wrap.mehp{filter:saturate(.55) brightness(.9)}
+#protoCell{width:100%;height:100%;display:block;overflow:visible}
+.pcg{opacity:0;transform:scale(.6);transform-origin:130px 130px;transition:opacity .55s,transform .55s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.pcg.show{opacity:1;transform:scale(1)}
+.pmem{fill:url(#labMem);stroke:rgba(47,227,194,.6);stroke-width:2}
 .lbeat{animation:beat 1s ease-in-out infinite;transform-origin:130px 135px}
+.proto-wrap.mehp .lbeat{animation-duration:2.4s}
 @keyframes beat{0%,100%{transform:scale(1)}18%{transform:scale(1.12)}32%{transform:scale(1)}46%{transform:scale(1.06)}}
-.axon-pulse{stroke-dasharray:6 10;animation:flow 1.1s linear infinite}
-@keyframes flow{to{stroke-dashoffset:-32}}
-.lab-hint{font-size:.82rem;color:var(--muted);text-align:center}
-.lab-label{font-weight:800;font-size:1.1rem;text-align:center}
-.signal-title{font-size:.74rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;text-align:center}
-.signals{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
-.signal{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-weight:650;font-size:.8rem;cursor:grab;transition:.2s;touch-action:none;user-select:none}
-.signal:hover{transform:translateY(-3px);border-color:var(--sig)}
-.signal.active{border-color:var(--sig);box-shadow:0 0 0 1px var(--sig)}
-.signal.dragging{opacity:.4}
-.signal .em{font-size:1.5rem;line-height:1;pointer-events:none}
-.drag-ghost{position:fixed;z-index:999;pointer-events:none;font-size:2rem;transform:translate(-50%,-50%);filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
-.fate-info{background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-height:120px}
-.fate-info h4{font-size:1.05rem;margin-bottom:6px;font-weight:750}
-.fate-info .desc{color:var(--muted);font-size:.9rem;margin-bottom:12px}
+.spin{animation:spin 22s linear infinite;transform-origin:130px 130px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lab-label{font-weight:800;font-size:1.05rem;text-align:center}
+.lab-tech{font-size:.78rem;color:var(--muted);text-align:center}
+.lab-info{background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.step-day{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:4px}
+.lab-info h4{font-size:1.15rem;margin-bottom:8px;font-weight:780}
+.proc{color:var(--muted);font-size:.92rem;margin-bottom:14px}
 .mk-title{font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.markers{display:flex;flex-wrap:wrap;gap:7px}
+.markers{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
 .marker{font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:999px;background:rgba(47,227,194,.1);color:var(--accent);border:1px solid rgba(47,227,194,.25);opacity:0;transform:translateY(8px);animation:mkin .4s forwards}
+.marker.down{background:rgba(255,93,115,.12);color:var(--cardiac);border-color:rgba(255,93,115,.3)}
 @keyframes mkin{to{opacity:1;transform:none}}
-.lab-reset{margin-top:14px;font-size:.84rem}
+.assess{font-size:.86rem;color:var(--ink);border-left:2px solid var(--accent);padding-left:12px;opacity:.9}
+.flag{margin-top:12px;font-size:.82rem;color:var(--cardiac);background:rgba(255,93,115,.08);border:1px solid rgba(255,93,115,.25);border-radius:10px;padding:10px 12px;display:none}
+.flag.on{display:block}
+.lab-nav{display:flex;gap:10px;margin-top:20px;position:relative;z-index:1}
+.lab-nav .btn{flex:1;justify-content:center;padding:11px}
+.pbtn{padding:11px 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-weight:700;font-size:.88rem;cursor:pointer;transition:.2s;flex:1}
+.pbtn:hover{border-color:var(--accent)}
+.pbtn:disabled{opacity:.4;cursor:default}
+.pbtn.play{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#04120f;border-color:transparent;flex:1.4}
+@media(max-width:560px){.lab-body{grid-template-columns:1fr}}
 
 /* projects */
 .proj{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px;cursor:pointer;position:relative;overflow:hidden;transition:.35s;margin-bottom:20px}
@@ -456,75 +475,97 @@ footer{margin-left:var(--stageW);width:calc(100% - var(--stageW));text-align:cen
 
 <!-- LAB -->
 <section id="lab" data-stage="3">
-  <div class="eyebrow reveal">03 — Specialization · Interactive</div>
-  <h2 class="section-title reveal">Cell Differentiation Lab</h2>
-  <p class="sub reveal" style="color:var(--muted);margin-bottom:26px">Drag a signal molecule onto the stem cell — or tap one — to commit it to a lineage. The same principle behind directing mouse embryonic stem cells down a cardiac fate in my thesis.</p>
+  <div class="eyebrow reveal">03 — Inside my thesis · Interactive</div>
+  <h2 class="section-title reveal">From Stem Cell to Beating Heart</h2>
+  <p class="sub reveal" style="color:var(--muted);margin-bottom:24px">In my M.Tech thesis I guide mouse embryonic stem cells (mESCs) down a cardiac lineage over 6 days using the hanging-drop method, then test whether the phthalate metabolite <b>MEHP</b> disrupts it. Step through the real protocol — or hit play — and switch the condition to see the comparison my work investigates.</p>
   <div class="lab reveal">
-    <div class="lab-stage">
-      <div class="labcell-wrap" id="labDrop">
-        <svg id="labCell" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
-          <defs><radialGradient id="labMem" cx="36%" cy="30%" r="75%"><stop offset="0%" stop-color="#eafffb"/><stop offset="100%" stop-color="#1bbfa0"/></radialGradient></defs>
-          <!-- stem -->
-          <g class="lcg show" id="l-stem">
-            <circle cx="130" cy="130" r="66" class="lmem"/><circle cx="130" cy="130" r="26" class="lnuc"/>
-            <circle cx="121" cy="123" r="6" class="lnpl"/><circle cx="138" cy="136" r="4" class="lnpl"/>
-          </g>
-          <!-- eb -->
-          <g class="lcg" id="l-eb">
-            <circle cx="130" cy="100" r="24" fill="url(#labMem)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
-            <circle cx="100" cy="124" r="24" fill="url(#labMem)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
-            <circle cx="160" cy="124" r="24" fill="url(#labMem)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
-            <circle cx="112" cy="158" r="24" fill="url(#labMem)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
-            <circle cx="148" cy="158" r="24" fill="url(#labMem)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
-            <circle cx="130" cy="130" r="22" fill="url(#labMem)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
-          </g>
-          <!-- cardiac -->
-          <g class="lcg" id="l-cardiac"><g class="lbeat" style="transform-origin:130px 135px">
-            <path d="M130 176 C98 148 84 128 84 110 C84 94 98 84 113 84 C122 84 128 89 130 94 C132 89 138 84 147 84 C162 84 176 94 176 110 C176 128 162 148 130 176 Z" fill="#ff5d73" stroke="#ff97a6" stroke-width="3"/>
-            <path d="M96 128 h13 l6 -14 l8 27 l7 -18 l6 9 h16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
-          </g></g>
-          <!-- neural -->
-          <g class="lcg" id="l-neural">
-            <line x1="130" y1="130" x2="72" y2="72" stroke="#8b7bff" stroke-width="5" stroke-linecap="round"/>
-            <line x1="130" y1="130" x2="188" y2="74" stroke="#8b7bff" stroke-width="5" stroke-linecap="round"/>
-            <line x1="130" y1="130" x2="78" y2="126" stroke="#8b7bff" stroke-width="5" stroke-linecap="round"/>
-            <line class="axon-pulse" x1="130" y1="130" x2="200" y2="196" stroke="#b9aeff" stroke-width="6" stroke-linecap="round"/>
-            <circle cx="200" cy="196" r="9" fill="#b9aeff"/>
-            <circle cx="130" cy="130" r="28" fill="#8b7bff" stroke="#c7bdff" stroke-width="3"/><circle cx="128" cy="127" r="10" fill="#4b3fa8"/>
-          </g>
-          <!-- hepatic -->
-          <g class="lcg" id="l-hepatic">
-            <polygon points="130,74 172,98 172,146 130,170 88,146 88,98" fill="#f2b134" stroke="#ffd47a" stroke-width="3"/>
-            <polygon points="94,124 116,137 116,163 94,176 72,163 72,137" fill="#e6a327" stroke="#ffd47a" stroke-width="2" opacity=".9"/>
-            <polygon points="172,124 194,137 194,163 172,176 150,163 150,137" fill="#e6a327" stroke="#ffd47a" stroke-width="2" opacity=".9"/>
-            <circle cx="130" cy="120" r="10" fill="#7a5410"/>
-          </g>
-          <!-- blood -->
-          <g class="lcg" id="l-blood"><g fill="#ff5252" stroke="#ff9a9a" stroke-width="2">
-            <circle cx="104" cy="104" r="24"/><circle cx="104" cy="104" r="10" fill="#a11" stroke="none" opacity=".55"/>
-            <circle cx="164" cy="114" r="22"/><circle cx="164" cy="114" r="9" fill="#a11" stroke="none" opacity=".55"/>
-            <circle cx="122" cy="160" r="26"/><circle cx="122" cy="160" r="11" fill="#a11" stroke="none" opacity=".55"/>
-            <circle cx="172" cy="164" r="18"/><circle cx="172" cy="164" r="7" fill="#a11" stroke="none" opacity=".55"/>
-          </g></g>
-        </svg>
+    <div class="cond">
+      <button class="cond-btn active" data-cond="control">Control</button>
+      <button class="cond-btn" data-cond="mehp">+ MEHP</button>
+    </div>
+
+    <div class="daystrip" id="dayStrip">
+      <div class="dfill" id="dayFill"></div>
+      <button class="day active" data-step="0"><span class="dnode">0</span>Day 0</button>
+      <button class="day" data-step="1"><span class="dnode">2</span>Day 2</button>
+      <button class="day" data-step="2"><span class="dnode">4</span>Day 4</button>
+      <button class="day" data-step="3"><span class="dnode">6</span>Day 6</button>
+    </div>
+
+    <div class="lab-body">
+      <div class="proto-stage">
+        <div class="proto-wrap" id="protoWrap">
+          <svg id="protoCell" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="labMem" cx="36%" cy="30%" r="75%"><stop offset="0%" stop-color="#eafffb"/><stop offset="100%" stop-color="#1bbfa0"/></radialGradient>
+              <radialGradient id="labMemPink" cx="36%" cy="30%" r="75%"><stop offset="0%" stop-color="#ffe3e8"/><stop offset="100%" stop-color="#ff5d73"/></radialGradient>
+            </defs>
+
+            <!-- DAY 0: seeding + hanging drop -->
+            <g class="pcg show" id="p0">
+              <path d="M130 30 C150 82 178 116 178 152 a48 48 0 1 1 -96 0 C82 116 110 82 130 30 Z" fill="rgba(47,227,194,.12)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
+              <circle cx="118" cy="150" r="15" class="pmem"/><circle cx="118" cy="150" r="6" fill="#0c8f78"/>
+              <circle cx="150" cy="158" r="14" class="pmem"/><circle cx="150" cy="158" r="5" fill="#0c8f78"/>
+              <circle cx="132" cy="178" r="13" class="pmem"/><circle cx="132" cy="178" r="5" fill="#0c8f78"/>
+            </g>
+
+            <!-- DAY 2: embryoid body -->
+            <g class="pcg" id="p1"><g class="spin">
+              <circle cx="130" cy="130" r="72" fill="rgba(47,227,194,.07)" stroke="rgba(47,227,194,.4)" stroke-width="2"/>
+              <g class="pmem">
+                <circle cx="130" cy="94" r="18"/><circle cx="100" cy="110" r="18"/><circle cx="160" cy="110" r="18"/>
+                <circle cx="90" cy="140" r="18"/><circle cx="170" cy="140" r="18"/><circle cx="112" cy="164" r="18"/>
+                <circle cx="148" cy="164" r="18"/><circle cx="130" cy="132" r="18"/>
+              </g>
+              <g fill="#0c8f78" opacity=".8">
+                <circle cx="130" cy="94" r="6"/><circle cx="100" cy="110" r="6"/><circle cx="160" cy="110" r="6"/>
+                <circle cx="90" cy="140" r="6"/><circle cx="170" cy="140" r="6"/><circle cx="112" cy="164" r="6"/>
+                <circle cx="148" cy="164" r="6"/><circle cx="130" cy="132" r="6"/>
+              </g>
+            </g></g>
+
+            <!-- DAY 4: cardiac progenitors -->
+            <g class="pcg" id="p2">
+              <circle cx="130" cy="130" r="72" fill="rgba(255,93,115,.06)" stroke="rgba(255,93,115,.35)" stroke-width="2"/>
+              <circle cx="128" cy="98" r="20" fill="url(#labMem)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
+              <ellipse cx="98" cy="126" rx="26" ry="16" fill="url(#labMemPink)" stroke="#ff97a6" stroke-width="2" transform="rotate(-20 98 126)"/>
+              <ellipse cx="162" cy="132" rx="26" ry="16" fill="url(#labMemPink)" stroke="#ff97a6" stroke-width="2" transform="rotate(18 162 132)"/>
+              <circle cx="128" cy="160" r="20" fill="url(#labMem)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
+              <circle cx="128" cy="130" r="16" fill="url(#labMemPink)" stroke="#ff97a6" stroke-width="2"/>
+              <circle cx="98" cy="126" r="6" fill="#7a1f2c"/><circle cx="162" cy="132" r="6" fill="#7a1f2c"/><circle cx="128" cy="130" r="6" fill="#7a1f2c"/>
+            </g>
+
+            <!-- DAY 6: beating cardiomyocyte -->
+            <g class="pcg" id="p3"><g class="lbeat" style="transform-origin:130px 132px">
+              <rect x="56" y="102" width="148" height="60" rx="28" fill="url(#labMemPink)" stroke="#ff97a6" stroke-width="3"/>
+              <g stroke="#ffd0d7" stroke-width="2.5" opacity=".8">
+                <line x1="84" y1="110" x2="84" y2="154"/><line x1="107" y1="110" x2="107" y2="154"/>
+                <line x1="130" y1="110" x2="130" y2="154"/><line x1="153" y1="110" x2="153" y2="154"/><line x1="176" y1="110" x2="176" y2="154"/>
+              </g>
+              <circle cx="130" cy="132" r="13" fill="#7a1f2c"/>
+            </g></g>
+          </svg>
+        </div>
+        <div class="lab-label" id="pLabel">Seeded mESCs</div>
+        <div class="lab-tech" id="pTech">Hanging-drop droplet</div>
       </div>
-      <div class="lab-label" id="labLabel">Pluripotent Stem Cell</div>
-      <div class="lab-hint" id="labHint">mESC · undifferentiated — drag a signal below</div>
+
+      <div class="lab-info">
+        <div class="step-day" id="pDay">Day 0</div>
+        <h4 id="pTitle">Seeding &amp; EB initiation</h4>
+        <div class="proc" id="pProc"></div>
+        <div class="mk-title">Markers assessed</div>
+        <div class="markers" id="pMarkers"></div>
+        <div class="assess" id="pAssess"></div>
+        <div class="flag" id="pFlag"></div>
+      </div>
     </div>
-    <div class="signal-title">Signal molecules</div>
-    <div class="signals">
-      <div class="signal" data-fate="cardiac" style="--sig:#ff5d73"><span class="em">🫀</span> Cardiac</div>
-      <div class="signal" data-fate="neural" style="--sig:#8b7bff"><span class="em">🧠</span> Neural</div>
-      <div class="signal" data-fate="hepatic" style="--sig:#f2b134"><span class="em">🧬</span> Hepatic</div>
-      <div class="signal" data-fate="blood" style="--sig:#ff5252"><span class="em">🩸</span> Blood</div>
+
+    <div class="lab-nav">
+      <button class="pbtn" id="pPrev" disabled>← Prev</button>
+      <button class="pbtn play" id="pPlay">▶ Play protocol</button>
+      <button class="pbtn" id="pNext">Next →</button>
     </div>
-    <div class="fate-info" id="fateInfo">
-      <h4 id="fiName">Pluripotent Stem Cell</h4>
-      <div class="desc" id="fiDesc">A blank-slate mouse embryonic stem cell (mESC) — it can become any cell type. Drag a signal molecule onto it to commit it to a lineage.</div>
-      <div class="mk-title">Key markers</div>
-      <div class="markers" id="fiMarkers"></div>
-    </div>
-    <button class="btn ghost lab-reset" id="resetCell">↺ Reset to stem cell</button>
   </div>
 </section>
 
@@ -699,75 +740,76 @@ const navObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
 }}),{rootMargin:'-45% 0px -50% 0px'});
 document.querySelectorAll('.content section').forEach(s=>navObs.observe(s));
 
-// -------- differentiation lab --------
-const FATES={
-  stem:{name:'Pluripotent Stem Cell',hint:'mESC · undifferentiated — drag a signal below',
-    desc:'A blank-slate mouse embryonic stem cell (mESC) — it can become any cell type. Drag a signal molecule onto it to commit it to a lineage.',markers:['Oct4','Sox2','Nanog']},
-  cardiac:{name:'Cardiomyocyte',hint:'cardiac lineage · contractile',
-    desc:'The exact lineage I direct mESCs toward in my M.Tech thesis. I confirm cardiac commitment with T and MESP1 markers — and study how the phthalate MEHP disrupts this pathway.',markers:['Brachyury (T)','MESP1','cTnT','GATA4']},
-  neural:{name:'Neuron',hint:'neural lineage · excitable',
-    desc:'Neural lineage — the cell extends dendrites and a long axon, wiring itself into networks.',markers:['Nestin','β-III Tubulin','MAP2']},
-  hepatic:{name:'Hepatocyte',hint:'endodermal lineage · metabolic',
-    desc:'Liver cells — tightly packed metabolic powerhouses that detoxify and synthesize proteins.',markers:['AFP','Albumin','HNF4α']},
-  blood:{name:'Blood Cell',hint:'haematopoietic lineage',
-    desc:'The haematopoietic lineage — red and white blood cells that carry oxygen and defend the body.',markers:['CD34','GATA1','CD45']}
-};
-const lgroups={stem:'l-stem',cardiac:'l-cardiac',neural:'l-neural',hepatic:'l-hepatic',blood:'l-blood'};
-const labLabel=document.getElementById('labLabel'),labHint=document.getElementById('labHint');
-const fiName=document.getElementById('fiName'),fiDesc=document.getElementById('fiDesc'),fiMk=document.getElementById('fiMarkers');
-const labDrop=document.getElementById('labDrop');
-const sigs=[...document.querySelectorAll('.signal')];
-let busy=false,cur='stem';
-function markers(list){fiMk.innerHTML='';list.forEach((m,i)=>{const s=document.createElement('span');s.className='marker';s.style.animationDelay=(i*70)+'ms';s.textContent=m;fiMk.appendChild(s);});}
-function showL(id){Object.values(lgroups).forEach(g=>document.getElementById(g).classList.remove('show'));document.getElementById(id).classList.add('show');}
-function setFate(f){const d=FATES[f];labLabel.textContent=d.name;labHint.textContent=d.hint;fiName.textContent=d.name;fiDesc.textContent=d.desc;markers(d.markers);}
-function differentiate(fate){
-  if(busy||!FATES[fate]||fate===cur)return;busy=true;
-  sigs.forEach(s=>s.classList.toggle('active',s.dataset.fate===fate));
-  labDrop.style.setProperty('--sig',getComputedStyle(document.querySelector('.signal[data-fate="'+fate+'"]')).getPropertyValue('--sig'));
-  Object.values(lgroups).forEach(g=>document.getElementById(g).classList.remove('show'));
-  document.getElementById('l-eb').classList.add('show');
-  labLabel.textContent='Embryoid body forming…';labHint.textContent='hanging drop · proliferation';
-  setTimeout(()=>{document.getElementById('l-eb').classList.remove('show');showL(lgroups[fate]);setFate(fate);cur=fate;busy=false;},850);
+// -------- thesis protocol walkthrough --------
+const PROTO=[
+  {day:'Day 0',svg:'p0',label:'Seeded mESCs',tech:'Hanging-drop droplet',
+   title:'Seeding & EB initiation',
+   proc:'Mouse embryonic stem cells are seeded and embryoid-body (EB) formation is initiated by the hanging-drop method — droplets of cell suspension let cells aggregate in 3D.',
+   markers:['Oct4','Sox2','Nanog'],
+   assess:'Assessment of pluripotency — confirming the starting cells are genuinely undifferentiated.'},
+  {day:'Day 2',svg:'p1',label:'Embryoid body',tech:'EB in suspension',
+   title:'Embryoid body formation',
+   proc:'EBs have formed. Cells move to media with ascorbic acid (a cardiac-promoting factor); the treatment arm also receives MEHP here.',
+   markers:['Brachyury (T)','MESP1'],
+   assess:'Early mesoderm emerges — the first commitment step toward a cardiac fate.'},
+  {day:'Day 4',svg:'p2',label:'Cardiac progenitors',tech:'Media change · ascorbic acid',
+   title:'Cardiac specification',
+   proc:'A media change refreshes the ascorbic-acid treatment. Cells specify into cardiac progenitors, seen here as pink committed cells within the aggregate.',
+   markers:['MESP1','NKX2-5','GATA4'],
+   assess:'Cardiac progenitor markers rise as cells commit to heart-muscle identity.'},
+  {day:'Day 6',svg:'p3',label:'Cardiomyocytes',tech:'Fixed in 4% PFA · analysed',
+   title:'Beating cardiomyocytes',
+   proc:'Cells are fixed in 4% PFA and analysed. In healthy conditions, spontaneously contracting cardiomyocytes appear.',
+   markers:['cTnT','α-actinin','NKX2-5'],
+   assess:'Assessment of cell fate & cell number — the endpoint readout of successful cardiac differentiation.'}
+];
+// MEHP arm: which markers are hypothesised to drop, per step, + a note
+const MEHP_DOWN=[[], [], ['NKX2-5','GATA4'], ['cTnT','α-actinin']];
+const MEHP_NOTE=[
+  'MEHP is introduced from Day 2 alongside ascorbic acid. My thesis compares this arm against control across the protocol.',
+  '⚠ MEHP added here. Whether it perturbs early mesoderm commitment is under investigation.',
+  '⚠ Hypothesised: MEHP may reduce cardiac progenitor marker expression (under investigation).',
+  '⚠ Hypothesised: MEHP may lower cardiomyocyte marker expression and contractility — the core question my thesis tests.'
+];
+const pcgs=[...document.querySelectorAll('.pcg')];
+const protoWrap=document.getElementById('protoWrap');
+const dayBtns=[...document.querySelectorAll('.day')];
+const dayFill=document.getElementById('dayFill');
+const pLabel=document.getElementById('pLabel'),pTech=document.getElementById('pTech');
+const pDay=document.getElementById('pDay'),pTitle=document.getElementById('pTitle'),pProc=document.getElementById('pProc'),pAssess=document.getElementById('pAssess'),pFlag=document.getElementById('pFlag');
+const pMk=document.getElementById('pMarkers');
+const pPrev=document.getElementById('pPrev'),pNext=document.getElementById('pNext'),pPlay=document.getElementById('pPlay');
+let step=0,cond='control',playing=false,playTimer=null;
+function renderStep(i){
+  const s=PROTO[i];
+  pcgs.forEach(g=>g.classList.toggle('show',g.id===s.svg));
+  dayBtns.forEach((b,bi)=>{b.classList.toggle('active',bi===i);b.classList.toggle('done',bi<i);});
+  dayFill.style.width=(i/(PROTO.length-1)*88)+'%';
+  pLabel.textContent=s.label;pTech.textContent=s.tech;
+  pDay.textContent=s.day;pTitle.textContent=s.title;pProc.textContent=s.proc;pAssess.textContent=s.assess;
+  const down=cond==='mehp'?MEHP_DOWN[i]:[];
+  pMk.innerHTML='';
+  s.markers.forEach((m,mi)=>{const el=document.createElement('span');el.className='marker'+(down.includes(m)?' down':'');
+    el.style.animationDelay=(mi*70)+'ms';el.textContent=m+(down.includes(m)?' ↓':'');pMk.appendChild(el);});
+  if(cond==='mehp'){pFlag.textContent=MEHP_NOTE[i];pFlag.classList.add('on');}else{pFlag.classList.remove('on');}
+  pPrev.disabled=(i===0);pNext.disabled=(i===PROTO.length-1);
 }
-// pointer-based drag (works for mouse + touch), with click as a fallback
-let ghost=null,dragFate=null,dragEl=null,moved=false,startX=0,startY=0;
-function overCell(e){const r=labDrop.getBoundingClientRect();return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;}
-function onMove(e){
-  if(!dragFate)return;
-  if(!moved&&Math.hypot(e.clientX-startX,e.clientY-startY)>6){
-    moved=true;
-    ghost=document.createElement('div');ghost.className='drag-ghost';
-    ghost.textContent=dragEl.querySelector('.em').textContent;document.body.appendChild(ghost);
-  }
-  if(ghost){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';}
-  labDrop.classList.toggle('armed',overCell(e));
-}
-function onUp(e){
-  dragEl.removeEventListener('pointermove',onMove);
-  if(ghost){ghost.remove();ghost=null;}
-  labDrop.classList.remove('armed');
-  if(moved&&dragFate&&overCell(e))differentiate(dragFate);
-  dragFate=null;dragEl=null;moved=false;
-}
-sigs.forEach(s=>{
-  s.addEventListener('pointerdown',e=>{
-    if(e.pointerType==='mouse'&&e.button!==0)return;
-    e.preventDefault();
-    dragFate=s.dataset.fate;dragEl=s;moved=false;startX=e.clientX;startY=e.clientY;
-    s.setPointerCapture(e.pointerId);
-    s.addEventListener('pointermove',onMove);
-    s.addEventListener('pointerup',onUp,{once:true});
-    s.addEventListener('pointercancel',onUp,{once:true});
-  });
-  // click = tap fallback (only fires when not dragged)
-  s.addEventListener('click',()=>{if(!moved)differentiate(s.dataset.fate);});
+function goStep(i){step=Math.max(0,Math.min(PROTO.length-1,i));renderStep(step);}
+dayBtns.forEach((b,i)=>b.addEventListener('click',()=>{stopPlay();goStep(i);}));
+pPrev.addEventListener('click',()=>{stopPlay();goStep(step-1);});
+pNext.addEventListener('click',()=>{stopPlay();goStep(step+1);});
+document.querySelectorAll('.cond-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.cond-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  cond=b.dataset.cond;protoWrap.classList.toggle('mehp',cond==='mehp');renderStep(step);
+}));
+function stopPlay(){playing=false;clearTimeout(playTimer);pPlay.textContent='▶ Play protocol';}
+function tick(){if(!playing)return;if(step>=PROTO.length-1){stopPlay();return;}goStep(step+1);playTimer=setTimeout(tick,1900);}
+pPlay.addEventListener('click',()=>{
+  if(playing){stopPlay();return;}
+  if(step>=PROTO.length-1)goStep(0);
+  playing=true;pPlay.textContent='⏸ Pause';playTimer=setTimeout(tick,1400);
 });
-document.getElementById('resetCell').addEventListener('click',()=>{
-  sigs.forEach(s=>s.classList.remove('active'));labDrop.style.removeProperty('--sig');
-  if(busy||cur==='stem')return;showL('l-stem');setFate('stem');cur='stem';
-});
-setFate('stem');
+renderStep(0);
 
 // -------- tabs --------
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
