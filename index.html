@@ -337,8 +337,8 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
 <!-- CELL DIFFERENTIATION LAB -->
 <section id="lab">
   <div class="eyebrow reveal">02 — Inside my thesis · Interactive</div>
-  <h2 class="section-title reveal">From Stem Cell to Beating Heart</h2>
-  <p class="reveal" style="color:var(--muted);margin-top:-24px;margin-bottom:34px;max-width:660px">I guide mouse embryonic stem cells (mESCs) down a cardiac lineage over 6 days using the hanging-drop method, then test whether the phthalate metabolite <b>MEHP</b> disrupts it. Step through the real protocol — or hit play — and switch the condition to see the comparison my work investigates.</p>
+  <h2 class="section-title reveal">Guiding Stem Cells Toward a Cardiac Fate</h2>
+  <p class="reveal" style="color:var(--muted);margin-top:-24px;margin-bottom:34px;max-width:660px">Over 6 days I differentiate mouse embryonic stem cells (mESCs) via the hanging-drop method, tracking the lineage markers that appear at each stage by immunofluorescence — then test whether the phthalate metabolite <b>MEHP</b> disrupts commitment. Step through the real protocol, or hit play, and switch the condition to see the comparison my work investigates.</p>
   <div class="lab reveal">
     <div class="stage-wrap">
       <div class="stage">
@@ -350,6 +350,10 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
             <radialGradient id="memPink" cx="35%" cy="30%" r="75%">
               <stop offset="0%" stop-color="#ffe3e8"/><stop offset="100%" stop-color="#ff5d73"/>
             </radialGradient>
+            <filter id="fluor" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="3.4" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
           </defs>
           <circle id="stageGlow" cx="160" cy="160" r="118"/>
 
@@ -376,26 +380,43 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
             </g>
           </g></g>
 
-          <!-- DAY 4 : cardiac progenitors -->
+          <!-- DAY 4 : mesoderm commitment — immunofluorescence, mesoderm markers (violet) -->
           <g class="cg" id="p2">
-            <circle cx="160" cy="160" r="86" fill="rgba(255,93,115,.06)" stroke="rgba(255,93,115,.35)" stroke-width="2"/>
-            <circle cx="158" cy="118" r="24" fill="url(#memGrad)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
-            <ellipse cx="120" cy="154" rx="30" ry="18" fill="url(#memPink)" stroke="#ff97a6" stroke-width="2" transform="rotate(-20 120 154)"/>
-            <ellipse cx="200" cy="162" rx="30" ry="18" fill="url(#memPink)" stroke="#ff97a6" stroke-width="2" transform="rotate(18 200 162)"/>
-            <circle cx="158" cy="200" r="24" fill="url(#memGrad)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
-            <circle cx="158" cy="158" r="18" fill="url(#memPink)" stroke="#ff97a6" stroke-width="2"/>
-            <circle cx="120" cy="154" r="7" fill="#7a1f2c"/><circle cx="200" cy="162" r="7" fill="#7a1f2c"/><circle cx="158" cy="158" r="6" fill="#7a1f2c"/>
+            <circle cx="160" cy="160" r="90" fill="rgba(10,14,30,.55)" stroke="rgba(139,123,255,.4)" stroke-width="2"/>
+            <!-- faint cell bodies -->
+            <g fill="rgba(139,123,255,.10)" stroke="rgba(139,123,255,.28)" stroke-width="1.2">
+              <circle cx="160" cy="116" r="22"/><circle cx="124" cy="136" r="22"/><circle cx="196" cy="136" r="22"/>
+              <circle cx="112" cy="172" r="22"/><circle cx="208" cy="172" r="22"/><circle cx="140" cy="198" r="22"/>
+              <circle cx="180" cy="198" r="22"/><circle cx="160" cy="162" r="22"/>
+            </g>
+            <!-- marker-positive nuclei glowing (some cells positive) -->
+            <g fill="#a99bff" filter="url(#fluor)">
+              <circle cx="160" cy="116" r="9"/><circle cx="196" cy="136" r="9"/>
+              <circle cx="112" cy="172" r="9"/><circle cx="180" cy="198" r="9"/><circle cx="160" cy="162" r="9"/>
+            </g>
+            <!-- not-yet-positive nuclei (dim) -->
+            <g fill="rgba(200,195,255,.35)">
+              <circle cx="124" cy="136" r="7"/><circle cx="208" cy="172" r="7"/><circle cx="140" cy="198" r="7"/>
+            </g>
           </g>
 
-          <!-- DAY 6 : beating cardiomyocyte -->
+          <!-- DAY 6 : cardiac mesoderm — immunofluorescence, cardiac markers (pink), no beat -->
           <g class="cg" id="p3">
-            <g class="beat">
-              <rect x="70" y="126" width="180" height="72" rx="34" fill="url(#memPink)" stroke="#ff97a6" stroke-width="3"/>
-              <g stroke="#ffd0d7" stroke-width="3" opacity=".8">
-                <line x1="104" y1="134" x2="104" y2="190"/><line x1="132" y1="134" x2="132" y2="190"/>
-                <line x1="160" y1="134" x2="160" y2="190"/><line x1="188" y1="134" x2="188" y2="190"/><line x1="216" y1="134" x2="216" y2="190"/>
-              </g>
-              <circle cx="160" cy="162" r="16" fill="#7a1f2c"/>
+            <circle cx="160" cy="160" r="90" fill="rgba(28,10,16,.6)" stroke="rgba(255,93,115,.42)" stroke-width="2"/>
+            <!-- faint cell bodies -->
+            <g fill="rgba(255,93,115,.10)" stroke="rgba(255,93,115,.3)" stroke-width="1.2">
+              <circle cx="160" cy="116" r="22"/><circle cx="124" cy="136" r="22"/><circle cx="196" cy="136" r="22"/>
+              <circle cx="112" cy="172" r="22"/><circle cx="208" cy="172" r="22"/><circle cx="140" cy="198" r="22"/>
+              <circle cx="180" cy="198" r="22"/><circle cx="160" cy="162" r="22"/>
+            </g>
+            <!-- cardiac-marker-positive nuclei glowing (most cells positive) -->
+            <g fill="#ff8a99" filter="url(#fluor)">
+              <circle cx="160" cy="116" r="9"/><circle cx="124" cy="136" r="9"/><circle cx="196" cy="136" r="9"/>
+              <circle cx="112" cy="172" r="9"/><circle cx="140" cy="198" r="9"/>
+              <circle cx="180" cy="198" r="9"/><circle cx="160" cy="162" r="9"/>
+            </g>
+            <g fill="rgba(255,200,208,.35)">
+              <circle cx="208" cy="172" r="7"/>
             </g>
           </g>
         </svg>
@@ -697,27 +718,27 @@ const PROTO=[
    assess:'Assessment of pluripotency — confirming the starting cells are genuinely undifferentiated.'},
   {day:'Day 2',svg:'p1',label:'Embryoid body',tech:'EB in suspension',glow:'rgba(47,227,194,.18)',
    title:'Embryoid body formation',
-   proc:'EBs have formed. Cells move to media with ascorbic acid (a cardiac-promoting factor); the treatment arm also receives MEHP from this point.',
+   proc:'The hanging-drop aggregates have formed 3D embryoid bodies. Cells move to media with ascorbic acid (a cardiac-promoting factor); the treatment arm also receives MEHP from this point.',
+   markers:['Oct4','Nanog'],
+   assess:'Pluripotency markers (Oct4, Nanog) decline as EBs form and cells begin to specify into germ layers.'},
+  {day:'Day 4',svg:'p2',label:'Mesoderm commitment',tech:'Immunofluorescence · mesoderm markers',glow:'rgba(139,123,255,.20)',
+   title:'Mesoderm specification',
+   proc:'A media change refreshes the ascorbic-acid treatment. Within the embryoid body, cells commit to the mesoderm lineage — shown here as mesoderm-marker-positive nuclei lighting up under immunofluorescence. Not yet cardiac.',
    markers:['Brachyury (T)','MESP1'],
-   assess:'Early mesoderm emerges — the first commitment step toward a cardiac fate.'},
-  {day:'Day 4',svg:'p2',label:'Cardiac progenitors',tech:'Media change · ascorbic acid',glow:'rgba(255,93,115,.20)',
-   title:'Cardiac specification',
-   proc:'A media change refreshes the ascorbic-acid treatment. Cells specify into cardiac progenitors, shown here as pink committed cells within the aggregate.',
-   markers:['MESP1','NKX2-5','GATA4'],
-   assess:'Cardiac progenitor markers rise as cells commit to a heart-muscle identity.'},
-  {day:'Day 6',svg:'p3',label:'Cardiomyocytes',tech:'Fixed in 4% PFA · analysed',glow:'rgba(255,93,115,.24)',
-   title:'Beating cardiomyocytes',
-   proc:'Cells are fixed in 4% PFA and analysed. In healthy conditions, spontaneously contracting cardiomyocytes appear.',
-   markers:['cTnT','α-actinin','NKX2-5'],
-   assess:'Assessment of cell fate & cell number — the endpoint readout of successful cardiac differentiation.'}
+   assess:'Mesoderm markers confirm commitment toward a mesodermal fate, the route to heart tissue.'},
+  {day:'Day 6',svg:'p3',label:'Cardiac mesoderm',tech:'Fixed in 4% PFA · immunofluorescence',glow:'rgba(255,93,115,.22)',
+   title:'Cardiac mesoderm',
+   proc:'Cells are fixed in 4% PFA and stained. Cardiac mesoderm markers now light up, indicating commitment to a heart-muscle fate — the cells are cardiac-specified, though not yet mature contractile cardiomyocytes.',
+   markers:['NKX2-5','GATA4','ISL1'],
+   assess:'Assessment of cell fate & cell number — cardiac mesoderm markers are the endpoint readout of successful cardiac commitment.'}
 ];
 // MEHP arm: markers hypothesised to drop per step + explanatory note
-const MEHP_DOWN=[[],[],['NKX2-5','GATA4'],['cTnT','α-actinin']];
+const MEHP_DOWN=[[],[],['MESP1'],['NKX2-5','GATA4','ISL1']];
 const MEHP_NOTE=[
   'MEHP is introduced from Day 2 alongside ascorbic acid; my thesis compares this arm against control across the whole protocol.',
   '⚠ MEHP added here. Whether it perturbs early mesoderm commitment is under investigation.',
-  '⚠ Hypothesised: MEHP may reduce cardiac progenitor marker expression (under investigation).',
-  '⚠ Hypothesised: MEHP may lower cardiomyocyte marker expression and contractility — the core question my thesis tests.'
+  '⚠ Hypothesised: MEHP may weaken mesoderm marker expression, blunting commitment (under investigation).',
+  '⚠ Hypothesised: MEHP may reduce cardiac mesoderm marker expression — the core question my thesis tests.'
 ];
 const stage=document.getElementById('cellStage');
 const glowEl=document.getElementById('stageGlow');
