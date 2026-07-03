@@ -856,11 +856,11 @@ document.querySelectorAll('.cond-btn').forEach(b=>b.addEventListener('click',()=
   cond=b.dataset.cond;stage.classList.toggle('mehp',cond==='mehp');renderStep(step);
 }));
 function stopPlay(){playing=false;clearTimeout(playTimer);pPlay.textContent='▶ Play protocol';}
-function tick(){if(!playing)return;if(step>=PROTO.length-1){stopPlay();return;}goStep(step+1);playTimer=setTimeout(tick,1900);}
+function tick(){if(!playing)return;if(step>=PROTO.length-1){stopPlay();return;}goStep(step+1);playTimer=setTimeout(tick,4000);}
 pPlay.addEventListener('click',()=>{
   if(playing){stopPlay();return;}
   if(step>=PROTO.length-1)goStep(0);
-  playing=true;pPlay.textContent='⏸ Pause';playTimer=setTimeout(tick,1400);
+  playing=true;pPlay.textContent='⏸ Pause';playTimer=setTimeout(tick,4000);
 });
 renderStep(0);
 </script>
