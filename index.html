@@ -250,6 +250,33 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
 .pbtn:hover:not(:disabled){border-color:var(--accent)}
 .pbtn:disabled{opacity:.4;cursor:default}
 .pbtn.play{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#04120f;border-color:transparent;flex:1.4}
+/* MEHP result bars */
+.result{margin-top:14px;display:none}
+.result.on{display:block;animation:fade .4s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.result .rtitle{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.rbar{margin-bottom:12px}
+.rbar .rlab{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:5px}
+.rbar .rlab b{color:var(--ink);font-weight:700}
+.rbar .rlab .sig{color:#ff8a99;font-weight:700;font-size:.72rem}
+.rrow{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.rrow .rk{width:56px;font-size:.68rem;color:var(--muted);flex-shrink:0}
+.rtrack{flex:1;height:9px;background:var(--panel-2);border-radius:999px;overflow:hidden}
+.rtrack i{display:block;height:100%;border-radius:999px;width:0;transition:width .8s cubic-bezier(.3,.7,.2,1)}
+.rtrack i.ctrl{background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+.rtrack i.mehp{background:linear-gradient(90deg,#ff5d73,#ffa233)}
+.result .apop{font-size:.8rem;color:#ffb27a;background:rgba(242,177,52,.08);border:1px solid rgba(242,177,52,.28);border-radius:10px;padding:9px 12px;margin-top:4px}
+.result .cap{font-size:.68rem;color:var(--muted);margin-top:8px;font-style:italic}
+/* conclusion callout */
+.conclusion{margin-top:26px;background:linear-gradient(135deg,rgba(255,93,115,.08),rgba(47,227,194,.06));border:1px solid var(--line);border-radius:18px;padding:24px 26px}
+.conclusion .ctag{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:12px}
+.conclusion p{color:var(--muted);font-size:.95rem;margin-bottom:10px}
+.conclusion p:last-child{margin-bottom:0}
+.conclusion b{color:var(--ink)}
+.conclusion .caveat{font-size:.85rem;opacity:.85}
+/* apoptosis overlay only under MEHP */
+.apopt{display:none}
+#cellStage.mehp .apopt{display:block}
 
 /* ---------- responsive ---------- */
 @media(max-width:860px){
@@ -398,6 +425,10 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
             <g fill="rgba(200,195,255,.35)">
               <circle cx="124" cy="136" r="7"/><circle cx="208" cy="172" r="7"/><circle cx="140" cy="198" r="7"/>
             </g>
+            <!-- apoptotic bodies (MEHP only) -->
+            <g class="apopt" fill="#f2b134" opacity=".85">
+              <circle cx="206" cy="198" r="4"/><circle cx="215" cy="204" r="2.6"/><circle cx="209" cy="210" r="2.2"/>
+            </g>
           </g>
 
           <!-- DAY 6 : cardiac mesoderm — immunofluorescence, cardiac markers (pink), no beat -->
@@ -417,6 +448,11 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
             </g>
             <g fill="rgba(255,200,208,.35)">
               <circle cx="208" cy="172" r="7"/>
+            </g>
+            <!-- apoptotic bodies (MEHP only) -->
+            <g class="apopt" fill="#f2b134" opacity=".85">
+              <circle cx="206" cy="196" r="4.5"/><circle cx="216" cy="202" r="3"/><circle cx="210" cy="210" r="2.4"/>
+              <circle cx="120" cy="118" r="4"/><circle cx="112" cy="124" r="2.4"/>
             </g>
           </g>
         </svg>
@@ -447,12 +483,18 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
         <div class="markers" id="pMarkers"></div>
         <div class="assess" id="pAssess"></div>
         <div class="flag" id="pFlag"></div>
+        <div class="result" id="pResult"></div>
       </div>
       <div class="lab-nav">
         <button class="pbtn" id="pPrev" disabled>← Prev</button>
         <button class="pbtn play" id="pPlay">▶ Play protocol</button>
         <button class="pbtn" id="pNext">Next →</button>
       </div>
+    </div>
+    <div class="conclusion reveal">
+      <div class="ctag">🧾 Thesis conclusion</div>
+      <p>Using this in&nbsp;vitro model, <b>MEHP disrupts early mesoderm and cardiac mesoderm differentiation.</b> After exposure at an environmentally relevant dose, significantly fewer cells were positive for <b>T/BRACHYURY</b> (pan-mesoderm), <b>MESP1</b> (cardiac mesoderm), and the <b>T⁺MESP1⁺</b> transition population — pointing to impaired mesoderm induction and weaker progression toward cardiac lineage commitment. The stronger effect at the lower, environmentally relevant dose suggests sensitivity to low concentrations.</p>
+      <p class="caveat">Some of this change was shared with the DMSO vehicle control, so the solvent contributes in part; but MEHP reduced marker expression further than vehicle alone, indicating an additional effect of its own. MEHP also showed a <b>dose-dependent trend toward increased apoptosis</b> (cPARP), though this was not statistically significant and needs larger studies to confirm.</p>
     </div>
   </div>
 </section>
@@ -712,43 +754,63 @@ draw();
 // ---- thesis cardiac-differentiation protocol walkthrough ----
 const PROTO=[
   {day:'Day 0',svg:'p0',label:'Seeded mESCs',tech:'Hanging-drop droplet',glow:'rgba(47,227,194,.18)',
-   title:'Seeding & EB initiation',
-   proc:'Mouse embryonic stem cells are seeded and embryoid-body (EB) formation is initiated by the hanging-drop method — droplets of cell suspension let cells aggregate in 3D.',
-   markers:['Oct4','Sox2','Nanog'],
-   assess:'Assessment of pluripotency — confirming the starting cells are genuinely undifferentiated.'},
+   title:'Seeding & pluripotency check',
+   proc:'Mouse embryonic stem cells are seeded and embryoid-body (EB) formation is initiated by the hanging-drop method. Pluripotency is confirmed by OCT4 (Alexa Fluor 488) co-localizing with the DAPI-stained nucleus.',
+   markers:['OCT4','DAPI'],
+   assess:'OCT4 co-localizes with the nucleus (DAPI), confirming the mESC line is pluripotent. A standard OCT4 dilution was also established.'},
   {day:'Day 2',svg:'p1',label:'Embryoid body',tech:'EB in suspension',glow:'rgba(47,227,194,.18)',
    title:'Embryoid body formation',
    proc:'The hanging-drop aggregates have formed 3D embryoid bodies. Cells move to media with ascorbic acid (a cardiac-promoting factor); the treatment arm also receives MEHP from this point.',
-   markers:['Oct4','Nanog'],
-   assess:'Pluripotency markers (Oct4, Nanog) decline as EBs form and cells begin to specify into germ layers.'},
-  {day:'Day 4',svg:'p2',label:'Mesoderm commitment',tech:'Immunofluorescence · mesoderm markers',glow:'rgba(139,123,255,.20)',
+   markers:['OCT4 waning'],
+   assess:'Pluripotency wanes as EBs form and cells begin to specify into germ layers.'},
+  {day:'Day 4',svg:'p2',label:'Mesoderm commitment',tech:'Immunofluorescence · T/BRACHYURY',glow:'rgba(139,123,255,.20)',
    title:'Mesoderm specification',
-   proc:'A media change refreshes the ascorbic-acid treatment. Within the embryoid body, cells commit to the mesoderm lineage — shown here as mesoderm-marker-positive nuclei lighting up under immunofluorescence. Not yet cardiac.',
-   markers:['Brachyury (T)','MESP1'],
-   assess:'Mesoderm markers confirm commitment toward a mesodermal fate, the route to heart tissue.'},
-  {day:'Day 6',svg:'p3',label:'Cardiac mesoderm',tech:'Fixed in 4% PFA · immunofluorescence',glow:'rgba(255,93,115,.22)',
+   proc:'A media change refreshes the ascorbic-acid treatment. Cells commit to mesoderm, shown as T/BRACHYURY-positive nuclei lighting up under immunofluorescence. T/BRACHYURY is a pan-mesoderm marker. Not yet cardiac.',
+   markers:['T / BRACHYURY'],
+   assess:'T/BRACHYURY marks pan-mesoderm — the route toward heart tissue.'},
+  {day:'Day 6',svg:'p3',label:'Cardiac mesoderm',tech:'Fixed in 4% PFA · MESP1',glow:'rgba(255,93,115,.22)',
    title:'Cardiac mesoderm',
-   proc:'Cells are fixed in 4% PFA and stained. Cardiac mesoderm markers now light up, indicating commitment to a heart-muscle fate — the cells are cardiac-specified, though not yet mature contractile cardiomyocytes.',
-   markers:['NKX2-5','GATA4','ISL1'],
-   assess:'Assessment of cell fate & cell number — cardiac mesoderm markers are the endpoint readout of successful cardiac commitment.'}
+   proc:'Cells are fixed in 4% PFA and stained. MESP1 (a cardiac mesoderm marker) lights up, and T⁺MESP1⁺ double-positive cells mark the transition from mesoderm to cardiac mesoderm — cardiac-specified, though not yet mature contractile cardiomyocytes.',
+   markers:['MESP1','T⁺MESP1⁺'],
+   assess:'MESP1 and the T⁺MESP1⁺ transition population are the endpoint readout of cardiac lineage commitment.'}
 ];
-// MEHP arm: markers hypothesised to drop per step + explanatory note
-const MEHP_DOWN=[[],[],['MESP1'],['NKX2-5','GATA4','ISL1']];
+// MEHP arm: confirmed thesis findings — markers significantly reduced per stage
+const MEHP_DOWN=[[],[],['T / BRACHYURY'],['MESP1','T⁺MESP1⁺']];
 const MEHP_NOTE=[
-  'MEHP is introduced from Day 2 alongside ascorbic acid; my thesis compares this arm against control across the whole protocol.',
-  '⚠ MEHP added here. Whether it perturbs early mesoderm commitment is under investigation.',
-  '⚠ Hypothesised: MEHP may weaken mesoderm marker expression, blunting commitment (under investigation).',
-  '⚠ Hypothesised: MEHP may reduce cardiac mesoderm marker expression — the core question my thesis tests.'
+  'MEHP is applied from Day 2 alongside ascorbic acid. Findings below compare the MEHP arm against the untreated control.',
+  '⚠ MEHP added here (environmentally relevant dose). Its effect on lineage markers is read out from Day 4 onward.',
+  '✔ Finding: significantly fewer T/BRACHYURY⁺ cells after MEHP — impaired mesoderm induction, with a stronger effect at the low, environmentally relevant dose.',
+  '✔ Finding: MESP1⁺ and T⁺MESP1⁺ cells significantly reduced after MEHP — disrupted cardiac lineage commitment and blocked mesoderm-to-cardiac-mesoderm transition.'
 ];
+// Control-vs-MEHP result bars (relative to untreated control; illustrative of direction, not measured values)
+const RESULT={
+  2:{bars:[{k:'T/BRA⁺',mehp:52}]},
+  3:{bars:[{k:'MESP1⁺',mehp:55},{k:'T⁺MESP1⁺',mehp:47}],
+     apop:'Apoptosis (cPARP): dose-dependent upward trend with MEHP — not statistically significant; larger studies needed.'}
+};
 const stage=document.getElementById('cellStage');
 const glowEl=document.getElementById('stageGlow');
 const pcgs=[...document.querySelectorAll('#cellStage .cg')];
 const dayBtns=[...document.querySelectorAll('.day')];
 const dayFill=document.getElementById('dayFill');
 const pLabel=document.getElementById('pLabel'),pTech=document.getElementById('pTech');
-const pDay=document.getElementById('pDay'),pTitle=document.getElementById('pTitle'),pProc=document.getElementById('pProc'),pAssess=document.getElementById('pAssess'),pFlag=document.getElementById('pFlag'),pMk=document.getElementById('pMarkers');
+const pDay=document.getElementById('pDay'),pTitle=document.getElementById('pTitle'),pProc=document.getElementById('pProc'),pAssess=document.getElementById('pAssess'),pFlag=document.getElementById('pFlag'),pMk=document.getElementById('pMarkers'),pResult=document.getElementById('pResult');
 const pPrev=document.getElementById('pPrev'),pNext=document.getElementById('pNext'),pPlay=document.getElementById('pPlay');
 let step=0,cond='control',playing=false,playTimer=null;
+function renderResult(i){
+  const r=RESULT[i];
+  if(cond!=='mehp'||!r){pResult.classList.remove('on');pResult.innerHTML='';return;}
+  let html='<div class="rtitle">Marker⁺ cells · control vs MEHP</div>';
+  r.bars.forEach(b=>{
+    html+='<div class="rbar"><div class="rlab"><b>'+b.k+'</b><span class="sig">▼ significant</span></div>'+
+      '<div class="rrow"><span class="rk">Control</span><div class="rtrack"><i class="ctrl" data-w="100"></i></div></div>'+
+      '<div class="rrow"><span class="rk">+ MEHP</span><div class="rtrack"><i class="mehp" data-w="'+b.mehp+'"></i></div></div></div>';
+  });
+  if(r.apop)html+='<div class="apop">'+r.apop+'</div>';
+  html+='<div class="cap">Bars show direction of change relative to untreated control (illustrative, not measured values).</div>';
+  pResult.innerHTML=html;pResult.classList.add('on');
+  requestAnimationFrame(()=>pResult.querySelectorAll('.rtrack i').forEach(el=>el.style.width=el.dataset.w+'%'));
+}
 function renderStep(i){
   const s=PROTO[i];
   pcgs.forEach(g=>g.classList.toggle('show',g.id===s.svg));
@@ -762,6 +824,7 @@ function renderStep(i){
   s.markers.forEach((m,mi)=>{const el=document.createElement('span');el.className='marker'+(down.includes(m)?' down':'');
     el.style.animationDelay=(mi*70)+'ms';el.textContent=m+(down.includes(m)?' ↓':'');pMk.appendChild(el);});
   if(cond==='mehp'){pFlag.textContent=MEHP_NOTE[i];pFlag.classList.add('on');}else{pFlag.classList.remove('on');}
+  renderResult(i);
   pPrev.disabled=(i===0);pNext.disabled=(i===PROTO.length-1);
 }
 function goStep(i){step=Math.max(0,Math.min(PROTO.length-1,i));renderStep(step);}
