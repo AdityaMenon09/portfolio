@@ -4,366 +4,307 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aditya Menon — Biotechnology Researcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#070d13;
-  --bg-soft:#0c1621;
-  --panel:#101f2e;
-  --panel-2:#132738;
-  --line:#1e3a4f;
-  --ink:#eaf4f4;
-  --muted:#8ba6b3;
-  --accent:#2fe3c2;
-  --accent-2:#3aa0ff;
-  --accent-3:#8b7bff;
-  --glow:rgba(47,227,194,.35);
-  --radius:16px;
-  --maxw:1080px;
-  --font:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  /* Dala tokens */
+  --void:#000000;
+  --bone:#ffffff;
+  --ash:#9a9a9a;
+  --silver:#bdbdbd;
+  --iris:#8052ff;      /* electric iris — primary violet */
+  --saffron:#ffb829;   /* saffron spark — amber emphasis */
+  --verdant:#15846e;   /* deep verdant teal */
+  --magenta:#ff5db0;
+  --blue:#3aa0ff;
+  --font:'Inter',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --maxw:1280px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
   font-family:var(--font);
-  background:var(--bg);
-  color:var(--ink);
-  line-height:1.6;
+  background:var(--void);
+  color:var(--bone);
+  line-height:1.5;
   overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
 a{color:inherit;text-decoration:none}
-::selection{background:var(--accent);color:#04120f}
+::selection{background:var(--iris);color:#fff}
 
-/* ---------- background canvas ---------- */
-#bg-canvas{position:fixed;inset:0;z-index:0;opacity:.55}
-.bg-grad{position:fixed;inset:0;z-index:0;pointer-events:none;
+/* ---------- fixed heart particle field ---------- */
+#heart-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+/* soft ambient glow washes, fixed behind everything */
+.washes{position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-   radial-gradient(1200px 700px at 80% -10%, rgba(58,160,255,.10), transparent 60%),
-   radial-gradient(900px 600px at 0% 20%, rgba(47,227,194,.10), transparent 55%),
-   radial-gradient(700px 700px at 50% 120%, rgba(139,123,255,.10), transparent 60%);
+   radial-gradient(1000px 700px at 72% 40%, rgba(128,82,255,.14), transparent 60%),
+   radial-gradient(700px 700px at 78% 78%, rgba(255,93,176,.08), transparent 60%),
+   radial-gradient(900px 600px at 20% 10%, rgba(58,160,255,.06), transparent 60%);
 }
 
-/* ---------- scroll DNA helix ---------- */
-#dna-helix{position:fixed;top:0;right:clamp(8px,1.6vw,26px);height:100vh;width:46px;z-index:1;pointer-events:none}
-#dna-helix svg{width:100%;height:100%;display:block;overflow:visible}
-.dna-strand{fill:none;stroke:rgba(139,166,179,.22);stroke-width:1.6;vector-effect:non-scaling-stroke;stroke-linecap:round}
-.dna-strand.b{stroke:rgba(139,166,179,.14)}
-.dna-rung{stroke:rgba(139,166,179,.13);stroke-width:1.4;vector-effect:non-scaling-stroke;transition:stroke .45s ease}
-.dna-rung.lit{stroke:rgba(47,227,194,.5)}
-.dna-dot{fill:rgba(139,166,179,.28);transition:fill .45s ease}
-.dna-dot.lit{fill:var(--accent);filter:drop-shadow(0 0 3px var(--glow))}
-@media(max-width:1180px){#dna-helix{display:none}}
+/* ---------- slideshow HUD (bottom-left, scroll-driven) ---------- */
+.hud{position:fixed;left:clamp(16px,4vw,48px);bottom:clamp(18px,4vw,40px);z-index:40;
+  max-width:340px;pointer-events:none;transition:opacity .5s}
+.hud .stagelabel{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--saffron);margin-bottom:8px}
+.hud .stagetitle{font-size:20px;font-weight:400;letter-spacing:-.01em;color:var(--bone);margin-bottom:6px;line-height:1.15}
+.hud .stagenote{font-size:13px;font-weight:200;color:var(--silver);line-height:1.45;min-height:38px}
+.hud .dots{display:flex;gap:8px;margin-top:14px;pointer-events:auto}
+.hud .dot{width:8px;height:8px;border-radius:50%;background:#3a3a3a;border:none;padding:0;cursor:pointer;transition:.3s}
+.hud .dot.on{background:var(--iris);box-shadow:0 0 10px rgba(128,82,255,.7);transform:scale(1.15)}
+@media(max-width:760px){.hud{max-width:220px;bottom:14px}}
 
 /* ---------- nav ---------- */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:50;
+nav{position:fixed;top:0;left:0;right:0;z-index:50;
   display:flex;align-items:center;justify-content:space-between;
-  padding:14px clamp(16px,4vw,48px);
-  backdrop-filter:blur(12px);
-  background:rgba(7,13,19,.55);
-  border-bottom:1px solid transparent;
-  transition:border-color .3s, background .3s;
-}
-nav.scrolled{border-bottom:1px solid var(--line);background:rgba(7,13,19,.8)}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.5px}
-.brand .dot{width:12px;height:12px;border-radius:50%;
-  background:radial-gradient(circle at 30% 30%,var(--accent),#0a6b58);
-  box-shadow:0 0 14px var(--glow);animation:pulse 2.6s ease-in-out infinite}
-@keyframes pulse{50%{box-shadow:0 0 22px var(--glow);transform:scale(1.12)}}
-.nav-links{display:flex;gap:6px}
-.nav-links a{
-  padding:8px 14px;border-radius:999px;color:var(--muted);
-  font-size:.9rem;font-weight:600;transition:.25s;position:relative;
-}
-.nav-links a:hover{color:var(--ink)}
-.nav-links a.active{color:var(--accent);background:rgba(47,227,194,.08)}
-.nav-toggle{display:none;background:none;border:none;color:var(--ink);font-size:1.5rem;cursor:pointer}
+  padding:18px clamp(16px,4vw,48px);transition:background .3s;}
+nav.scrolled{background:rgba(0,0,0,.55);backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:11px;font-size:15px;font-weight:500;letter-spacing:-.01em}
+.brand svg{width:20px;height:20px;display:block}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:8px 12px;font-size:13px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--ash);transition:.25s}
+.nav-links a:hover{color:var(--bone)}
+.nav-links a.active{color:var(--bone)}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--iris);color:#fff;
+  font-size:13px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+  padding:12px 20px;border-radius:999px;border:none;cursor:pointer;transition:.25s;white-space:nowrap}
+.pill:hover{background:#9066ff;transform:translateY(-2px)}
+.pill.solid-nav{padding:11px 18px}
+.nav-toggle{display:none;background:none;border:none;color:var(--bone);font-size:22px;cursor:pointer}
 
 /* ---------- layout ---------- */
 main{position:relative;z-index:2}
-section{max-width:var(--maxw);margin:0 auto;padding:clamp(60px,9vw,120px) clamp(16px,4vw,32px)}
-.eyebrow{color:var(--accent);font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:.72rem;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.eyebrow::before{content:"";width:28px;height:2px;background:var(--accent);display:inline-block}
-h2.section-title{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.1;margin-bottom:40px;font-weight:800;letter-spacing:-1px}
+section{max-width:var(--maxw);margin:0 auto;padding:clamp(80px,12vw,150px) clamp(20px,5vw,64px)}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--saffron);margin-bottom:26px}
+.dislay, h1,h2,h3,h4{font-weight:400}
+h2.title{font-size:clamp(2.6rem,6.5vw,5rem);line-height:1.02;letter-spacing:-.045em;margin-bottom:34px;max-width:14ch}
+.lead{font-size:clamp(1.05rem,1.9vw,1.35rem);font-weight:200;color:var(--silver);max-width:56ch;line-height:1.55}
+.lead b{color:var(--bone);font-weight:400}
+.hl{color:var(--iris);font-weight:400}
+.amber{color:var(--saffron)}
 
-/* ---------- hero ---------- */
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;max-width:var(--maxw);margin:0 auto;padding:0 clamp(16px,4vw,32px);position:relative;z-index:2}
-.hero-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-size:.8rem;color:var(--muted);margin-bottom:26px;width:fit-content;background:rgba(16,31,46,.5)}
-.hero-tag .live{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--glow);animation:pulse 2s infinite}
-.hero h1{font-size:clamp(2.8rem,9vw,6rem);line-height:.98;font-weight:850;letter-spacing:-3px;margin-bottom:10px}
-.hero h1 .grad{background:linear-gradient(120deg,var(--accent),var(--accent-2) 55%,var(--accent-3));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .role{font-size:clamp(1.1rem,2.6vw,1.7rem);color:var(--muted);font-weight:500;max-width:640px;margin-bottom:34px}
-.hero .role b{color:var(--ink);font-weight:700}
-.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:44px}
-.btn{padding:13px 26px;border-radius:999px;font-weight:700;font-size:.95rem;transition:.25s;cursor:pointer;border:1px solid var(--line);display:inline-flex;align-items:center;gap:9px}
-.btn.primary{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#04120f;border-color:transparent;box-shadow:0 8px 30px -8px var(--glow)}
-.btn.primary:hover{transform:translateY(-3px);box-shadow:0 14px 40px -8px var(--glow)}
-.btn.ghost:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-3px)}
-.hero-meta{display:flex;flex-wrap:wrap;gap:26px;color:var(--muted);font-size:.92rem}
-.hero-meta a{display:flex;align-items:center;gap:8px;transition:.2s}
-.hero-meta a:hover{color:var(--accent)}
-
-/* ---------- stats strip ---------- */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:8px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px;text-align:center;transition:.3s}
-.stat:hover{border-color:var(--accent);transform:translateY(-4px)}
-.stat .num{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:850;background:linear-gradient(120deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
-.stat .lbl{color:var(--muted);font-size:.82rem;margin-top:8px}
-.stats-note{margin-top:16px;color:var(--muted);font-size:.86rem;text-align:center;letter-spacing:.2px}
-.stats-note b{color:var(--ink);font-weight:650}
+/* text sits over particles — subtle readability backing on big type */
+.title,.hero h1,.contact .big{text-shadow:0 4px 40px rgba(0,0,0,.85)}
 
 /* ---------- reveal ---------- */
-.reveal{opacity:0;transform:translateY(34px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
 
+/* ---------- hero ---------- */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,64px);position:relative}
+.hero .tag{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--ash);margin-bottom:30px;width:fit-content}
+.hero .tag .live{width:8px;height:8px;border-radius:50%;background:var(--iris);box-shadow:0 0 12px rgba(128,82,255,.8);animation:pulse 2.2s infinite}
+@keyframes pulse{50%{opacity:.4;transform:scale(1.25)}}
+.hero h1{font-size:clamp(3.4rem,11vw,8.6rem);line-height:.9;letter-spacing:-.055em;margin-bottom:28px}
+.hero h1 .thin{display:block;color:var(--ash)}
+.hero .role{font-size:clamp(1.05rem,2vw,1.45rem);font-weight:200;color:var(--silver);max-width:44ch;margin-bottom:40px;line-height:1.5}
+.hero .role b{color:var(--bone);font-weight:400}
+.hero-cta{display:flex;flex-wrap:wrap;gap:22px;align-items:center;margin-bottom:52px}
+.ghost{font-size:14px;font-weight:400;color:var(--ash);transition:.25s;border-bottom:1px solid transparent;padding-bottom:2px}
+.ghost:hover{color:var(--bone);border-color:var(--iris)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:28px;color:var(--ash);font-size:13px}
+.hero-meta a{transition:.2s}
+.hero-meta a:hover{color:var(--saffron)}
+
 /* ---------- about ---------- */
-.about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:30px}
-.about-lead{font-size:clamp(1.1rem,2.3vw,1.4rem);color:var(--ink);font-weight:500}
-.about-lead .hl{color:var(--accent);font-weight:700}
-.about-side{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
-.about-side h4{font-size:.8rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{padding:7px 13px;background:var(--panel-2);border:1px solid var(--line);border-radius:999px;font-size:.82rem;color:var(--muted);transition:.2s}
-.chip:hover{color:var(--accent);border-color:var(--accent)}
-.langbar{margin-top:22px}
-.langbar .lang{margin-bottom:14px}
-.langbar .lang .top{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px}
-.langbar .track{height:7px;background:var(--panel-2);border-radius:999px;overflow:hidden}
-.langbar .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+.stats{display:flex;flex-wrap:wrap;gap:clamp(30px,6vw,90px);margin:10px 0 36px}
+.stat .num{font-size:clamp(2.6rem,5vw,4rem);font-weight:400;letter-spacing:-.04em;line-height:1;color:var(--bone)}
+.stat .lbl{color:var(--ash);font-size:13px;font-weight:200;margin-top:10px;max-width:16ch}
+.about-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:clamp(30px,6vw,80px);margin-top:20px}
+.side h4{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:18px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font-size:14px;font-weight:200;color:var(--silver);padding:8px 15px;border-radius:999px;border:1px solid #232323;transition:.2s}
+.chip:hover{color:var(--iris);border-color:var(--iris)}
+.langs{margin-top:38px}
+.lang{margin-bottom:16px}
+.lang .top{display:flex;justify-content:space-between;font-size:14px;font-weight:200;margin-bottom:7px;color:var(--silver)}
+.lang .track{height:2px;background:#1c1c1c;overflow:hidden}
+.lang .fill{height:100%;width:0;background:var(--iris);transition:width 1.3s cubic-bezier(.2,.7,.2,1)}
+
+/* ---------- development scrollytelling (the thesis, as slides in the animation) ---------- */
+#develop{max-width:none;padding:0}
+.dev-intro{max-width:var(--maxw);margin:0 auto;padding:clamp(80px,12vw,140px) clamp(20px,5vw,64px) 0}
+.dev-track{position:relative;min-height:480vh}
+.dev-sticky{position:sticky;top:0;height:100vh;display:flex;align-items:center;pointer-events:none}
+.slide{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,64px);width:100%}
+.slide-inner{max-width:44ch;pointer-events:auto}
+.slide-card{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s;position:absolute;max-width:46ch}
+.slide-card.on{opacity:1;transform:none;position:relative}
+.slide-day{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--saffron);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.slide-day .n{color:var(--iris)}
+.slide-card h3{font-size:clamp(1.8rem,3.6vw,2.8rem);letter-spacing:-.035em;line-height:1.03;margin-bottom:18px}
+.slide-card p{font-size:clamp(1rem,1.6vw,1.15rem);font-weight:200;color:var(--silver);line-height:1.55;margin-bottom:18px}
+.slide-markers{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:18px}
+.mk{font-size:12px;font-weight:500;letter-spacing:.04em;padding:6px 13px;border-radius:999px;border:1px solid rgba(128,82,255,.4);color:#b7a2ff}
+.mk.down{border-color:rgba(255,184,41,.5);color:var(--saffron)}
+.slide-find{font-size:14px;font-weight:200;color:var(--bone);border-left:2px solid var(--iris);padding-left:16px;line-height:1.5}
+.slide-find.warn{border-color:var(--saffron)}
+/* condition toggle floats top-right of the dev section */
+.cond{position:sticky;top:84px;z-index:20;margin:0 auto;max-width:var(--maxw);padding:0 clamp(20px,5vw,64px);display:flex;justify-content:flex-end;pointer-events:none;height:0}
+.cond-inner{display:inline-flex;gap:4px;padding:4px;border:1px solid #232323;border-radius:999px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);pointer-events:auto}
+.cond-btn{padding:8px 18px;border-radius:999px;border:none;background:transparent;color:var(--ash);font-family:var(--font);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:.2s}
+.cond-btn.active{background:var(--iris);color:#fff}
+.cond-btn.active[data-cond="mehp"]{background:var(--saffron);color:#241500}
+
+/* ---------- thesis conclusion ---------- */
+.conclusion{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,64px) clamp(80px,12vw,140px)}
+.conclusion .box{max-width:60ch}
+.conclusion p{font-size:clamp(1rem,1.7vw,1.2rem);font-weight:200;color:var(--silver);line-height:1.6;margin-bottom:18px}
+.conclusion b{color:var(--bone);font-weight:400}
+.conclusion .caveat{font-size:.95rem;color:var(--ash)}
 
 /* ---------- timeline ---------- */
-.tl{position:relative;padding-left:34px}
-.tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--accent),var(--accent-3),transparent)}
-.tl-item{position:relative;margin-bottom:38px}
-.tl-item:last-child{margin-bottom:0}
-.tl-item .node{position:absolute;left:-33px;top:4px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--accent);display:grid;place-items:center}
-.tl-item .node::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--glow)}
-.tl-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;transition:.3s}
-.tl-card:hover{border-color:var(--accent);transform:translateX(6px)}
+.tl{max-width:64ch}
+.tl-item{padding:0 0 clamp(40px,6vw,64px) 30px;position:relative;border-left:1px solid #232323}
+.tl-item:last-child{border-left-color:transparent;padding-bottom:0}
+.tl-item .node{position:absolute;left:-6px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--iris);box-shadow:0 0 12px rgba(128,82,255,.7)}
 .tl-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:4px}
-.tl-role{font-size:1.15rem;font-weight:750}
-.tl-date{font-size:.8rem;color:var(--accent);font-weight:600;white-space:nowrap}
-.tl-org{color:var(--muted);font-size:.95rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.tl-org .loc{opacity:.7;font-size:.85rem}
-.tl-card ul{list-style:none;display:flex;flex-direction:column;gap:9px}
-.tl-card li{position:relative;padding-left:20px;color:var(--muted);font-size:.94rem}
-.tl-card li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:2px;background:var(--accent);transform:rotate(45deg);opacity:.8}
-.tl-card li b{color:var(--ink)}
+.tl-role{font-size:clamp(1.3rem,2.4vw,1.7rem);letter-spacing:-.02em}
+.tl-date{font-size:13px;color:var(--saffron);font-weight:400;white-space:nowrap}
+.tl-org{color:var(--ash);font-size:15px;font-weight:200;margin-bottom:16px}
+.tl-item ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.tl-item li{color:var(--silver);font-size:15px;font-weight:200;line-height:1.5;padding-left:18px;position:relative}
+.tl-item li::before{content:"";position:absolute;left:0;top:10px;width:5px;height:5px;border-radius:50%;background:var(--iris)}
+.tl-item li b{color:var(--bone);font-weight:400}
 
 /* ---------- projects ---------- */
-.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.proj{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;cursor:pointer;position:relative;overflow:hidden;transition:.35s}
-.proj::before{content:"";position:absolute;inset:0;background:radial-gradient(400px 200px at var(--mx,50%) var(--my,0%),rgba(47,227,194,.12),transparent 70%);opacity:0;transition:opacity .4s}
-.proj:hover{border-color:var(--accent);transform:translateY(-6px);box-shadow:0 24px 50px -24px var(--glow)}
-.proj:hover::before{opacity:1}
-.proj .tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.proj .ptag{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(47,227,194,.1);color:var(--accent)}
-.proj .ptag.alt{background:rgba(139,123,255,.12);color:var(--accent-3)}
-.proj h3{font-size:1.25rem;font-weight:780;margin-bottom:8px;line-height:1.25}
-.proj .psub{color:var(--muted);font-size:.85rem;margin-bottom:16px}
-.proj .pdesc{color:var(--muted);font-size:.94rem}
+.proj{max-width:70ch;padding:clamp(28px,4vw,44px) 0;border-top:1px solid #1c1c1c;cursor:pointer}
+.proj .tagrow{display:flex;gap:14px;margin-bottom:18px;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.proj .tagrow .a{color:var(--iris)}
+.proj .tagrow .b{color:var(--ash)}
+.proj h3{font-size:clamp(1.7rem,3.4vw,2.7rem);letter-spacing:-.035em;line-height:1.04;margin-bottom:14px;transition:.3s}
+.proj:hover h3{color:var(--iris)}
+.proj .psub{color:var(--ash);font-size:14px;font-weight:200;margin-bottom:18px}
+.proj .pdesc{color:var(--silver);font-size:clamp(1rem,1.6vw,1.15rem);font-weight:200;line-height:1.55;max-width:52ch}
+.proj .ptake{margin-top:18px;font-size:15px;font-weight:200;color:var(--bone);border-left:2px solid var(--saffron);padding-left:16px;line-height:1.5;max-width:52ch}
+.proj .ptake b{color:var(--saffron);font-weight:400}
 .proj .details{max-height:0;overflow:hidden;transition:max-height .5s ease}
-.proj.open .details{max-height:520px}
-.proj .details ul{list-style:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
-.proj .details li{position:relative;padding-left:22px;font-size:.92rem;color:var(--muted)}
-.proj .details li::before{content:"→";position:absolute;left:0;color:var(--accent);font-weight:700}
-.proj .expand{margin-top:16px;display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-weight:700;font-size:.85rem}
-.proj .expand .ic{transition:transform .4s}
+.proj.open .details{max-height:600px}
+.proj .details ul{list-style:none;margin-top:22px;display:flex;flex-direction:column;gap:12px;max-width:56ch}
+.proj .details li{color:var(--silver);font-size:15px;font-weight:200;line-height:1.5;padding-left:22px;position:relative}
+.proj .details li::before{content:"→";position:absolute;left:0;color:var(--iris)}
+.proj .details li b{color:var(--bone);font-weight:400}
+.proj .expand{margin-top:20px;display:inline-flex;align-items:center;gap:9px;color:var(--iris);font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.proj .expand .ic{display:inline-block;transition:transform .4s}
 .proj.open .expand .ic{transform:rotate(45deg)}
-.proj .ptakeaway{margin-top:14px;font-size:.9rem;font-weight:600;color:var(--ink);border-left:2px solid var(--accent);padding-left:12px;line-height:1.45}
-.proj .ptakeaway b{color:var(--accent);font-weight:750}
 
 /* ---------- skills ---------- */
-.skill-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.skill-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:.3s}
-.skill-card:hover{border-color:var(--accent);transform:translateY(-5px)}
-.skill-card .ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;margin-bottom:16px;background:rgba(47,227,194,.1);font-size:1.4rem}
-.skill-card h4{font-size:1.1rem;margin-bottom:14px;font-weight:750}
-.skill-card ul{list-style:none;display:flex;flex-direction:column;gap:8px}
-.skill-card li{color:var(--muted);font-size:.9rem;display:flex;align-items:center;gap:9px}
-.skill-card li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.skill-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(30px,5vw,70px)}
+.skill h4{font-size:clamp(1.3rem,2.4vw,1.7rem);letter-spacing:-.02em;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.skill h4 .ic{font-size:1.3rem}
+.skill ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.skill li{color:var(--silver);font-size:15px;font-weight:200;padding-left:18px;position:relative}
+.skill li::before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--iris)}
 
 /* ---------- more (tabs) ---------- */
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
-.tab{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-weight:650;font-size:.88rem;cursor:pointer;transition:.25s}
-.tab.active{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#04120f;border-color:transparent}
-.tab:hover:not(.active){border-color:var(--accent);color:var(--ink)}
-.tab-panel{display:none;animation:fade .5s}
-.tab-panel.active{display:block}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:38px}
+.tab{padding:9px 18px;border-radius:999px;border:1px solid #232323;background:transparent;color:var(--ash);font-family:var(--font);font-weight:500;font-size:13px;letter-spacing:.03em;cursor:pointer;transition:.25s}
+.tab.active{background:var(--iris);color:#fff;border-color:transparent}
+.tab:hover:not(.active){color:var(--bone);border-color:var(--iris)}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fade .5s}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.list-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.list-item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;transition:.25s}
-.list-item:hover{border-color:var(--accent);transform:translateX(5px)}
-.list-item .t{font-weight:650;font-size:.96rem;margin-bottom:3px}
-.list-item .d{color:var(--muted);font-size:.82rem}
+.list-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px) clamp(30px,5vw,70px)}
+.list-item{padding-bottom:18px;border-bottom:1px solid #161616}
+.list-item .t{font-size:16px;font-weight:400;margin-bottom:5px}
+.list-item .d{color:var(--ash);font-size:13px;font-weight:200}
 
 /* ---------- contact ---------- */
-.contact{text-align:center}
-.contact .big{font-size:clamp(2rem,6vw,4rem);font-weight:850;letter-spacing:-2px;margin-bottom:20px;line-height:1.05}
-.contact .big .grad{background:linear-gradient(120deg,var(--accent),var(--accent-2),var(--accent-3));-webkit-background-clip:text;background-clip:text;color:transparent}
-.contact p{color:var(--muted);max-width:560px;margin:0 auto 32px;font-size:1.05rem}
-.contact-links{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
-.ref{margin-top:48px;padding-top:28px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
-.ref b{color:var(--ink)}
-footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border-top:1px solid var(--line);position:relative;z-index:2}
-
-/* ---------- differentiation lab (thesis protocol) ---------- */
-.lab{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:clamp(20px,4vw,40px);position:relative;overflow:hidden}
-.lab::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(600px 300px at 25% 20%,rgba(47,227,194,.08),transparent 60%)}
-.stage-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px}
-.stage{width:min(360px,80vw);aspect-ratio:1;position:relative}
-#cellStage{width:100%;height:100%;display:block;transition:filter .5s}
-#cellStage.mehp{filter:saturate(.5) brightness(.9)}
-#cellStage.mehp .beat{animation-duration:2.4s}
-.stage-label{font-weight:750;font-size:1.15rem;text-align:center;transition:.3s}
-.stage-sub{color:var(--muted);font-size:.8rem;letter-spacing:2px;text-transform:uppercase;text-align:center}
-/* svg groups */
-.cg{opacity:0;transform:scale(.55);transform-origin:160px 160px;transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1);pointer-events:none}
-.cg.show{opacity:1;transform:scale(1)}
-.membrane{fill:url(#memGrad);stroke:rgba(47,227,194,.6);stroke-width:2}
-.nucleus{fill:#0c8f78;opacity:.85}
-.nucleolus{fill:#eafffb;opacity:.9}
-#stageGlow{transition:fill .5s;fill:transparent}
-.beat{animation:beat 1s ease-in-out infinite;transform-origin:160px 165px}
-@keyframes beat{0%,100%{transform:scale(1)}18%{transform:scale(1.13)}32%{transform:scale(1.0)}46%{transform:scale(1.07)}}
-.spin{animation:spin 24s linear infinite;transform-origin:160px 160px}
-@keyframes spin{to{transform:rotate(360deg)}}
-/* controls */
-.lab-controls{position:relative;z-index:1}
-/* condition toggle */
-.cond{display:inline-flex;gap:4px;padding:4px;background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;margin-bottom:20px}
-.cond-btn{padding:8px 18px;border-radius:999px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s}
-.cond-btn.active{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#04120f}
-.cond-btn.active[data-cond="mehp"]{background:linear-gradient(120deg,#ff5d73,#ffa233);color:#2a0a10}
-/* day timeline */
-.daystrip{position:relative;display:flex;justify-content:space-between;margin:0 4px 22px}
-.daystrip::before{content:"";position:absolute;top:13px;left:6%;right:6%;height:2px;background:var(--panel-2)}
-.daystrip .dfill{position:absolute;top:13px;left:6%;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:width .5s cubic-bezier(.3,.7,.2,1)}
-.day{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:var(--muted);font-weight:700;font-size:.8rem;flex:1}
-.day .dnode{width:28px;height:28px;border-radius:50%;background:var(--bg-soft);border:2px solid var(--line);transition:.3s;display:grid;place-items:center;font-size:.75rem}
-.day.done .dnode{border-color:var(--accent);background:var(--accent);color:#04120f}
-.day.active .dnode{border-color:var(--accent);background:var(--accent);color:#04120f;box-shadow:0 0 0 5px rgba(47,227,194,.18);transform:scale(1.1)}
-.day.active{color:var(--ink)}
-/* info card */
-.fate-info{background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:18px 20px;min-height:150px;transition:.3s}
-.step-day{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:4px}
-.fate-info h4{font-size:1.15rem;margin-bottom:8px;font-weight:780}
-.fate-info .desc{color:var(--muted);font-size:.92rem;margin-bottom:14px}
-.fate-info .mk-title{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.markers{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
-.marker{font-size:.78rem;font-weight:700;padding:5px 11px;border-radius:999px;background:rgba(47,227,194,.1);color:var(--accent);border:1px solid rgba(47,227,194,.25);opacity:0;transform:translateY(8px);animation:mkin .4s forwards}
-.marker.down{background:rgba(255,93,115,.12);color:#ff5d73;border-color:rgba(255,93,115,.3)}
-@keyframes mkin{to{opacity:1;transform:none}}
-.assess{font-size:.86rem;color:var(--ink);border-left:2px solid var(--accent);padding-left:12px;opacity:.9}
-.flag{margin-top:12px;font-size:.82rem;color:#ff8a99;background:rgba(255,93,115,.08);border:1px solid rgba(255,93,115,.25);border-radius:10px;padding:10px 12px;display:none}
-.flag.on{display:block}
-.lab-nav{display:flex;gap:10px;margin-top:18px}
-.pbtn{padding:11px 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-weight:700;font-size:.86rem;cursor:pointer;transition:.2s;flex:1}
-.pbtn:hover:not(:disabled){border-color:var(--accent)}
-.pbtn:disabled{opacity:.4;cursor:default}
-.pbtn.play{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#04120f;border-color:transparent;flex:1.4}
-/* MEHP result bars */
-.result{margin-top:14px;display:none}
-.result.on{display:block;animation:fade .4s}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.result .rtitle{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-.rbar{margin-bottom:12px}
-.rbar .rlab{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:5px}
-.rbar .rlab b{color:var(--ink);font-weight:700}
-.rbar .rlab .sig{color:#ff8a99;font-weight:700;font-size:.72rem}
-.rrow{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.rrow .rk{width:56px;font-size:.68rem;color:var(--muted);flex-shrink:0}
-.rtrack{flex:1;height:9px;background:var(--panel-2);border-radius:999px;overflow:hidden}
-.rtrack i{display:block;height:100%;border-radius:999px;width:0;transition:width .8s cubic-bezier(.3,.7,.2,1)}
-.rtrack i.ctrl{background:linear-gradient(90deg,var(--accent),var(--accent-2))}
-.rtrack i.mehp{background:linear-gradient(90deg,#ff5d73,#ffa233)}
-.result .apop{font-size:.8rem;color:#ffb27a;background:rgba(242,177,52,.08);border:1px solid rgba(242,177,52,.28);border-radius:10px;padding:9px 12px;margin-top:4px}
-.result .cap{font-size:.68rem;color:var(--muted);margin-top:8px;font-style:italic}
-/* conclusion callout */
-.conclusion{margin-top:26px;background:linear-gradient(135deg,rgba(255,93,115,.08),rgba(47,227,194,.06));border:1px solid var(--line);border-radius:18px;padding:24px 26px}
-.conclusion .ctag{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:12px}
-.conclusion p{color:var(--muted);font-size:.95rem;margin-bottom:10px}
-.conclusion p:last-child{margin-bottom:0}
-.conclusion b{color:var(--ink)}
-.conclusion .caveat{font-size:.85rem;opacity:.85}
-/* apoptosis overlay + lost cells, only under MEHP */
-.apopt{display:none}
-#cellStage.mehp .apopt{display:block}
-#cellStage.mehp .melost{display:none}
+.contact{text-align:left}
+.contact .big{font-size:clamp(2.6rem,7vw,5.6rem);letter-spacing:-.05em;line-height:.98;margin-bottom:30px;max-width:16ch}
+.contact .big .hl{color:var(--iris)}
+.contact p{color:var(--silver);font-weight:200;font-size:clamp(1.05rem,1.8vw,1.3rem);max-width:52ch;margin-bottom:40px;line-height:1.55}
+.contact-links{display:flex;gap:24px;flex-wrap:wrap;align-items:center}
+.ref{margin-top:70px;padding-top:30px;border-top:1px solid #1c1c1c;color:var(--ash);font-size:14px;font-weight:200;max-width:70ch;line-height:1.6}
+.ref b{color:var(--bone);font-weight:400}
+footer{text-align:center;padding:44px;color:var(--ash);font-size:13px;font-weight:200;position:relative;z-index:2}
 
 /* ---------- responsive ---------- */
 @media(max-width:860px){
-  .about-grid,.proj-grid,.skill-cols,.list-grid{grid-template-columns:1fr}
-  .stats{grid-template-columns:1fr 1fr}
-  .lab{grid-template-columns:1fr}
-  .nav-links{position:fixed;inset:0 0 0 auto;flex-direction:column;background:var(--bg-soft);width:250px;padding:90px 20px;transform:translateX(100%);transition:.35s;border-left:1px solid var(--line)}
+  .about-grid,.skill-cols,.list-grid{grid-template-columns:1fr}
+  .nav-links{position:fixed;inset:0 0 0 auto;flex-direction:column;background:#080808;width:250px;padding:100px 24px;gap:6px;transform:translateX(100%);transition:.35s;border-left:1px solid #1c1c1c;z-index:55}
   .nav-links.open{transform:none}
+  .nav-links a{padding:12px 4px;font-size:15px}
   .nav-toggle{display:block;z-index:60}
+  nav .pill.solid-nav{display:none}
 }
 
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
-  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .reveal{opacity:1!important;transform:none!important}
 }
 </style>
 </head>
 <body>
-<canvas id="bg-canvas"></canvas>
-<div class="bg-grad"></div>
-<div id="dna-helix" aria-hidden="true"></div>
+<canvas id="heart-canvas"></canvas>
+<div class="washes"></div>
+
+<!-- scroll-driven slideshow HUD -->
+<div class="hud" id="hud" aria-hidden="true">
+  <div class="stagelabel" id="hudLabel">Day 0 · Seeding</div>
+  <div class="stagetitle" id="hudTitle">Pluripotent stem cells</div>
+  <div class="stagenote" id="hudNote">Scroll to develop the cells toward a beating heart.</div>
+  <div class="dots" id="hudDots"></div>
+</div>
 
 <nav id="nav">
-  <a href="#top" class="brand"><span class="dot"></span> Aditya Menon</a>
+  <a href="#top" class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8052ff"/><stop offset="1" stop-color="#15846e"/></linearGradient></defs><path d="M12 21C7 17.2 3 13.8 3 9.4 3 6.4 5.2 4.2 8 4.2c1.7 0 3.2.9 4 2.3.8-1.4 2.3-2.3 4-2.3 2.8 0 5 2.2 5 5.2 0 4.4-4 7.8-9 11.6z" fill="url(#lg)"/></svg>
+    Aditya Menon
+  </a>
   <button class="nav-toggle" id="navToggle" aria-label="menu">☰</button>
   <div class="nav-links" id="navLinks">
     <a href="#about">About</a>
-    <a href="#lab">Lab</a>
+    <a href="#develop">Thesis</a>
     <a href="#experience">Experience</a>
     <a href="#projects">Projects</a>
     <a href="#skills">Skills</a>
     <a href="#more">More</a>
-    <a href="#contact">Contact</a>
+    <a href="#contact" class="pill solid-nav">Get in touch</a>
   </div>
 </nav>
 
 <main>
 <!-- HERO -->
 <header class="hero" id="top">
-  <div class="hero-tag reveal"><span class="live"></span> Open to research roles · 2026</div>
-  <h1 class="reveal">Aditya <span class="grad">Menon</span></h1>
-  <p class="role reveal">Biotechnology postgraduate specializing in <b>stem cell biology</b>, <b>bioinformatics</b>, and <b>toxicology</b> — with hands-on work in WGS analysis and in&nbsp;vitro developmental models.</p>
+  <div class="tag reveal"><span class="live"></span> Open to research roles · 2026</div>
+  <h1 class="reveal">Aditya<span class="thin">Menon</span></h1>
+  <p class="role reveal">Biotechnology postgraduate in <b>stem cell biology</b>, <b>bioinformatics</b>, and <b>toxicology</b> — building the heart, one cell at a time.</p>
   <div class="hero-cta reveal">
-    <a href="#projects" class="btn primary">Explore my work <span>→</span></a>
-    <a href="Aditya_Menon_Resume.pdf" download class="btn ghost">⭳ Download résumé</a>
-    <a href="#contact" class="btn ghost">Get in touch</a>
+    <a href="#develop" class="pill">See the cells develop →</a>
+    <a href="Aditya_Menon_Resume.pdf" download class="ghost">Download résumé</a>
+    <a href="#contact" class="ghost">Get in touch</a>
   </div>
   <div class="hero-meta reveal">
-    <a href="mailto:menonadi10@gmail.com">✉ menonadi10@gmail.com</a>
-    <a href="https://www.linkedin.com/in/adityamenon09" target="_blank" rel="noopener">in LinkedIn</a>
-    <a href="https://github.com/AdityaMenon09" target="_blank" rel="noopener">⌨ GitHub</a>
-    <span>📍 Mangaluru / Chennai, India</span>
+    <a href="mailto:menonadi10@gmail.com">menonadi10@gmail.com</a>
+    <a href="https://www.linkedin.com/in/adityamenon09" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="https://github.com/AdityaMenon09" target="_blank" rel="noopener">GitHub</a>
+    <span>Mangaluru / Chennai, India</span>
   </div>
 </header>
 
 <!-- ABOUT -->
 <section id="about">
   <div class="eyebrow reveal">01 — Profile</div>
-  <h2 class="section-title reveal">Research-driven, interdisciplinary, curious.</h2>
+  <h2 class="title reveal">Research-driven, interdisciplinary, curious.</h2>
   <div class="stats reveal">
     <div class="stat"><div class="num" data-count="8.04">0</div><div class="lbl">M.Tech CGPA / 10</div></div>
     <div class="stat"><div class="num" data-count="8.88">0</div><div class="lbl">B.E CGPA / 10</div></div>
     <div class="stat"><div class="num" data-count="2">0</div><div class="lbl">Research roles</div></div>
-    <div class="stat"><div class="num" data-count="5">0</div><div class="lbl">Languages</div></div>
+    <div class="stat"><div class="num" data-count="5">0</div><div class="lbl">Languages spoken</div></div>
   </div>
-  <p class="stats-note reveal">Two research roles spanning <b>WGS bioinformatics</b> and <b>in-vitro developmental models</b> · Mangaluru / Chennai · 2019–present</p>
-  <div class="about-grid" style="margin-top:34px">
+  <div class="about-grid">
     <div>
-      <p class="about-lead reveal">Postgraduate in Biotechnology with hands-on experience in <span class="hl">molecular biology</span>, <span class="hl">bioinformatics</span>, and microbial research. I'm most drawn to <span class="hl">developmental biology</span> and <span class="hl">environmental toxicology</span> — understanding how the world around us shapes the cells within us.</p>
-      <p class="reveal" style="margin-top:20px;color:var(--muted)">Skilled in PCR, genome analysis, and experimental data interpretation, with a strong commitment to collaborative and interdisciplinary research. I like problems that sit between disciplines: where a bioinformatics pipeline meets a cell culture dish, or where an environmental chemical meets a developing heart.</p>
+      <p class="lead reveal">Postgraduate in Biotechnology with hands-on experience in <span class="hl">molecular biology</span>, <span class="hl">bioinformatics</span>, and microbial research. I'm most drawn to <span class="hl">developmental biology</span> and <span class="hl">environmental toxicology</span> — understanding how the world around us shapes the cells within us.</p>
+      <p class="lead reveal" style="margin-top:24px">Skilled in PCR, genome analysis, and experimental data interpretation, with a commitment to collaborative, interdisciplinary work. I like problems that sit between disciplines: where a bioinformatics pipeline meets a culture dish, or where an environmental chemical meets a developing heart.</p>
     </div>
-    <div class="about-side reveal">
-      <h4>Focus Areas</h4>
+    <div class="side reveal">
+      <h4>Focus areas</h4>
       <div class="chips">
         <span class="chip">Stem Cell Biology</span>
         <span class="chip">Bioinformatics</span>
@@ -372,8 +313,8 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
         <span class="chip">Developmental Biology</span>
         <span class="chip">Cell Culture</span>
       </div>
-      <div class="langbar">
-        <h4 style="margin-top:24px">Languages</h4>
+      <div class="langs">
+        <h4 style="margin-top:36px">Languages</h4>
         <div class="lang"><div class="top"><span>English</span><span>Fluent</span></div><div class="track"><div class="fill" data-w="100"></div></div></div>
         <div class="lang"><div class="top"><span>Hindi</span><span>Fluent</span></div><div class="track"><div class="fill" data-w="100"></div></div></div>
         <div class="lang"><div class="top"><span>Kannada</span><span>Proficient</span></div><div class="track"><div class="fill" data-w="75"></div></div></div>
@@ -384,561 +325,475 @@ footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border
   </div>
 </section>
 
-<!-- CELL DIFFERENTIATION LAB -->
-<section id="lab">
-  <div class="eyebrow reveal">02 — Inside my thesis · Interactive</div>
-  <h2 class="section-title reveal">Guiding Stem Cells Toward a Cardiac Fate</h2>
-  <p class="reveal" style="color:var(--muted);margin-top:-24px;margin-bottom:34px;max-width:660px">Over 6 days I differentiate mouse embryonic stem cells (mESCs) via the hanging-drop method, tracking the lineage markers that appear at each stage by immunofluorescence — then test whether the phthalate metabolite <b>MEHP</b> disrupts commitment. Step through the real protocol, or hit play, and switch the condition to see the comparison my work investigates.</p>
-  <div class="lab reveal">
-    <div class="stage-wrap">
-      <div class="stage">
-        <svg id="cellStage" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="memGrad" cx="35%" cy="30%" r="75%">
-              <stop offset="0%" stop-color="#eafffb"/><stop offset="100%" stop-color="#1bbfa0"/>
-            </radialGradient>
-            <radialGradient id="memPink" cx="35%" cy="30%" r="75%">
-              <stop offset="0%" stop-color="#ffe3e8"/><stop offset="100%" stop-color="#ff5d73"/>
-            </radialGradient>
-            <filter id="fluor" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur stdDeviation="3.4" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-          <circle id="stageGlow" cx="160" cy="160" r="118"/>
+<!-- DEVELOPMENT — the thesis, as slides woven into the heart animation -->
+<section id="develop">
+  <div class="dev-intro">
+    <div class="eyebrow reveal">02 — Inside my thesis · Scroll to develop</div>
+    <h2 class="title reveal" style="max-width:20ch">Guiding stem cells toward a cardiac fate.</h2>
+    <p class="lead reveal">Over six days I differentiate mouse embryonic stem cells (mESCs) by the hanging-drop method, tracking the lineage markers that appear at each stage by immunofluorescence — then test whether the phthalate metabolite <b class="amber">MEHP</b> disrupts commitment. Every cell you see forming the heart follows this real protocol. Scroll to build it, and switch the condition to see the comparison my work investigates.</p>
+  </div>
 
-          <!-- DAY 0 : seeding + hanging drop -->
-          <g class="cg show" id="p0">
-            <path d="M160 40 C184 104 220 146 220 190 a60 60 0 1 1 -120 0 C100 146 136 104 160 40 Z" fill="rgba(47,227,194,.12)" stroke="rgba(47,227,194,.5)" stroke-width="2"/>
-            <circle cx="144" cy="188" r="19" class="membrane"/><circle cx="144" cy="188" r="8" class="nucleus"/>
-            <circle cx="185" cy="198" r="17" class="membrane"/><circle cx="185" cy="198" r="7" class="nucleus"/>
-            <circle cx="162" cy="222" r="16" class="membrane"/><circle cx="162" cy="222" r="6" class="nucleus"/>
-          </g>
-
-          <!-- DAY 2 : embryoid body -->
-          <g class="cg" id="p1"><g class="spin">
-            <circle cx="160" cy="160" r="86" fill="rgba(47,227,194,.07)" stroke="rgba(47,227,194,.4)" stroke-width="2"/>
-            <g class="membrane">
-              <circle cx="160" cy="116" r="22"/><circle cx="124" cy="136" r="22"/><circle cx="196" cy="136" r="22"/>
-              <circle cx="112" cy="172" r="22"/><circle cx="208" cy="172" r="22"/><circle cx="140" cy="198" r="22"/>
-              <circle cx="180" cy="198" r="22"/><circle cx="160" cy="162" r="22"/>
-            </g>
-            <g class="nucleus">
-              <circle cx="160" cy="116" r="7"/><circle cx="124" cy="136" r="7"/><circle cx="196" cy="136" r="7"/>
-              <circle cx="112" cy="172" r="7"/><circle cx="208" cy="172" r="7"/><circle cx="140" cy="198" r="7"/>
-              <circle cx="180" cy="198" r="7"/><circle cx="160" cy="162" r="7"/>
-            </g>
-          </g></g>
-
-          <!-- DAY 4 : mesoderm — migratory mesenchymal (spindle) cells, T/BRA+ (violet) -->
-          <g class="cg" id="p2">
-            <circle cx="160" cy="160" r="94" fill="none" stroke="rgba(139,123,255,.22)" stroke-width="2" stroke-dasharray="4 9"/>
-            <!-- persistent mesoderm cells (remain under MEHP) -->
-            <g class="mcell">
-              <ellipse cx="150" cy="152" rx="40" ry="12" transform="rotate(5 150 152)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
-              <circle cx="150" cy="152" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
-            <g class="mcell">
-              <ellipse cx="112" cy="116" rx="34" ry="11" transform="rotate(-30 112 116)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
-              <circle cx="112" cy="116" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
-            <g class="mcell">
-              <ellipse cx="206" cy="132" rx="34" ry="11" transform="rotate(26 206 132)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
-              <circle cx="206" cy="132" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
-            <g class="mcell">
-              <ellipse cx="132" cy="204" rx="34" ry="11" transform="rotate(-14 132 204)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
-              <circle cx="132" cy="204" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
-            <!-- cells lost under MEHP (fewer T/BRA+ cells) -->
-            <g class="mcell melost">
-              <ellipse cx="206" cy="196" rx="34" ry="11" transform="rotate(18 206 196)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
-              <circle cx="206" cy="196" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
-            <g class="mcell melost">
-              <ellipse cx="94" cy="176" rx="32" ry="11" transform="rotate(44 94 176)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
-              <circle cx="94" cy="176" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
-            <g class="mcell melost">
-              <ellipse cx="172" cy="104" rx="32" ry="11" transform="rotate(-8 172 104)" fill="rgba(139,123,255,.15)" stroke="rgba(139,123,255,.55)" stroke-width="2"/>
-              <circle cx="172" cy="104" r="8" fill="#a99bff" filter="url(#fluor)"/></g>
-            <!-- apoptotic bodies (MEHP only) -->
-            <g class="apopt" fill="#f2b134" opacity=".85">
-              <circle cx="204" cy="196" r="4"/><circle cx="213" cy="202" r="2.6"/><circle cx="96" cy="176" r="3.4"/>
-            </g>
-          </g>
-
-          <!-- DAY 6 : cardiac mesoderm — cohesive aligned progenitor cluster, MESP1+ (pink), T+MESP1+ double-positive -->
-          <g class="cg" id="p3">
-            <ellipse cx="160" cy="160" rx="100" ry="80" fill="rgba(28,10,16,.45)" stroke="rgba(255,93,115,.35)" stroke-width="2"/>
-            <!-- persistent cells (remain under MEHP) -->
-            <g class="mcell">
-              <ellipse cx="126" cy="128" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
-              <circle cx="126" cy="128" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
-            <g class="mcell">
-              <ellipse cx="114" cy="160" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
-              <circle cx="114" cy="160" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
-            <!-- double-positive T+MESP1+ (violet ring + pink core) -->
-            <g class="mcell">
-              <ellipse cx="160" cy="160" rx="32" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
-              <circle cx="160" cy="160" r="9.5" fill="#a99bff" filter="url(#fluor)"/><circle cx="160" cy="160" r="5" fill="#ff8a99"/></g>
-            <g class="mcell">
-              <ellipse cx="140" cy="192" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
-              <circle cx="140" cy="192" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
-            <!-- cells lost under MEHP (fewer MESP1+ and fewer double-positive) -->
-            <g class="mcell melost">
-              <ellipse cx="192" cy="128" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
-              <circle cx="192" cy="128" r="9.5" fill="#a99bff" filter="url(#fluor)"/><circle cx="192" cy="128" r="5" fill="#ff8a99"/></g>
-            <g class="mcell melost">
-              <ellipse cx="206" cy="160" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
-              <circle cx="206" cy="160" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
-            <g class="mcell melost">
-              <ellipse cx="184" cy="192" rx="30" ry="11" fill="rgba(255,93,115,.15)" stroke="rgba(255,93,115,.55)" stroke-width="2"/>
-              <circle cx="184" cy="192" r="8" fill="#ff8a99" filter="url(#fluor)"/></g>
-            <!-- apoptotic bodies (MEHP only) -->
-            <g class="apopt" fill="#f2b134" opacity=".85">
-              <circle cx="192" cy="128" r="4.4"/><circle cx="200" cy="134" r="2.8"/>
-              <circle cx="206" cy="160" r="4"/><circle cx="184" cy="192" r="3.4"/>
-            </g>
-          </g>
-        </svg>
-      </div>
-      <div>
-        <div class="stage-label" id="pLabel">Seeded mESCs</div>
-        <div class="stage-sub" id="pTech">Hanging-drop droplet</div>
-      </div>
+  <!-- condition toggle -->
+  <div class="cond">
+    <div class="cond-inner">
+      <button class="cond-btn active" data-cond="control">Control</button>
+      <button class="cond-btn" data-cond="mehp">+ MEHP</button>
     </div>
+  </div>
 
-    <div class="lab-controls">
-      <div class="cond">
-        <button class="cond-btn active" data-cond="control">Control</button>
-        <button class="cond-btn" data-cond="mehp">+ MEHP</button>
+  <!-- scrolly track: sticky slides change as the fixed heart develops -->
+  <div class="dev-track" id="devTrack">
+    <div class="dev-sticky">
+      <div class="slide">
+        <div class="slide-inner" id="slideStack"><!-- slide cards injected --></div>
       </div>
-      <div class="daystrip" id="dayStrip">
-        <div class="dfill" id="dayFill"></div>
-        <button class="day active" data-step="0"><span class="dnode">0</span>Day 0</button>
-        <button class="day" data-step="1"><span class="dnode">2</span>Day 2</button>
-        <button class="day" data-step="2"><span class="dnode">4</span>Day 4</button>
-        <button class="day" data-step="3"><span class="dnode">6</span>Day 6</button>
-      </div>
-      <div class="fate-info">
-        <div class="step-day" id="pDay">Day 0</div>
-        <h4 id="pTitle">Seeding &amp; EB initiation</h4>
-        <div class="desc" id="pProc"></div>
-        <div class="mk-title">Markers assessed</div>
-        <div class="markers" id="pMarkers"></div>
-        <div class="assess" id="pAssess"></div>
-        <div class="flag" id="pFlag"></div>
-        <div class="result" id="pResult"></div>
-      </div>
-      <div class="lab-nav">
-        <button class="pbtn" id="pPrev" disabled>← Prev</button>
-        <button class="pbtn play" id="pPlay">▶ Play protocol</button>
-        <button class="pbtn" id="pNext">Next →</button>
-      </div>
-    </div>
-    <div class="conclusion reveal">
-      <div class="ctag">🧾 Thesis conclusion</div>
-      <p>Using this in&nbsp;vitro model, <b>MEHP disrupts early mesoderm and cardiac mesoderm differentiation.</b> After exposure at an environmentally relevant dose, significantly fewer cells were positive for <b>T/BRACHYURY</b> (pan-mesoderm), <b>MESP1</b> (cardiac mesoderm), and the <b>T⁺MESP1⁺</b> transition population — pointing to impaired mesoderm induction and weaker progression toward cardiac lineage commitment. The stronger effect at the lower, environmentally relevant dose suggests sensitivity to low concentrations.</p>
-      <p class="caveat">Some of this change was shared with the DMSO vehicle control, so the solvent contributes in part; but MEHP reduced marker expression further than vehicle alone, indicating an additional effect of its own. MEHP also showed a <b>dose-dependent trend toward increased apoptosis</b> (cPARP), though this was not statistically significant and needs larger studies to confirm.</p>
     </div>
   </div>
 </section>
 
-<!-- EXPERIENCE / EDUCATION -->
+<!-- THESIS CONCLUSION -->
+<div class="conclusion reveal">
+  <div class="eyebrow">Thesis conclusion</div>
+  <div class="box">
+    <p>Using this in&nbsp;vitro model, <b>MEHP disrupts early mesoderm and cardiac mesoderm differentiation.</b> After exposure at an environmentally relevant dose, significantly fewer cells were positive for <b>T/BRACHYURY</b> (pan-mesoderm), <b>MESP1</b> (cardiac mesoderm), and the <b>T⁺MESP1⁺</b> transition population — pointing to impaired mesoderm induction and weaker progression toward cardiac lineage commitment. The stronger effect at the lower dose suggests sensitivity to low concentrations.</p>
+    <p class="caveat">Some of this change was shared with the DMSO vehicle control, so the solvent contributes in part; but MEHP reduced marker expression further than vehicle alone, indicating an added effect of its own. MEHP also showed a dose-dependent trend toward increased apoptosis (cPARP), though this was not statistically significant and needs larger studies to confirm.</p>
+  </div>
+</div>
+
+<!-- EXPERIENCE -->
 <section id="experience">
   <div class="eyebrow reveal">03 — Journey</div>
-  <h2 class="section-title reveal">Experience &amp; Education</h2>
+  <h2 class="title reveal">Experience &amp; education.</h2>
   <div class="tl">
-    <div class="tl-item reveal">
-      <div class="node"></div>
-      <div class="tl-card">
-        <div class="tl-head"><span class="tl-role">M.Tech, Biotechnology</span><span class="tl-date">08/2024 — Present</span></div>
-        <div class="tl-org">SRM Institute of Science and Technology <span class="loc">· Chennai, India</span></div>
-        <ul><li>Pursuing advanced study in biotechnology · <b>CGPA 8.04 / 10.0</b></li><li>Thesis on environmental toxicology and cardiac development in stem cell models.</li></ul>
-      </div>
+    <div class="tl-item reveal"><div class="node"></div>
+      <div class="tl-head"><span class="tl-role">M.Tech, Biotechnology</span><span class="tl-date">08/2024 — Present</span></div>
+      <div class="tl-org">SRM Institute of Science and Technology · Chennai, India</div>
+      <ul><li>Advanced study in biotechnology · <b>CGPA 8.04 / 10.0</b></li><li>Thesis on environmental toxicology and cardiac development in stem cell models.</li></ul>
     </div>
-    <div class="tl-item reveal">
-      <div class="node"></div>
-      <div class="tl-card">
-        <div class="tl-head"><span class="tl-role">Junior Research Fellow</span><span class="tl-date">09/2023 — 03/2024</span></div>
-        <div class="tl-org">Central Research Laboratory <span class="loc">· Bengaluru, India</span></div>
-        <ul>
-          <li>Performed bioinformatic analysis of <b>whole genome sequencing (WGS)</b> data of <i>Staphylococcus aureus</i> to identify AMR patterns and virulence-associated genes.</li>
-          <li>Investigated <b>antimicrobial resistance (AMR)</b> profiles using genome-based approaches.</li>
-          <li>Studied the role of <b>PVL-carrying prophages</b> in enhancing bacterial virulence.</li>
-        </ul>
-      </div>
+    <div class="tl-item reveal"><div class="node"></div>
+      <div class="tl-head"><span class="tl-role">Junior Research Fellow</span><span class="tl-date">09/2023 — 03/2024</span></div>
+      <div class="tl-org">Central Research Laboratory · Bengaluru, India</div>
+      <ul>
+        <li>Bioinformatic analysis of <b>whole genome sequencing (WGS)</b> data of <i>Staphylococcus aureus</i> to identify AMR patterns and virulence-associated genes.</li>
+        <li>Investigated <b>antimicrobial resistance (AMR)</b> profiles using genome-based approaches.</li>
+        <li>Studied the role of <b>PVL-carrying prophages</b> in enhancing bacterial virulence.</li>
+      </ul>
     </div>
-    <div class="tl-item reveal">
-      <div class="node"></div>
-      <div class="tl-card">
-        <div class="tl-head"><span class="tl-role">Research Intern — Clinical Research Coordinator</span><span class="tl-date">07/2022 — 08/2022</span></div>
-        <div class="tl-org">Samahitha Research Solutions <span class="loc">· Hyderabad, India</span></div>
-        <ul>
-          <li>Trained in clinical trial procedures and documentation.</li>
-          <li>Completed <b>Case Report Forms (CRFs)</b> from source documents for a vaccine trial.</li>
-          <li>Conducted telephonic follow-ups to monitor participant health post-treatment.</li>
-          <li>Assisted in video documentation of the informed consent process.</li>
-        </ul>
-      </div>
+    <div class="tl-item reveal"><div class="node"></div>
+      <div class="tl-head"><span class="tl-role">Research Intern — Clinical Research Coordinator</span><span class="tl-date">07/2022 — 08/2022</span></div>
+      <div class="tl-org">Samahitha Research Solutions · Hyderabad, India</div>
+      <ul>
+        <li>Trained in clinical trial procedures and documentation.</li>
+        <li>Completed <b>Case Report Forms (CRFs)</b> from source documents for a vaccine trial.</li>
+        <li>Conducted telephonic follow-ups to monitor participant health post-treatment.</li>
+        <li>Assisted in video documentation of the informed consent process.</li>
+      </ul>
     </div>
-    <div class="tl-item reveal">
-      <div class="node"></div>
-      <div class="tl-card">
-        <div class="tl-head"><span class="tl-role">B.E, Biotechnology</span><span class="tl-date">2019 — 2023</span></div>
-        <div class="tl-org">NMAM Institute of Technology <span class="loc">· Nitte, India</span></div>
-        <ul><li>Bachelor of Engineering in Biotechnology · <b>CGPA 8.88 / 10.0</b></li><li>Capstone on eco-friendly quantum dots for bioimaging.</li></ul>
-      </div>
+    <div class="tl-item reveal"><div class="node"></div>
+      <div class="tl-head"><span class="tl-role">B.E, Biotechnology</span><span class="tl-date">2019 — 2023</span></div>
+      <div class="tl-org">NMAM Institute of Technology · Nitte, India</div>
+      <ul><li>Bachelor of Engineering in Biotechnology · <b>CGPA 8.88 / 10.0</b></li><li>Capstone on eco-friendly quantum dots for bioimaging.</li></ul>
     </div>
   </div>
 </section>
 
 <!-- PROJECTS -->
 <section id="projects">
-  <div class="eyebrow reveal">04 — Research Projects</div>
-  <h2 class="section-title reveal">Where the science happens.</h2>
-  <p class="reveal" style="color:var(--muted);margin-top:-24px;margin-bottom:34px">Click a card to expand the full method &amp; findings.</p>
-  <div class="proj-grid">
-    <article class="proj reveal">
-      <div class="tagrow"><span class="ptag">M.Tech Thesis</span><span class="ptag alt">2025 — 2026</span></div>
-      <h3>Phthalate Exposure &amp; Congenital Heart Disease</h3>
-      <div class="psub">SRM Institute of Science and Technology</div>
-      <p class="pdesc">Investigating how DEHP — an endocrine-disrupting chemical — disrupts cardiac development, using an in&nbsp;vitro mouse embryonic stem cell model.</p>
-      <p class="ptakeaway"><b>Key result:</b> MEHP significantly reduced T/BRACHYURY, MESP1, and T⁺MESP1⁺ cells — impaired early mesoderm and cardiac-mesoderm commitment.</p>
-      <div class="details"><ul>
-        <li>Studying the impact of <b>MEHP</b> (Mono-(2-ethylhexyl) phthalate) on cardiac differentiation of mouse embryonic stem cells (mESCs).</li>
-        <li>Cultured mESCs and performed <b>cardiac differentiation assays</b> to assess EDC toxicity.</li>
-        <li>Generated <b>embryoid bodies</b> using the hanging drop method to model early embryonic development and cardiac lineage specification.</li>
-        <li>Evaluated developmental progression through cardiac progenitor markers (<b>T</b> and <b>MESP1</b>) and immunofluorescence.</li>
-        <li>Investigated effects of environmental toxicants on cell-fate specification and cardiac developmental pathways.</li>
-      </ul></div>
-      <span class="expand">Read the full study <span class="ic">＋</span></span>
-    </article>
-
-    <article class="proj reveal">
-      <div class="tagrow"><span class="ptag">B.E Capstone</span><span class="ptag alt">2022 — 2023</span></div>
-      <h3>Eco-Friendly Quantum Dots for Bioimaging</h3>
-      <div class="psub">NMAM Institute of Technology</div>
-      <p class="pdesc">Synthesized organic quantum dots from natural materials — lignin, chitosan, honey, and nanocellulose — for bioimaging and antimicrobial applications.</p>
-      <p class="ptakeaway"><b>Key result:</b> tunable blue→green emission from fully bio-derived dots, with antimicrobial activity and confirmed biocompatibility.</p>
-      <div class="details"><ul>
-        <li>Synthesized eco-friendly quantum dots from <b>lignin, chitosan, honey, and nanocellulose</b>.</li>
-        <li>Optimized fluorescence through <b>phosphoric acid doping</b>, achieving an emission shift from blue to green.</li>
-        <li>Characterized optical properties using UV illumination and a gel documentation system.</li>
-        <li>Evaluated bioimaging and antimicrobial activity in bacterial cells and onion peel tissue.</li>
-        <li>Assessed biocompatibility using <i>Poecilia reticulata</i>.</li>
-      </ul></div>
-      <span class="expand">Read the full study <span class="ic">＋</span></span>
-    </article>
-  </div>
+  <div class="eyebrow reveal">04 — Research projects</div>
+  <h2 class="title reveal">Where the science happens.</h2>
+  <p class="lead reveal" style="margin-bottom:20px">Select a project to expand the full method &amp; findings.</p>
+  <article class="proj reveal">
+    <div class="tagrow"><span class="a">M.Tech Thesis</span><span class="b">2025 — 2026</span></div>
+    <h3>Phthalate exposure &amp; congenital heart disease</h3>
+    <div class="psub">SRM Institute of Science and Technology</div>
+    <p class="pdesc">Investigating how DEHP — an endocrine-disrupting chemical — disrupts cardiac development, using an in&nbsp;vitro mouse embryonic stem cell model.</p>
+    <p class="ptake"><b>Key result:</b> MEHP significantly reduced T/BRACHYURY, MESP1, and T⁺MESP1⁺ cells — impaired early mesoderm and cardiac-mesoderm commitment.</p>
+    <div class="details"><ul>
+      <li>Studying the impact of <b>MEHP</b> (Mono-(2-ethylhexyl) phthalate) on cardiac differentiation of mouse embryonic stem cells (mESCs).</li>
+      <li>Cultured mESCs and performed <b>cardiac differentiation assays</b> to assess EDC toxicity.</li>
+      <li>Generated <b>embryoid bodies</b> using the hanging drop method to model early embryonic development and cardiac lineage specification.</li>
+      <li>Evaluated developmental progression through cardiac progenitor markers (<b>T</b> and <b>MESP1</b>) and immunofluorescence.</li>
+      <li>Investigated effects of environmental toxicants on cell-fate specification and cardiac developmental pathways.</li>
+    </ul></div>
+    <span class="expand">Read the full study <span class="ic">＋</span></span>
+  </article>
+  <article class="proj reveal">
+    <div class="tagrow"><span class="a">B.E Capstone</span><span class="b">2022 — 2023</span></div>
+    <h3>Eco-friendly quantum dots for bioimaging</h3>
+    <div class="psub">NMAM Institute of Technology</div>
+    <p class="pdesc">Synthesized organic quantum dots from natural materials — lignin, chitosan, honey, and nanocellulose — for bioimaging and antimicrobial applications.</p>
+    <p class="ptake"><b>Key result:</b> tunable blue→green emission from fully bio-derived dots, with antimicrobial activity and confirmed biocompatibility.</p>
+    <div class="details"><ul>
+      <li>Synthesized eco-friendly quantum dots from <b>lignin, chitosan, honey, and nanocellulose</b>.</li>
+      <li>Optimized fluorescence through <b>phosphoric acid doping</b>, achieving an emission shift from blue to green.</li>
+      <li>Characterized optical properties using UV illumination and a gel documentation system.</li>
+      <li>Evaluated bioimaging and antimicrobial activity in bacterial cells and onion peel tissue.</li>
+      <li>Assessed biocompatibility using <i>Poecilia reticulata</i>.</li>
+    </ul></div>
+    <span class="expand">Read the full study <span class="ic">＋</span></span>
+  </article>
 </section>
 
 <!-- SKILLS -->
 <section id="skills">
   <div class="eyebrow reveal">05 — Toolkit</div>
-  <h2 class="section-title reveal">Skills &amp; Techniques</h2>
+  <h2 class="title reveal">Skills &amp; techniques.</h2>
   <div class="skill-cols">
-    <div class="skill-card reveal">
-      <div class="ic">🧫</div>
-      <h4>Cell Culture</h4>
-      <ul><li>mESC culture</li><li>Embryoid body formation</li><li>Differentiation assays</li><li>Basic microbial culturing &amp; staining</li></ul>
-    </div>
-    <div class="skill-card reveal">
-      <div class="ic">🧬</div>
-      <h4>Molecular Biology</h4>
-      <ul><li>PCR</li><li>Gel electrophoresis</li><li>Immunofluorescence</li><li>UV-Vis spectroscopy</li></ul>
-    </div>
-    <div class="skill-card reveal">
-      <div class="ic">💻</div>
-      <h4>Bioinformatics</h4>
-      <ul><li>WGS analysis &amp; interpretation</li><li>AMR profiling</li><li>Genome annotation</li><li>BLAST · Fiji · genome platforms</li></ul>
-    </div>
+    <div class="skill reveal"><h4><span class="ic">🧫</span> Cell Culture</h4><ul><li>mESC culture</li><li>Embryoid body formation</li><li>Differentiation assays</li><li>Microbial culturing &amp; staining</li></ul></div>
+    <div class="skill reveal"><h4><span class="ic">🧬</span> Molecular Biology</h4><ul><li>PCR</li><li>Gel electrophoresis</li><li>Immunofluorescence</li><li>UV-Vis spectroscopy</li></ul></div>
+    <div class="skill reveal"><h4><span class="ic">💻</span> Bioinformatics</h4><ul><li>WGS analysis &amp; interpretation</li><li>AMR profiling</li><li>Genome annotation</li><li>BLAST · Fiji · genome platforms</li></ul></div>
   </div>
 </section>
 
 <!-- MORE -->
 <section id="more">
   <div class="eyebrow reveal">06 — Beyond the lab</div>
-  <h2 class="section-title reveal">Learning, events &amp; community.</h2>
+  <h2 class="title reveal">Learning, events &amp; community.</h2>
   <div class="tabs reveal">
     <button class="tab active" data-tab="courses">Courses &amp; Workshops</button>
     <button class="tab" data-tab="events">Events</button>
     <button class="tab" data-tab="extra">Extracurriculars</button>
     <button class="tab" data-tab="interests">Interests</button>
   </div>
-
-  <div class="tab-panel active" id="courses">
-    <div class="list-grid">
-      <div class="list-item"><div class="t">Gene Expression Analysis using Real-Time PCR</div><div class="d">SRM-DBT, SRMIST · 03/2025</div></div>
-      <div class="list-item"><div class="t">Introduction to Bioinformatics</div><div class="d">Dept. of Biotech &amp; IQAC, NMAMIT · 08/2022</div></div>
-      <div class="list-item"><div class="t">Soil Health and its Impact on Human Health</div><div class="d">NUCSER · 12/2022</div></div>
-      <div class="list-item"><div class="t">Biomedical Nanotechnology (NPTEL)</div><div class="d">IIT Roorkee · scored 72%</div></div>
-    </div>
-  </div>
-  <div class="tab-panel" id="events">
-    <div class="list-grid">
-      <div class="list-item"><div class="t">Sakura Science Online Exchange Program</div><div class="d">University of Miyazaki, Japan</div></div>
-      <div class="list-item"><div class="t">Smart India Hackathon</div><div class="d">Team participant</div></div>
-      <div class="list-item"><div class="t">NITTE-BIO 2022 Conference</div><div class="d">Innovative Technological Trends in Engineering Bioscience</div></div>
-      <div class="list-item"><div class="t">Frontiers in Gamete Biology &amp; Stem Cell Research</div><div class="d">KMC Manipal</div></div>
-    </div>
-  </div>
-  <div class="tab-panel" id="extra">
-    <div class="list-grid">
-      <div class="list-item"><div class="t">Taught Basic Computer Skills</div><div class="d">Volunteer · government school students</div></div>
-      <div class="list-item"><div class="t">Beach Cleaning Program</div><div class="d">Golden Shuttle Academy</div></div>
-      <div class="list-item"><div class="t">The Institute of Engineers (India)</div><div class="d">Student chapter member</div></div>
-      <div class="list-item"><div class="t">Co-Magazine Editor, Phoenix</div><div class="d">Biotechnology Student Association, NMAMIT · 2020</div></div>
-      <div class="list-item"><div class="t">Blood Donation Camp</div><div class="d">Participant · 2022 &amp; 2023</div></div>
-    </div>
-  </div>
-  <div class="tab-panel" id="interests">
-    <div class="chips" style="gap:12px">
-      <span class="chip">🧩 Solving puzzles</span>
-      <span class="chip">✈ Travelling</span>
-      <span class="chip">✏ Drawing</span>
-      <span class="chip">🥾 Trekking</span>
-      <span class="chip">💪 Fitness</span>
-    </div>
-  </div>
+  <div class="tab-panel active" id="courses"><div class="list-grid">
+    <div class="list-item"><div class="t">Gene Expression Analysis using Real-Time PCR</div><div class="d">SRM-DBT, SRMIST · 03/2025</div></div>
+    <div class="list-item"><div class="t">Introduction to Bioinformatics</div><div class="d">Dept. of Biotech &amp; IQAC, NMAMIT · 08/2022</div></div>
+    <div class="list-item"><div class="t">Soil Health and its Impact on Human Health</div><div class="d">NUCSER · 12/2022</div></div>
+    <div class="list-item"><div class="t">Biomedical Nanotechnology (NPTEL)</div><div class="d">IIT Roorkee · scored 72%</div></div>
+  </div></div>
+  <div class="tab-panel" id="events"><div class="list-grid">
+    <div class="list-item"><div class="t">Sakura Science Online Exchange Program</div><div class="d">University of Miyazaki, Japan</div></div>
+    <div class="list-item"><div class="t">Smart India Hackathon</div><div class="d">Team participant</div></div>
+    <div class="list-item"><div class="t">NITTE-BIO 2022 Conference</div><div class="d">Innovative Technological Trends in Engineering Bioscience</div></div>
+    <div class="list-item"><div class="t">Frontiers in Gamete Biology &amp; Stem Cell Research</div><div class="d">KMC Manipal</div></div>
+  </div></div>
+  <div class="tab-panel" id="extra"><div class="list-grid">
+    <div class="list-item"><div class="t">Taught Basic Computer Skills</div><div class="d">Volunteer · government school students</div></div>
+    <div class="list-item"><div class="t">Beach Cleaning Program</div><div class="d">Golden Shuttle Academy</div></div>
+    <div class="list-item"><div class="t">The Institute of Engineers (India)</div><div class="d">Student chapter member</div></div>
+    <div class="list-item"><div class="t">Co-Magazine Editor, Phoenix</div><div class="d">Biotechnology Student Association, NMAMIT · 2020</div></div>
+    <div class="list-item"><div class="t">Blood Donation Camp</div><div class="d">Participant · 2022 &amp; 2023</div></div>
+  </div></div>
+  <div class="tab-panel" id="interests"><div class="chips" style="gap:12px">
+    <span class="chip">🧩 Solving puzzles</span><span class="chip">✈ Travelling</span><span class="chip">✏ Drawing</span><span class="chip">🥾 Trekking</span><span class="chip">💪 Fitness</span>
+  </div></div>
 </section>
 
 <!-- CONTACT -->
 <section id="contact" class="contact">
-  <div class="eyebrow reveal" style="justify-content:center">07 — Let's connect</div>
-  <div class="big reveal">Let's build something <span class="grad">worth studying.</span></div>
+  <div class="eyebrow reveal">07 — Let's connect</div>
+  <div class="big reveal">Let's build something <span class="hl">worth studying.</span></div>
   <p class="reveal">I'm open to research collaborations, PhD opportunities, and roles in developmental biology, toxicology, and bioinformatics. Reach out — I'd love to talk.</p>
   <div class="contact-links reveal">
-    <a href="mailto:menonadi10@gmail.com" class="btn primary">✉ menonadi10@gmail.com</a>
-    <a href="Aditya_Menon_Resume.pdf" download class="btn ghost">⭳ Download résumé</a>
-    <a href="https://www.linkedin.com/in/adityamenon09" target="_blank" rel="noopener" class="btn ghost">in LinkedIn</a>
-    <a href="https://github.com/AdityaMenon09" target="_blank" rel="noopener" class="btn ghost">⌨ GitHub</a>
+    <a href="mailto:menonadi10@gmail.com" class="pill">✉ menonadi10@gmail.com</a>
+    <a href="Aditya_Menon_Resume.pdf" download class="ghost">Download résumé</a>
+    <a href="https://www.linkedin.com/in/adityamenon09" target="_blank" rel="noopener" class="ghost">LinkedIn</a>
+    <a href="https://github.com/AdityaMenon09" target="_blank" rel="noopener" class="ghost">GitHub</a>
   </div>
-  <div class="ref reveal">
-    <b>Reference</b> · Dr. Ujwal P — Professor &amp; Head, Dept. of Biotechnology Engineering, NMAM Institute of Technology, Nitte · ujwal.p@nitte.edu.in
-  </div>
+  <div class="ref reveal"><b>Reference</b> · Dr. Ujwal P — Professor &amp; Head, Dept. of Biotechnology Engineering, NMAM Institute of Technology, Nitte · ujwal.p@nitte.edu.in</div>
 </section>
 </main>
 
 <footer>Designed &amp; built for Aditya Menon · Biotechnology · 2026</footer>
 
 <script>
-// ---- nav ----
-const nav=document.getElementById('nav');
-const navLinks=document.getElementById('navLinks');
+const prefersReduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============================================================
+   NAV + REVEAL + COUNTERS + PROJECTS + TABS
+   ============================================================ */
+const nav=document.getElementById('nav'),navLinks=document.getElementById('navLinks');
 document.getElementById('navToggle').addEventListener('click',()=>navLinks.classList.toggle('open'));
 navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
-addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>30));
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>30),{passive:true});
 
-// ---- scroll spy ----
-const sections=[...document.querySelectorAll('main section, header.hero')];
 const links=[...navLinks.querySelectorAll('a')];
-const spy=new IntersectionObserver(es=>{
-  es.forEach(e=>{if(e.isIntersecting){
-    const id=e.target.id;
-    links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+id));
-  }});
-},{rootMargin:'-45% 0px -50% 0px'});
-sections.forEach(s=>spy.observe(s));
+const spy=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const id=e.target.id;
+  links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+id));}});},{rootMargin:'-45% 0px -50% 0px'});
+[...document.querySelectorAll('main section, header.hero')].forEach(s=>spy.observe(s));
 
-// ---- reveal ----
-const rev=new IntersectionObserver(es=>{
-  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rev.unobserve(e.target)}});
-},{threshold:.12});
-document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%6*60)+'ms';rev.observe(el)});
+const rev=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rev.unobserve(e.target)}});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%5*70)+'ms';rev.observe(el)});
 
-// ---- count up + bars ----
-const counted=new IntersectionObserver(es=>{
-  es.forEach(e=>{
-    if(!e.isIntersecting)return;
-    e.target.querySelectorAll('[data-count]').forEach(n=>{
-      const target=parseFloat(n.dataset.count);const dec=n.dataset.count.includes('.')?2:0;
-      let cur=0;const step=target/45;
-      const t=setInterval(()=>{cur+=step;if(cur>=target){cur=target;clearInterval(t)}n.textContent=cur.toFixed(dec)},18);
-    });
-    e.target.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%');
-    counted.unobserve(e.target);
-  });
-},{threshold:.4});
-document.querySelectorAll('#about,.langbar').forEach(s=>counted.observe(s));
+const counted=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;
+  e.target.querySelectorAll('[data-count]').forEach(n=>{const target=parseFloat(n.dataset.count);const dec=n.dataset.count.includes('.')?2:0;
+    let cur=0;const step=target/45;const t=setInterval(()=>{cur+=step;if(cur>=target){cur=target;clearInterval(t)}n.textContent=cur.toFixed(dec)},18);});
+  e.target.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%');counted.unobserve(e.target);});},{threshold:.4});
+document.querySelectorAll('#about').forEach(s=>counted.observe(s));
 
-// ---- projects ----
-document.querySelectorAll('.proj').forEach(p=>{
-  p.addEventListener('click',()=>p.classList.toggle('open'));
-  p.addEventListener('mousemove',e=>{const r=p.getBoundingClientRect();p.style.setProperty('--mx',(e.clientX-r.left)+'px');p.style.setProperty('--my',(e.clientY-r.top)+'px')});
-});
+document.querySelectorAll('.proj').forEach(p=>p.addEventListener('click',()=>p.classList.toggle('open')));
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');}));
 
-// ---- tabs ----
-document.querySelectorAll('.tab').forEach(t=>{
-  t.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    document.getElementById(t.dataset.tab).classList.add('active');
-  });
-});
-
-// ---- DNA / particle background ----
-const prefersReduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const cv=document.getElementById('bg-canvas'),ctx=cv.getContext('2d');
-let W,H,pts;
-function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;
-  const n=Math.min(90,Math.floor(W*H/16000));
-  pts=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35}));}
-resize();addEventListener('resize',resize);
-function draw(){
-  ctx.clearRect(0,0,W,H);
-  for(const p of pts){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;}
-  for(let i=0;i<pts.length;i++){
-    for(let j=i+1;j<pts.length;j++){
-      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.hypot(dx,dy);
-      if(d<130){ctx.strokeStyle='rgba(47,227,194,'+(1-d/130)*.22+')';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}
-    }
-  }
-  for(const p of pts){ctx.fillStyle='rgba(58,160,255,.55)';ctx.beginPath();ctx.arc(p.x,p.y,1.6,0,7);ctx.fill();}
-  if(!prefersReduce)requestAnimationFrame(draw);
-}
-draw();
-
-// ---- scroll DNA helix ----
-// A fixed double-helix on the right edge. Base pairs light up as you scroll,
-// and the whole strand twists a little with scroll progress.
-(function(){
-  const host=document.getElementById('dna-helix');
-  if(!host)return;
-  const NS='http://www.w3.org/2000/svg';
-  const W=46,cx=W/2,amp=15,turns=3;
-  let H=innerHeight,N=0,rungs=[],dotsA=[],dotsB=[];
-  const svg=document.createElementNS(NS,'svg');
-  svg.setAttribute('preserveAspectRatio','none');
-  const strandA=document.createElementNS(NS,'path');strandA.setAttribute('class','dna-strand');
-  const strandB=document.createElementNS(NS,'path');strandB.setAttribute('class','dna-strand b');
-  host.appendChild(svg);
-  function layout(){
-    H=innerHeight;
-    svg.setAttribute('viewBox','0 0 '+W+' '+H);
-    while(svg.firstChild)svg.removeChild(svg.firstChild);
-    svg.appendChild(strandA);svg.appendChild(strandB);
-    N=Math.max(10,Math.round(H/36));
-    rungs=[];dotsA=[];dotsB=[];
-    for(let i=0;i<N;i++){
-      const r=document.createElementNS(NS,'line');r.setAttribute('class','dna-rung');svg.appendChild(r);rungs.push(r);
-      const da=document.createElementNS(NS,'circle');da.setAttribute('class','dna-dot');svg.appendChild(da);dotsA.push(da);
-      const db=document.createElementNS(NS,'circle');db.setAttribute('class','dna-dot');svg.appendChild(db);dotsB.push(db);
-    }
-  }
-  function build(p){
-    const phase=p*Math.PI*2.4;
-    let pa='',pb='';
-    for(let i=0;i<N;i++){
-      const t=N>1?i/(N-1):0,y=t*H,ang=t*turns*Math.PI*2+phase,s=Math.sin(ang);
-      const xa=cx+amp*s,xb=cx-amp*s,front=s>=0;
-      pa+=(i?'L':'M')+xa.toFixed(1)+' '+y.toFixed(1)+' ';
-      pb+=(i?'L':'M')+xb.toFixed(1)+' '+y.toFixed(1)+' ';
-      const r=rungs[i],da=dotsA[i],db=dotsB[i];
-      r.setAttribute('x1',xa.toFixed(1));r.setAttribute('y1',y.toFixed(1));r.setAttribute('x2',xb.toFixed(1));r.setAttribute('y2',y.toFixed(1));
-      da.setAttribute('cx',xa.toFixed(1));da.setAttribute('cy',y.toFixed(1));da.setAttribute('r',front?3.4:2.1);
-      db.setAttribute('cx',xb.toFixed(1));db.setAttribute('cy',y.toFixed(1));db.setAttribute('r',front?2.1:3.4);
-      const lit=t<=p+0.002;
-      r.classList.toggle('lit',lit);da.classList.toggle('lit',lit);db.classList.toggle('lit',lit);
-    }
-    strandA.setAttribute('d',pa);strandB.setAttribute('d',pb);
-  }
-  let ticking=false,prog=0;
-  function compute(){const max=document.documentElement.scrollHeight-innerHeight;prog=max>0?Math.min(1,Math.max(0,scrollY/max)):0;}
-  function onScroll(){if(ticking)return;ticking=true;requestAnimationFrame(()=>{compute();build(prog);ticking=false;});}
-  layout();compute();build(prog);
-  addEventListener('scroll',onScroll,{passive:true});
-  addEventListener('resize',()=>{layout();compute();build(prog);});
-})();
-
-// ---- thesis cardiac-differentiation protocol walkthrough ----
-const PROTO=[
-  {day:'Day 0',svg:'p0',label:'Seeded mESCs',tech:'Hanging-drop droplet',glow:'rgba(47,227,194,.18)',
-   title:'Seeding & pluripotency check',
-   proc:'Mouse embryonic stem cells are seeded and embryoid-body (EB) formation is initiated by the hanging-drop method. Pluripotency is confirmed by OCT4 (Alexa Fluor 488) co-localizing with the DAPI-stained nucleus.',
-   markers:['OCT4','DAPI'],
-   assess:'OCT4 co-localizes with the nucleus (DAPI), confirming the mESC line is pluripotent. A standard OCT4 dilution was also established.'},
-  {day:'Day 2',svg:'p1',label:'Embryoid body',tech:'EB in suspension',glow:'rgba(47,227,194,.18)',
-   title:'Embryoid body formation',
-   proc:'The hanging-drop aggregates have formed 3D embryoid bodies. Cells move to media with ascorbic acid (a cardiac-promoting factor); the treatment arm also receives MEHP from this point.',
-   markers:['OCT4 waning'],
-   assess:'Pluripotency wanes as EBs form and cells begin to specify into germ layers.'},
-  {day:'Day 4',svg:'p2',label:'Mesoderm commitment',tech:'Immunofluorescence · T/BRACHYURY',glow:'rgba(139,123,255,.20)',
-   title:'Mesoderm specification',
-   proc:'A media change refreshes the ascorbic-acid treatment. Cells commit to mesoderm and spread out as migratory, spindle-shaped mesenchyme, with T/BRACHYURY-positive nuclei lit up by immunofluorescence. T/BRACHYURY is a pan-mesoderm marker. Not yet cardiac.',
-   markers:['T / BRACHYURY'],
-   assess:'T/BRACHYURY marks pan-mesoderm — the route toward heart tissue.'},
-  {day:'Day 6',svg:'p3',label:'Cardiac mesoderm',tech:'Fixed in 4% PFA · MESP1',glow:'rgba(255,93,115,.22)',
-   title:'Cardiac mesoderm',
-   proc:'Cells are fixed in 4% PFA and stained. MESP1-positive cells organize into a cohesive, aligned cardiac-mesoderm cluster; T⁺MESP1⁺ double-positive cells (violet ring + pink core) mark the transition from mesoderm to cardiac mesoderm — cardiac-specified, though not yet mature contractile cardiomyocytes.',
-   markers:['MESP1','T⁺MESP1⁺'],
-   assess:'MESP1 and the T⁺MESP1⁺ transition population are the endpoint readout of cardiac lineage commitment.'}
+/* ============================================================
+   THE STORY — development stages (his real 6-day protocol)
+   Each stage: heart formation + HUD text + a thesis slide.
+   ============================================================ */
+const STAGES=[
+  {label:'Day 0 · Seeding', title:'Pluripotent stem cells',
+   note:'Mouse embryonic stem cells, seeded and drifting — OCT4⁺, not yet committed to anything.',
+   day:'Day 0', head:'Seeding & pluripotency check',
+   body:'Mouse embryonic stem cells (mESCs) are seeded and embryoid-body formation is started by the hanging-drop method. Pluripotency is confirmed where OCT4 co-localises with the DAPI-stained nucleus.',
+   markers:['OCT4','DAPI'], down:[],
+   find:'OCT4 co-localises with the nucleus, confirming the line is pluripotent.', warn:false},
+  {label:'Day 2 · Aggregation', title:'Embryoid body',
+   note:'Cells aggregate into a 3D embryoid body and begin to specify into germ layers.',
+   day:'Day 2', head:'Embryoid body formation',
+   body:'The hanging-drop aggregates fuse into 3D embryoid bodies. Cells move to media with ascorbic acid, a cardiac-promoting factor; the treatment arm also receives MEHP from this point on.',
+   markers:['OCT4 waning'], down:[],
+   find:'Pluripotency wanes as the embryoid body forms and germ layers begin to appear.', warn:false},
+  {label:'Day 4 · Mesoderm', title:'Mesoderm commitment',
+   note:'Cells commit to mesoderm and spread out as migratory, spindle-shaped mesenchyme.',
+   day:'Day 4', head:'Mesoderm specification',
+   body:'A media change refreshes the treatment. Cells commit to mesoderm and spread as migratory, spindle-shaped mesenchyme, with T/BRACHYURY-positive nuclei lit by immunofluorescence. A pan-mesoderm marker — the route toward heart tissue, but not yet cardiac.',
+   markers:['T / BRACHYURY'], down:['T / BRACHYURY'],
+   find:'MEHP → significantly fewer T/BRACHYURY⁺ cells: impaired mesoderm induction, stronger at the low, environmentally relevant dose.', warn:true},
+  {label:'Day 6 · Cardiac mesoderm', title:'Cardiac mesoderm',
+   note:'MESP1⁺ cells organise into a cohesive cardiac cluster; T⁺MESP1⁺ mark the transition.',
+   day:'Day 6', head:'Cardiac mesoderm',
+   body:'Cells are fixed in 4% PFA and stained. MESP1-positive cells organise into a cohesive, aligned cardiac-mesoderm cluster; T⁺MESP1⁺ double-positive cells mark the transition from mesoderm to cardiac mesoderm — cardiac-specified, though not yet mature contractile cardiomyocytes.',
+   markers:['MESP1','T⁺MESP1⁺'], down:['MESP1','T⁺MESP1⁺'],
+   find:'MEHP → MESP1⁺ and T⁺MESP1⁺ cells significantly reduced: disrupted cardiac lineage commitment.', warn:true},
+  {label:'The endpoint', title:'A beating heart',
+   note:'The lineage that these progenitors are committing toward — the whole reason the markers matter.',
+   day:'Where it leads', head:'A beating heart',
+   body:'Cardiac mesoderm is the origin of the heart. My thesis asks a simple, worrying question: if a common plasticiser metabolite thins out these earliest progenitors, what does that mean for a heart that is still being built? That is congenital heart disease, read from the very first cells.',
+   markers:['Cardiomyocytes','Congenital risk'], down:[],
+   find:'Fewer early progenitors under MEHP → a weaker foundation for the developing heart.', warn:true}
 ];
-// MEHP arm: confirmed thesis findings — markers significantly reduced per stage
-const MEHP_DOWN=[[],[],['T / BRACHYURY'],['MESP1','T⁺MESP1⁺']];
-const MEHP_NOTE=[
-  'MEHP is applied from Day 2 alongside ascorbic acid. Findings below compare the MEHP arm against the untreated control.',
-  '⚠ MEHP added here (environmentally relevant dose). Its effect on lineage markers is read out from Day 4 onward.',
-  '✔ Finding: significantly fewer T/BRACHYURY⁺ cells after MEHP — impaired mesoderm induction, with a stronger effect at the low, environmentally relevant dose.',
-  '✔ Finding: MESP1⁺ and T⁺MESP1⁺ cells significantly reduced after MEHP — disrupted cardiac lineage commitment and blocked mesoderm-to-cardiac-mesoderm transition.'
-];
-// Control-vs-MEHP result bars (relative to untreated control; illustrative of direction, not measured values)
-const RESULT={
-  2:{bars:[{k:'T/BRA⁺',mehp:52}]},
-  3:{bars:[{k:'MESP1⁺',mehp:55},{k:'T⁺MESP1⁺',mehp:47}],
-     apop:'Apoptosis (cPARP): dose-dependent upward trend with MEHP — not statistically significant; larger studies needed.'}
-};
-const stage=document.getElementById('cellStage');
-const glowEl=document.getElementById('stageGlow');
-const pcgs=[...document.querySelectorAll('#cellStage .cg')];
-const dayBtns=[...document.querySelectorAll('.day')];
-const dayFill=document.getElementById('dayFill');
-const pLabel=document.getElementById('pLabel'),pTech=document.getElementById('pTech');
-const pDay=document.getElementById('pDay'),pTitle=document.getElementById('pTitle'),pProc=document.getElementById('pProc'),pAssess=document.getElementById('pAssess'),pFlag=document.getElementById('pFlag'),pMk=document.getElementById('pMarkers'),pResult=document.getElementById('pResult');
-const pPrev=document.getElementById('pPrev'),pNext=document.getElementById('pNext'),pPlay=document.getElementById('pPlay');
-let step=0,cond='control',playing=false,playTimer=null;
-function renderResult(i){
-  const r=RESULT[i];
-  if(cond!=='mehp'||!r){pResult.classList.remove('on');pResult.innerHTML='';return;}
-  let html='<div class="rtitle">Marker⁺ cells · control vs MEHP</div>';
-  r.bars.forEach(b=>{
-    html+='<div class="rbar"><div class="rlab"><b>'+b.k+'</b><span class="sig">▼ significant</span></div>'+
-      '<div class="rrow"><span class="rk">Control</span><div class="rtrack"><i class="ctrl" data-w="100"></i></div></div>'+
-      '<div class="rrow"><span class="rk">+ MEHP</span><div class="rtrack"><i class="mehp" data-w="'+b.mehp+'"></i></div></div></div>';
+
+/* build HUD dots + slide cards */
+const hud=document.getElementById('hud'),hudLabel=document.getElementById('hudLabel'),hudTitle=document.getElementById('hudTitle'),hudNote=document.getElementById('hudNote'),hudDots=document.getElementById('hudDots');
+const slideStack=document.getElementById('slideStack');
+STAGES.forEach((s,i)=>{
+  const b=document.createElement('button');b.className='dot'+(i===0?' on':'');b.setAttribute('aria-label',s.label);
+  b.addEventListener('click',()=>scrollToStage(i));hudDots.appendChild(b);
+  const c=document.createElement('div');c.className='slide-card'+(i===0?' on':'');c.dataset.i=i;
+  c.innerHTML='<div class="slide-day"><span class="n">'+s.day+'</span></div>'+
+    '<h3>'+s.head+'</h3><p>'+s.body+'</p>'+
+    '<div class="slide-markers"></div>'+
+    '<div class="slide-find'+(s.warn?' warn':'')+'"></div>';
+  slideStack.appendChild(c);
+});
+const slideCards=[...slideStack.querySelectorAll('.slide-card')];
+let cond='control';
+function renderSlideMarkers(){
+  slideCards.forEach((c,i)=>{
+    const s=STAGES[i];const mk=c.querySelector('.slide-markers');mk.innerHTML='';
+    s.markers.forEach(m=>{const down=cond==='mehp'&&s.down.includes(m);
+      const el=document.createElement('span');el.className='mk'+(down?' down':'');el.textContent=m+(down?' ↓':'');mk.appendChild(el);});
+    const f=c.querySelector('.slide-find');
+    f.textContent = cond==='mehp' ? s.find : (s.markers.length?('Control: markers appear on schedule — normal cardiac progression.'):s.find);
+    f.classList.toggle('warn', cond==='mehp' && s.warn);
   });
-  if(r.apop)html+='<div class="apop">'+r.apop+'</div>';
-  html+='<div class="cap">Bars show direction of change relative to untreated control (illustrative, not measured values).</div>';
-  pResult.innerHTML=html;pResult.classList.add('on');
-  requestAnimationFrame(()=>pResult.querySelectorAll('.rtrack i').forEach(el=>el.style.width=el.dataset.w+'%'));
 }
-function renderStep(i){
-  const s=PROTO[i];
-  pcgs.forEach(g=>g.classList.toggle('show',g.id===s.svg));
-  dayBtns.forEach((b,bi)=>{b.classList.toggle('active',bi===i);b.classList.toggle('done',bi<i);});
-  dayFill.style.width=(i/(PROTO.length-1)*88)+'%';
-  glowEl.style.fill=s.glow;
-  pLabel.textContent=s.label;pTech.textContent=s.tech;
-  pDay.textContent=s.day;pTitle.textContent=s.title;pProc.textContent=s.proc;pAssess.textContent=s.assess;
-  const down=cond==='mehp'?MEHP_DOWN[i]:[];
-  pMk.innerHTML='';
-  s.markers.forEach((m,mi)=>{const el=document.createElement('span');el.className='marker'+(down.includes(m)?' down':'');
-    el.style.animationDelay=(mi*70)+'ms';el.textContent=m+(down.includes(m)?' ↓':'');pMk.appendChild(el);});
-  if(cond==='mehp'){pFlag.textContent=MEHP_NOTE[i];pFlag.classList.add('on');}else{pFlag.classList.remove('on');}
-  renderResult(i);
-  pPrev.disabled=(i===0);pNext.disabled=(i===PROTO.length-1);
-}
-function goStep(i){step=Math.max(0,Math.min(PROTO.length-1,i));renderStep(step);}
-dayBtns.forEach((b,i)=>b.addEventListener('click',()=>{stopPlay();goStep(i);}));
-pPrev.addEventListener('click',()=>{stopPlay();goStep(step-1);});
-pNext.addEventListener('click',()=>{stopPlay();goStep(step+1);});
+renderSlideMarkers();
+
 document.querySelectorAll('.cond-btn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.cond-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-  cond=b.dataset.cond;stage.classList.toggle('mehp',cond==='mehp');renderStep(step);
+  cond=b.dataset.cond;renderSlideMarkers();HEART.setCond(cond);
 }));
-function stopPlay(){playing=false;clearTimeout(playTimer);pPlay.textContent='▶ Play protocol';}
-function tick(){if(!playing)return;if(step>=PROTO.length-1){stopPlay();return;}goStep(step+1);playTimer=setTimeout(tick,4000);}
-pPlay.addEventListener('click',()=>{
-  if(playing){stopPlay();return;}
-  if(step>=PROTO.length-1)goStep(0);
-  playing=true;pPlay.textContent='⏸ Pause';playTimer=setTimeout(tick,4000);
-});
-renderStep(0);
+
+let activeStage=0;
+function setStage(i){
+  if(i===activeStage)return;activeStage=i;const s=STAGES[i];
+  hudLabel.textContent=s.label;hudTitle.textContent=s.title;hudNote.textContent=s.note;
+  [...hudDots.children].forEach((d,di)=>d.classList.toggle('on',di===i));
+  slideCards.forEach((c,ci)=>c.classList.toggle('on',ci===i));
+}
+/* map a stage index to a scroll position within the dev track */
+const devTrack=document.getElementById('devTrack');
+function scrollToStage(i){
+  const rect=devTrack.getBoundingClientRect();const top=rect.top+scrollY;
+  const usable=devTrack.offsetHeight-innerHeight;
+  const frac=i/(STAGES.length-1);
+  scrollTo({top:top+usable*frac*0.98,behavior:'smooth'});
+}
+
+/* ============================================================
+   ANATOMICAL HEART PARTICLE ENGINE
+   Particles proliferate + migrate as global scroll progresses:
+   scattered stem cells → embryoid ball → heart silhouette, beating.
+   ============================================================ */
+const HEART=(function(){
+  const cv=document.getElementById('heart-canvas'),ctx=cv.getContext('2d');
+  let W,H,DPR,cx,cy,scale;
+  let N=0,P=[],heartPts=[];
+  let dev=0,devTarget=0;           // 0..1 development
+  let condMode='control';
+  const COLORS=[
+    {c:[128,82,255],w:52},   // iris violet (dominant)
+    {c:[58,160,255],w:16},   // blue
+    {c:[31,190,159],w:14},   // teal
+    {c:[255,93,176],w:10},   // magenta
+    {c:[255,184,41],w:8}     // saffron sparks
+  ];
+  function pickColor(){let r=Math.random()*100,a=0;for(const o of COLORS){a+=o.w;if(r<=a)return o.c;}return COLORS[0].c;}
+
+  /* draw an (approximately) anatomical heart onto an offscreen canvas, then
+     sample opaque pixels as target points. Not a valentine — asymmetric muscular
+     mass, pointed apex bottom-left, atria + great vessels up top. */
+  function buildHeartPoints(count){
+    const S=360,oc=document.createElement('canvas');oc.width=S;oc.height=S;const o=oc.getContext('2d');
+    o.clearRect(0,0,S,S);o.fillStyle='#fff';
+    // great vessels first (behind the mass) — aorta arch, pulmonary trunk, SVC
+    o.lineCap='round';o.strokeStyle='#fff';
+    o.lineWidth=26;o.beginPath();o.moveTo(196,120);o.bezierCurveTo(196,60,150,30,120,52);o.stroke(); // aortic arch
+    o.lineWidth=30;o.beginPath();o.moveTo(168,120);o.lineTo(150,38);o.stroke();  // pulmonary trunk
+    o.lineWidth=22;o.beginPath();o.moveTo(214,130);o.lineTo(232,54);o.stroke();  // SVC
+    // main muscular mass (ventricles + atria) — asymmetric, apex to lower-left
+    o.beginPath();
+    o.moveTo(150,96);
+    o.bezierCurveTo(120,86,86,96,78,132);     // right atrium / upper left of image
+    o.bezierCurveTo(56,150,52,206,86,248);    // sweep down left wall
+    o.bezierCurveTo(112,286,150,312,150,318); // to the apex (bottom)
+    o.bezierCurveTo(176,300,224,272,248,224);  // right ventricle wall up
+    o.bezierCurveTo(276,180,272,120,236,102);  // left atrium / auricle bulge
+    o.bezierCurveTo(212,90,178,90,150,96);
+    o.closePath();o.fill();
+    // left auricle bump
+    o.beginPath();o.ellipse(242,132,26,22,-0.4,0,7);o.fill();
+    // sample
+    const img=o.getImageData(0,0,S,S).data;const opaque=[];
+    for(let y=0;y<S;y+=2)for(let x=0;x<S;x+=2){if(img[(y*S+x)*4+3]>40)opaque.push([x,y]);}
+    // normalize to [-0.5,0.5] around heart centroid-ish, flip nothing
+    const pts=[];
+    for(let i=0;i<count;i++){
+      const s=opaque[(Math.random()*opaque.length)|0];
+      pts.push([(s[0]-S/2)/S, (s[1]-S*0.52)/S]);   // slight upward bias so apex hangs low
+    }
+    return pts;
+  }
+
+  function resize(){
+    if(innerWidth<2||innerHeight<2)return;   // pane not laid out yet
+    DPR=Math.min(devicePixelRatio||1,2);
+    W=cv.width=innerWidth*DPR;H=cv.height=innerHeight*DPR;
+    cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    // heart sits centre-right on wide screens, centre on narrow
+    const vw=innerWidth,vh=innerHeight;
+    cx = vw>900 ? vw*0.68 : vw*0.5;
+    cy = vh*0.5;
+    scale = Math.min(vw,vh) * (vw>900?0.82:0.92);
+    N = Math.round(Math.min(1700, Math.max(700, vw*vh/1300)));
+    heartPts=buildHeartPoints(N);
+    P=[];
+    for(let i=0;i<N;i++){
+      const h=heartPts[i];
+      // embryoid-body cluster point: tight disc near heart centre
+      const a=Math.random()*Math.PI*2, rr=Math.sqrt(Math.random())*0.09;
+      const cluster=[Math.cos(a)*rr, Math.sin(a)*rr-0.02];
+      // scattered origin: anywhere on screen (screen-space fraction of scale)
+      const scat=[ (Math.random()-0.5)* (innerWidth/scale)*1.1,
+                   (Math.random()-0.5)* (innerHeight/scale)*1.1 ];
+      P.push({
+        h, cluster, scat,
+        col: pickColor(),
+        size: 1.1+Math.random()*2.2,
+        spin: (Math.random()-0.5)*0.9,
+        rot: Math.random()*Math.PI*2,
+        birth: Math.pow(i/N,0.85)*0.62-0.2,    // proliferation: seed pop visible at top, later cells appear later
+        vuln: Math.random()<0.46,             // vulnerable to MEHP
+        death: 0.54+Math.random()*0.34,       // dev point where a vulnerable cell dies off
+        twk: Math.random()*Math.PI*2          // per-cell drift phase
+      });
+    }
+  }
+
+  const smooth=t=>t*t*(3-2*t);
+  const clamp01=t=>t<0?0:t>1?1:t;
+
+  function draw(now){
+    dev += (devTarget-dev)*0.08;
+    const t=now*0.001;
+    const beat = 1 + (dev>0.55? (Math.pow(Math.max(0,Math.sin(t*(condMode==='mehp'?1.7:2.6))),8))*0.045*smooth(clamp01((dev-0.55)/0.25)) :0);
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    ctx.globalCompositeOperation='lighter';
+    const dcx=cx, dcy=cy;
+    for(let i=0;i<N;i++){
+      const p=P[i];
+      // birth / proliferation reveal
+      let life=clamp01((dev-p.birth)/0.12);
+      if(life<=0) continue;
+      // path: scattered -> cluster (0..0.42) -> heart (0.42..1)
+      let x,y;
+      if(dev<0.42){
+        const k=smooth(clamp01(dev/0.42));
+        x=p.scat[0]+(p.cluster[0]-p.scat[0])*k;
+        y=p.scat[1]+(p.cluster[1]-p.scat[1])*k;
+      }else{
+        const k=smooth(clamp01((dev-0.42)/0.5));
+        x=p.cluster[0]+(p.h[0]-p.cluster[0])*k;
+        y=p.cluster[1]+(p.h[1]-p.cluster[1])*k;
+      }
+      // gentle living drift
+      const dr=0.004+0.006*(1-life);
+      x+=Math.sin(t*0.6+p.twk)*dr;
+      y+=Math.cos(t*0.5+p.twk*1.3)*dr;
+      // MEHP: vulnerable cells fade + turn saffron + drift outward once cardiac
+      let col=p.col, alpha=0.85*life;
+      if(condMode==='mehp' && p.vuln){
+        const dd=dev-p.death;
+        if(dd>0.05) continue;                        // cell has died off → visibly fewer cells
+        if(dd>-0.05){ col=[255,184,41]; alpha*=clamp01((0.05-dd)/0.10); } // brief apoptotic flare
+      }
+      const sx=dcx+x*scale*beat, sy=dcy+y*scale*beat;
+      // triangle glyph
+      const r=p.size*(0.6+life*0.4);
+      const ang=p.rot+t*p.spin;
+      ctx.globalAlpha=alpha;
+      ctx.fillStyle='rgba('+col[0]+','+col[1]+','+col[2]+',1)';
+      ctx.beginPath();
+      for(let k=0;k<3;k++){const a=ang+k*2.094;ctx.lineTo(sx+Math.cos(a)*r, sy+Math.sin(a)*r);}
+      ctx.closePath();ctx.fill();
+    }
+    ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+    if(!prefersReduce)requestAnimationFrame(draw);
+    else {/* one static frame */}
+  }
+
+  function setDev(v){devTarget=clamp01(v); if(prefersReduce){dev=devTarget;requestAnimationFrame(draw);} }
+  function setCond(c){condMode=c;}
+  function reflow(){const d=devTarget;resize();devTarget=d;}
+  resize();
+  addEventListener('resize',reflow);
+  addEventListener('load',reflow);
+  // pane may grow from 0 after init (embedded preview) — watch for it
+  if(window.ResizeObserver){new ResizeObserver(()=>{ if(cv.width<2||Math.abs(cv.width/(Math.min(devicePixelRatio||1,2))-innerWidth)>2) reflow(); }).observe(document.documentElement);}
+  requestAnimationFrame(draw);
+  return {setDev,setCond};
+})();
+
+/* ============================================================
+   SCROLL → development. Global progress drives the heart;
+   position within the dev-track drives which slide/stage shows.
+   ============================================================ */
+function onScroll(){
+  const rect=devTrack.getBoundingClientRect();
+  const trackTop=rect.top+scrollY;
+  const usable=devTrack.offsetHeight-innerHeight;
+  const local=clamp(usable>0 ? (-rect.top)/usable : 0, 0, 1);      // progress pinned within thesis track
+  // heart development: gently seed through hero/about, then fully form across the thesis track,
+  // then hold as a beating heart for the rest of the page.
+  let dev;
+  if(rect.top>0){ dev = 0.12*clamp(scrollY/Math.max(1,trackTop),0,1); }  // approaching: scattered seeding
+  else { dev = 0.12 + 0.88*local; }                                       // thesis track: Day 0 → beating heart
+  HEART.setDev(dev);
+  // which slide/stage is showing
+  const idx=Math.min(STAGES.length-1, Math.round(local*(STAGES.length-1)));
+  setStage(idx);
+  // fade HUD out once above or below the thesis section
+  const before = rect.top > innerHeight*0.85;
+  const past = rect.bottom < innerHeight*0.5;
+  hud.style.opacity = (before||past)?0.25:1;
+}
+function clamp(v,a,b){return v<a?a:v>b?b:v;}
+addEventListener('scroll',onScroll,{passive:true});
+addEventListener('resize',onScroll);
+onScroll();
 </script>
 </body>
 </html>
