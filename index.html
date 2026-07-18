@@ -45,17 +45,6 @@ a{color:inherit;text-decoration:none}
    radial-gradient(900px 600px at 20% 10%, rgba(58,160,255,.06), transparent 60%);
 }
 
-/* ---------- slideshow HUD (bottom-left, scroll-driven) ---------- */
-.hud{position:fixed;left:clamp(16px,4vw,48px);bottom:clamp(18px,4vw,40px);z-index:40;
-  max-width:340px;pointer-events:none;transition:opacity .5s}
-.hud .stagelabel{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--saffron);margin-bottom:8px}
-.hud .stagetitle{font-size:20px;font-weight:400;letter-spacing:-.01em;color:var(--bone);margin-bottom:6px;line-height:1.15}
-.hud .stagenote{font-size:13px;font-weight:200;color:var(--silver);line-height:1.45;min-height:38px}
-.hud .dots{display:flex;gap:8px;margin-top:14px;pointer-events:auto}
-.hud .dot{width:8px;height:8px;border-radius:50%;background:#3a3a3a;border:none;padding:0;cursor:pointer;transition:.3s}
-.hud .dot.on{background:var(--iris);box-shadow:0 0 10px rgba(128,82,255,.7);transform:scale(1.15)}
-@media(max-width:760px){.hud{max-width:220px;bottom:14px}}
-
 /* ---------- nav ---------- */
 nav{position:fixed;top:0;left:0;right:0;z-index:50;
   display:flex;align-items:center;justify-content:space-between;
@@ -142,9 +131,12 @@ h2.title{font-size:clamp(2.6rem,6.5vw,5rem);line-height:1.02;letter-spacing:-.04
 .mk.down{border-color:rgba(255,184,41,.5);color:var(--saffron)}
 .slide-find{font-size:14px;font-weight:200;color:var(--bone);border-left:2px solid var(--iris);padding-left:16px;line-height:1.5}
 .slide-find.warn{border-color:var(--saffron)}
-/* condition toggle floats top-right of the dev section */
-.cond{position:sticky;top:84px;z-index:20;margin:0 auto;max-width:var(--maxw);padding:0 clamp(20px,5vw,64px);display:flex;justify-content:flex-end;align-items:flex-start;pointer-events:none;height:0}
-.cond-inner{display:inline-flex;gap:4px;padding:4px;border:1px solid #232323;border-radius:999px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);pointer-events:auto}
+/* condition toggle floats top-right of the dev section.
+   The wrapper is a zero-height sticky rail that reserves no layout box of its
+   own; the pill is absolutely positioned inside it so nothing can render as a
+   stray bar above the buttons. */
+.cond{position:sticky;top:84px;z-index:20;height:0;margin:0 auto;max-width:var(--maxw);pointer-events:none}
+.cond-inner{position:absolute;top:0;right:clamp(20px,5vw,64px);display:inline-flex;gap:4px;padding:4px;border:1px solid #232323;border-radius:999px;background:rgba(8,8,10,.82);pointer-events:auto}
 .cond-btn{padding:8px 18px;border-radius:999px;border:none;background:transparent;color:var(--ash);font-family:var(--font);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:.2s}
 .cond-btn.active{background:var(--iris);color:#fff}
 .cond-btn.active[data-cond="mehp"]{background:var(--saffron);color:#241500}
@@ -243,14 +235,6 @@ footer{text-align:center;padding:44px;color:var(--ash);font-size:13px;font-weigh
 <body>
 <canvas id="heart-canvas"></canvas>
 <div class="washes"></div>
-
-<!-- scroll-driven slideshow HUD -->
-<div class="hud" id="hud" aria-hidden="true">
-  <div class="stagelabel" id="hudLabel">Day 0 · Seeding</div>
-  <div class="stagetitle" id="hudTitle">Pluripotent stem cells</div>
-  <div class="stagenote" id="hudNote">Scroll to develop the cells toward a beating heart.</div>
-  <div class="dots" id="hudDots"></div>
-</div>
 
 <nav id="nav">
   <a href="#top" class="brand">
@@ -564,12 +548,9 @@ const STAGES=[
    find:'Fewer early progenitors under MEHP → a weaker foundation for the developing heart.', warn:true}
 ];
 
-/* build HUD dots + slide cards */
-const hud=document.getElementById('hud'),hudLabel=document.getElementById('hudLabel'),hudTitle=document.getElementById('hudTitle'),hudNote=document.getElementById('hudNote'),hudDots=document.getElementById('hudDots');
+/* build slide cards */
 const slideStack=document.getElementById('slideStack');
 STAGES.forEach((s,i)=>{
-  const b=document.createElement('button');b.className='dot'+(i===0?' on':'');b.setAttribute('aria-label',s.label);
-  b.addEventListener('click',()=>scrollToStage(i));hudDots.appendChild(b);
   const c=document.createElement('div');c.className='slide-card'+(i===0?' on':'');c.dataset.i=i;
   c.innerHTML='<div class="slide-day"><span class="n">'+s.day+'</span></div>'+
     '<h3>'+s.head+'</h3><p>'+s.body+'</p>'+
@@ -598,19 +579,10 @@ document.querySelectorAll('.cond-btn').forEach(b=>b.addEventListener('click',()=
 
 let activeStage=0;
 function setStage(i){
-  if(i===activeStage)return;activeStage=i;const s=STAGES[i];
-  hudLabel.textContent=s.label;hudTitle.textContent=s.title;hudNote.textContent=s.note;
-  [...hudDots.children].forEach((d,di)=>d.classList.toggle('on',di===i));
+  if(i===activeStage)return;activeStage=i;
   slideCards.forEach((c,ci)=>c.classList.toggle('on',ci===i));
 }
-/* map a stage index to a scroll position within the dev track */
 const devTrack=document.getElementById('devTrack');
-function scrollToStage(i){
-  const rect=devTrack.getBoundingClientRect();const top=rect.top+scrollY;
-  const usable=devTrack.offsetHeight-innerHeight;
-  const frac=i/(STAGES.length-1);
-  scrollTo({top:top+usable*frac*0.98,behavior:'smooth'});
-}
 
 /* ============================================================
    ANATOMICAL HEART PARTICLE ENGINE
@@ -622,6 +594,7 @@ const HEART=(function(){
   let W,H,DPR,cx,cy,scale;
   let N=0,P=[],heartPts=[];
   let dev=0,devTarget=0;           // 0..1 development
+  let burst=0,burstTarget=0;       // 0..1 post-conclusion explosion
   let condMode='control';
   const COLORS=[
     {c:[128,82,255],w:52},   // iris violet (dominant)
@@ -711,6 +684,10 @@ const HEART=(function(){
       const burst=[ (Math.random()-0.5)*(innerWidth/scale)*1.15, (Math.random()-0.5)*(innerHeight/scale)*1.15 ];
       // formation keyframes: monogram, burst, mESC colonies, embryoid body, mesoderm, cardiac, heart
       const form=[ monoPts[i], burst, mesc, disc(0.13), disc(0.30), card, heartPts[i] ];
+      // outward direction for the post-conclusion explosion: radially away from
+      // the heart's centre, with a little scatter so it doesn't look uniform.
+      const hp=heartPts[i]||[0,0];
+      const bAng=Math.atan2(hp[1]+0.08, hp[0]||1e-3)+(Math.random()-0.5)*0.6;
       P.push({
         form,
         col: pickColor(),
@@ -721,7 +698,9 @@ const HEART=(function(){
         dp: Math.random()<0.3,                // double-positive (violet) cardiac cells
         vuln: Math.random()<0.46,             // vulnerable to MEHP
         death: 0.60+Math.random()*0.30,       // dev point where a vulnerable cell dies off
-        twk: Math.random()*Math.PI*2          // per-cell drift phase
+        twk: Math.random()*Math.PI*2,         // per-cell drift phase
+        bdir: [Math.cos(bAng), Math.sin(bAng)],
+        bspd: 0.9+Math.random()*1.3           // how far/fast this cell flies out
       });
     }
   }
@@ -736,6 +715,7 @@ const HEART=(function(){
 
   function render(now){
     dev += (devTarget-dev)*0.08;
+    burst += (burstTarget-burst)*0.08;
     const t=now*0.001;
     const beat = 1 + (dev>0.8? Math.pow(Math.max(0,Math.sin(t*(condMode==='mehp'?1.7:2.6))),8)*0.05*smooth(clamp01((dev-0.8)/0.15)) : 0);
     ctx.clearRect(0,0,innerWidth,innerHeight);
@@ -772,6 +752,14 @@ const HEART=(function(){
         if(dd>0.05) continue;
         if(dd>-0.05){ col=[255,184,41]; alpha*=clamp01((0.05-dd)/0.10); }
       }
+      // post-conclusion explosion: fling every cell radially off-screen and fade it out
+      if(burst>0.0005){
+        const be=smooth(burst);
+        x += p.bdir[0]*be*p.bspd*1.7;
+        y += p.bdir[1]*be*p.bspd*1.7 - be*0.05;
+        alpha *= (1-be);
+        if(alpha<=0.01) continue;
+      }
       const sx=cx+x*scale*beat, sy=cy+y*scale*beat;
       const rx=Math.max(0.5,p.size*elong), ry=Math.max(0.5,p.size*(elong>1?0.72:1));
       const ang=p.randAng+((-0.45+p.alignJit)-p.randAng)*alignMix;
@@ -788,6 +776,7 @@ const HEART=(function(){
   function draw(now){ render(now); if(!prefersReduce)requestAnimationFrame(draw); }
 
   function setDev(v){devTarget=clamp01(v); if(prefersReduce){dev=devTarget;requestAnimationFrame(draw);} }
+  function setBurst(v){burstTarget=clamp01(v); if(prefersReduce){burst=burstTarget;requestAnimationFrame(draw);} }
   function setCond(c){condMode=c;}
   function reflow(){const d=devTarget;resize();devTarget=d;}
   resize();
@@ -796,13 +785,14 @@ const HEART=(function(){
   // pane may grow from 0 after init (embedded preview) — watch for it
   if(window.ResizeObserver){new ResizeObserver(()=>{ if(cv.width<2||Math.abs(cv.width/(Math.min(devicePixelRatio||1,2))-innerWidth)>2) reflow(); }).observe(document.documentElement);}
   requestAnimationFrame(draw);
-  return {setDev,setCond};
+  return {setDev,setCond,setBurst};
 })();
 
 /* ============================================================
    SCROLL → development. Global progress drives the heart;
    position within the dev-track drives which slide/stage shows.
    ============================================================ */
+const conclEl=document.querySelector('.conclusion');
 function onScroll(){
   const rect=devTrack.getBoundingClientRect();
   const trackTop=rect.top+scrollY;
@@ -817,10 +807,14 @@ function onScroll(){
   // which slide/stage is showing
   const idx=Math.min(STAGES.length-1, Math.round(local*(STAGES.length-1)));
   setStage(idx);
-  // fade HUD out once above or below the thesis section
-  const before = rect.top > innerHeight*0.85;
-  const past = rect.bottom < innerHeight*0.5;
-  hud.style.opacity = (before||past)?0.25:1;
+  // once the reader scrolls past the thesis conclusion, burst the heart apart
+  let bp=0;
+  if(conclEl){
+    const cb=conclEl.getBoundingClientRect().bottom;
+    const startAt=innerHeight*0.55;               // begin as the conclusion's end rises past mid-screen
+    if(cb<startAt) bp=clamp((startAt-cb)/(innerHeight*0.85),0,1);
+  }
+  HEART.setBurst(bp);
 }
 function clamp(v,a,b){return v<a?a:v>b?b:v;}
 addEventListener('scroll',onScroll,{passive:true});
