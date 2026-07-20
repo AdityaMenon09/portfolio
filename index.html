@@ -646,11 +646,11 @@ const HEART=(function(){
   let N=0,P=[],heartPts=[];
   let dev=0,devTarget=0;           // 0..1 development
   let burst=0,burstTarget=0;       // 0..1 post-conclusion explosion
-  let helixFade=0,helixFadeTarget=0;// 0..1 fade the reassembled helix out before the Toolkit
-  let helixOn=true;                // only reassemble the helix on wide screens
-  let helixScroll=0,helixScrollTarget=0;// 0..1 scroll position → helix rotation
-  let mehpMorph=0,mehpMorphTarget=0;    // 0..1 morph the cells into the MEHP molecule
-  let mehpPts=[];
+  let helixFade=0,helixFadeTarget=0;// 0..1 fade the drifting cell field out before the Toolkit
+  let fieldOn=true;                // only reassemble the drifting field on wide screens
+  let helixScroll=0,helixScrollTarget=0;// 0..1 scroll position → field swirl
+  let mehpMorph=0,mehpMorphTarget=0;    // 0..1 the MEHP condition is active
+  let AG=[];                            // MEHP agent particles — the dosed molecule
   let condMode='control';
   const COLORS=[
     {c:[128,82,255],w:52},   // iris violet (dominant)
@@ -747,11 +747,10 @@ const HEART=(function(){
     const vw=innerWidth,vh=innerHeight;
     cx = vw>900 ? vw*0.68 : vw*0.5;
     cy = vh*0.5;
-    helixOn = vw>900;
+    fieldOn = vw>900;
     scale = Math.min(vw,vh) * (vw>900?0.82:0.92);
     N = Math.round(Math.min(1700, Math.max(700, vw*vh/1300)));
     heartPts=buildHeartPoints(N);
-    mehpPts=buildMEHPPoints(N);
     const monoPts=buildTextPoints('AM', N);
     // colony centres for the mESC stage — a few compact rounded clumps
     const colN=6, colonies=[];
@@ -771,11 +770,6 @@ const HEART=(function(){
       // the heart's centre, with a little scatter so it doesn't look uniform.
       const hp=heartPts[i]||[0,0];
       const bAng=Math.atan2(hp[1]+0.08, hp[0]||1e-3)+(Math.random()-0.5)*0.6;
-      // DNA double-helix reassembly: strand A, strand B, or a base-pair rung
-      const hr=Math.random();
-      const hStrand = hr<0.42?0 : hr<0.84?1 : 2;
-      let hU=Math.random();
-      if(hStrand===2){ const nR=14; hU=(Math.floor(hU*nR)+0.5)/nR; }   // rungs sit on discrete rings
       P.push({
         form,
         col: pickColor(),
@@ -785,14 +779,33 @@ const HEART=(function(){
         alignJit: (Math.random()-0.5)*0.5,    // jitter around the aligned cardiac angle
         dp: Math.random()<0.3,                // double-positive (violet) cardiac cells
         vuln: Math.random()<0.46,             // vulnerable to MEHP
-        death: 0.60+Math.random()*0.30,       // dev point where a vulnerable cell dies off
+        death: 0.50+Math.random()*0.34,       // dev point where a vulnerable cell dies off
         twk: Math.random()*Math.PI*2,         // per-cell drift phase
         bdir: [Math.cos(bAng), Math.sin(bAng)],
         bspd: 0.9+Math.random()*1.3,          // how far/fast this cell flies out
-        hStrand, hU, hV: Math.random(),        // which strand / where along the axis
-        hAmpJit:(Math.random()-0.5)*0.022,     // slight thickness on the strands
-        hAxJit:(Math.random()-0.5)*0.016,
-        hAngJit:(Math.random()-0.5)*0.10
+        // drifting cell field the burst cells settle into — a point on an
+        // ellipsoidal cloud that slowly swirls (see fieldPos)
+        fR: 0.30+Math.pow(Math.random(),0.65)*0.52, // radius within the cloud
+        fTheta: Math.random()*Math.PI*2,       // swirl azimuth
+        fPhi: Math.acos(2*Math.random()-1),    // elevation (uniform over the sphere)
+        fBob: Math.random()*Math.PI*2,         // vertical bob phase
+        fSpin: 0.75+Math.random()*0.6          // per-cell swirl speed
+      });
+    }
+    // MEHP agent particles — assemble the molecule beside the cells, then break
+    // up and stream into the cell mass after the embryoid-body stage.
+    const M=Math.round(Math.min(300,Math.max(150,N*0.16)));
+    const agPts=buildMEHPPoints(M);
+    AG=[];
+    for(let i=0;i<M;i++){
+      const ia=Math.random()*Math.PI*2, ir=Math.sqrt(Math.random());
+      AG.push({
+        struct: agPts[i]||[0,0],                            // slot in the assembled molecule
+        invade: [Math.cos(ia)*ir*0.30, Math.sin(ia)*ir*0.24-0.02], // where it enters the cells
+        size: 0.9+Math.random()*1.4,
+        twk: Math.random()*Math.PI*2,
+        dz: Math.random()*Math.PI*2,
+        delay: Math.random()                                // staggers the break-up
       });
     }
   }
@@ -805,19 +818,18 @@ const HEART=(function(){
   // stage colours up to cardiac; the heart then blends to the per-cell spectrum
   const CK=[[210,202,255],[204,196,255],[188,178,242],[128,82,255],[150,110,255],[236,96,168]];
 
-  // DNA double helix the burst cells reassemble into (normalized units, like heartPts)
-  const H_TURNS=3.0, H_AMP=0.135, H_HEIGHT=1.18, H_ROT=0.2, H_SCROLL_TURNS=2.5;
-  function helixPos(p,t){
-    const axisY=(p.hU-0.5)*H_HEIGHT + p.hAxJit;
-    const ang=p.hU*H_TURNS*TAU + t*H_ROT + helixScroll*H_SCROLL_TURNS*TAU + p.hAngJit;
-    const amp=H_AMP+p.hAmpJit;
-    if(p.hStrand<2){                                   // one of the two backbones
-      const a=ang+(p.hStrand?Math.PI:0);
-      return [Math.cos(a)*amp, axisY, Math.sin(a)];    // z (-1..1) = depth toward viewer
-    }
-    const xA=Math.cos(ang)*amp, zA=Math.sin(ang);      // base-pair rung spans the two strands
-    const xB=Math.cos(ang+Math.PI)*amp, zB=Math.sin(ang+Math.PI);
-    return [xA+(xB-xA)*p.hV, axisY, zA+(zB-zA)*p.hV];
+  // the drifting cell field the burst cells settle into — an ellipsoidal cloud
+  // of cells that slowly swirls around its vertical axis; scroll adds to the swirl.
+  const F_RX=0.55, F_RY=0.66, F_ROT=0.06, F_SCROLL_TURNS=1.5;
+  // MEHP molecule: sits just above the cells, then breaks up into them after the EB stage
+  const MEHP_OFF=[-0.02,-0.46], MEHP_SC=0.62, MEHP_EB=0.30;
+  function fieldPos(p,t){
+    const ang=p.fTheta + (t*F_ROT + helixScroll*F_SCROLL_TURNS*TAU)*p.fSpin;
+    const sinPhi=Math.sin(p.fPhi);
+    const ux=Math.cos(ang)*sinPhi, uz=Math.sin(ang)*sinPhi, uy=Math.cos(p.fPhi);
+    const x=ux*p.fR*F_RX;
+    const y=uy*p.fR*F_RY + Math.sin(t*0.4+p.fBob)*0.02;
+    return [x, y, uz];                                 // uz (-1..1) = depth toward viewer
   }
 
   function render(now){
@@ -856,40 +868,45 @@ const HEART=(function(){
       }else{
         const pe=CK[5];col=[pe[0]+(p.col[0]-pe[0])*heartBlend,pe[1]+(p.col[1]-pe[1])*heartBlend,pe[2]+(p.col[2]-pe[2])*heartBlend];
       }
-      // MEHP toggle: the whole population assembles into the MEHP molecule and
-      // takes on its saffron. Releases as the heart later bursts, so the helix
-      // stays its normal colour regardless of the toggle.
-      if(mehpMorph>0.001){
-        const mm=smooth(mehpMorph)*(1-clamp01(burst*1.5)), mp=mehpPts[i]||[0,0];
-        x=x+(mp[0]-x)*mm; y=y+(mp[1]-y)*mm;
-        col=[col[0]+(255-col[0])*mm*0.85, col[1]+(184-col[1])*mm*0.85, col[2]+(41-col[2])*mm*0.85];
+      // MEHP effect: once development passes the embryoid-body stage — where the
+      // treatment arm is dosed — the metabolite thins out the vulnerable
+      // progenitors, so fewer T/MESP1⁺ cells survive (the thesis result). Each
+      // hit cell flares saffron, then fades. The loss eases back as the heart
+      // bursts, so the drifting field stays full afterward.
+      let damage=0;
+      if(mehpMorph>0.001 && p.vuln){
+        damage=smooth(mehpMorph)*smooth(clamp01((dev-p.death)/0.12))*(1-smooth(burst));
+        if(damage>0.001){
+          const fl=Math.sin(clamp01(damage)*Math.PI)*0.75;   // saffron flash at the moment of the hit
+          col=[col[0]+(255-col[0])*fl, col[1]+(184-col[1])*fl, col[2]+(41-col[2])*fl];
+        }
       }
+      alpha*=(1-damage);
       // post-conclusion explosion: fling every cell radially outward...
       if(burst>0.0005){
         const be=smooth(burst);
         const ex=x + p.bdir[0]*be*p.bspd*1.7;
         const ey=y + p.bdir[1]*be*p.bspd*1.7 - be*0.05;
-        if(helixOn){
-          // ...then gather the scattered cells into a slowly rotating DNA double helix
-          const g=smooth(clamp01((burst-0.35)/0.65));
-          const hp=helixPos(p,t);
-          const hx=ex+(hp[0]-ex)*g, hy=ey+(hp[1]-ey)*g;
-          const depth=hp[2]*0.5+0.5;                       // 0 (back) .. 1 (front)
-          let a=0.72*((1-be)*(1-g) + (0.30+0.60*depth)*g); // dim while scattering, brighten into the helix
-          a*=(1-helixFade);                                // and fade out before the Toolkit
+        if(fieldOn){
+          // ...then let the scattered cells settle into a slow, swirling field
+          const g=smooth(clamp01((burst-0.30)/0.70));
+          const fp=fieldPos(p,t);
+          const fx=ex+(fp[0]-ex)*g, fy=ey+(fp[1]-ey)*g;
+          const depth=fp[2]*0.5+0.5;                       // 0 (back) .. 1 (front)
+          let a=0.72*((1-be)*(1-g) + (0.26+0.62*depth)*g); // dim while scattering, depth-shade in the field
+          a*=(1-helixFade)*(1-damage);                     // fade out before the Toolkit
           if(a<=0.01) continue;
-          const hsx=cx+hx*scale, hsy=cy+hy*scale, hr=Math.max(0.5,p.size*(0.5+0.55*depth));
+          const fsx=cx+fx*scale, fsy=cy+fy*scale, fr=Math.max(0.5,p.size*(0.5+0.6*depth));
           ctx.globalAlpha=a;
           ctx.fillStyle='rgb('+(col[0]|0)+','+(col[1]|0)+','+(col[2]|0)+')';
-          ctx.beginPath();ctx.arc(hsx,hsy,hr,0,TAU);ctx.fill();
+          ctx.beginPath();ctx.arc(fsx,fsy,fr,0,TAU);ctx.fill();
           continue;
         }
         x=ex; y=ey; alpha*=(1-be);
-        if(alpha<=0.01) continue;
       }
+      if(alpha<=0.01) continue;
       const sx=cx+x*scale*beat, sy=cy+y*scale*beat;
       let rx=Math.max(0.5,p.size*elong), ry=Math.max(0.5,p.size*(elong>1?0.72:1));
-      if(mehpMorph>0.001){const mm=smooth(mehpMorph);rx+=(p.size-rx)*mm;ry+=(p.size-ry)*mm;}
       const ang=p.randAng+((-0.45+p.alignJit)-p.randAng)*alignMix;
       ctx.globalAlpha=alpha;
       ctx.fillStyle='rgb('+(col[0]|0)+','+(col[1]|0)+','+(col[2]|0)+')';
@@ -897,6 +914,29 @@ const HEART=(function(){
       if(nucAmt>0.12){                                   // bright nucleolus for round mESC/EB cells
         ctx.globalAlpha=alpha*nucAmt*0.8;ctx.fillStyle='rgb(238,238,255)';
         ctx.beginPath();ctx.arc(sx,sy,p.size*0.5,0,TAU);ctx.fill();
+      }
+    }
+    // MEHP agent molecule: the dosed metabolite assembles beside the cells, then
+    // breaks up and streams into the cell mass once development clears the EB stage.
+    if(mehpMorph>0.001){
+      const gate=smooth(mehpMorph)*(1-clamp01(burst*1.6));   // present until the burst clears it
+      if(gate>0.002){
+        for(let i=0;i<AG.length;i++){
+          const ag=AG[i];
+          const bk=smooth(clamp01((dev-(MEHP_EB+ag.delay*0.06))/0.22)); // 0 assembled → 1 invaded
+          const sx0=ag.struct[0]*MEHP_SC+MEHP_OFF[0], sy0=ag.struct[1]*MEHP_SC+MEHP_OFF[1];
+          let fx=sx0+(ag.invade[0]-sx0)*bk, fy=sy0+(ag.invade[1]-sy0)*bk;
+          const drf=0.003+0.013*bk;                          // tight while assembled, looser once loose
+          fx+=Math.sin(t*0.8+ag.twk)*drf; fy+=Math.cos(t*0.7+ag.dz)*drf;
+          const depth=0.5+0.5*Math.sin(t*0.6+ag.dz);
+          const aa=gate*(0.9-0.4*bk);                         // dims a little as it is absorbed
+          if(aa<=0.01) continue;
+          const px=cx+fx*scale*beat, py=cy+fy*scale*beat;
+          const r=Math.max(0.6, ag.size*(0.7+0.5*depth)*(1-0.22*bk));
+          ctx.globalAlpha=aa;
+          ctx.fillStyle='rgb(255,184,41)';
+          ctx.beginPath();ctx.arc(px,py,r,0,TAU);ctx.fill();
+        }
       }
     }
     ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
@@ -938,7 +978,7 @@ function onScroll(){
   const idx=Math.min(STAGES.length-1, Math.round(local*(STAGES.length-1)));
   setStage(idx);
   // burst the heart as the thesis conclusion first rises into view — early enough
-  // that the helix has fully reassembled by the time the conclusion is being read.
+  // that the drifting field has settled by the time the conclusion is being read.
   let bp=0;
   if(conclEl){
     const ct=conclEl.getBoundingClientRect().top;
@@ -946,13 +986,13 @@ function onScroll(){
     bp=clamp((startAt-ct)/(startAt-endAt),0,1);
   }
   HEART.setBurst(bp);
-  // scroll animation: advance the helix's rotation as the reader moves through
-  // Experience + Projects, so scrolling visibly turns the strands.
+  // scroll animation: advance the field's swirl as the reader moves through
+  // Experience + Projects, so scrolling visibly turns the cloud.
   const expEl=document.getElementById('experience');
   let hs=0;
   if(expEl){ const et=expEl.getBoundingClientRect().top; hs=clamp((innerHeight-et)/(innerHeight*3),0,1); }
   HEART.setHelixScroll(hs);
-  // the reassembled helix holds through Experience + Projects, then fades out as the
+  // the drifting field holds through Experience + Projects, then fades out as the
   // Toolkit heading rises, so it never sits behind that text.
   const skillsEl=document.getElementById('skills');
   let hf=0;
