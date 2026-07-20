@@ -141,6 +141,19 @@ h2.title{font-size:clamp(2.6rem,6.5vw,5rem);line-height:1.02;letter-spacing:-.04
 .cond-btn.active{background:var(--iris);color:#fff}
 .cond-btn.active[data-cond="mehp"]{background:var(--saffron);color:#241500}
 
+/* the molecule under investigation — MEHP skeletal structure */
+.mehp-fig{margin-top:36px;max-width:540px;border:1px solid #232323;border-radius:16px;
+  padding:22px 24px 20px;background:rgba(10,10,12,.5)}
+.mehp-fig .cap{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 11px;margin-bottom:4px}
+.mehp-fig .cap .tag{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+.mehp-fig .cap .nm{font-size:14.5px;font-weight:400;color:var(--bone)}
+.mehp-fig svg{width:100%;height:auto;display:block;margin:10px 0 12px;overflow:visible}
+.mehp-fig .desc{font-size:13px;font-weight:200;color:var(--ash);line-height:1.6}
+.mehp-fig .desc b{color:var(--silver);font-weight:400}
+.mehp-fig .bond{stroke:var(--silver);stroke-width:2;stroke-linecap:round;fill:none}
+.mehp-fig .ring{stroke:var(--silver);stroke-width:1.7;fill:none}
+.mehp-fig .atom{fill:var(--saffron);font-size:13px;font-weight:500;font-family:var(--font)}
+
 /* ---------- thesis conclusion ---------- */
 .conclusion{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,64px) clamp(80px,12vw,140px)}
 .conclusion .box{max-width:60ch}
@@ -315,6 +328,44 @@ footer{text-align:center;padding:44px;color:var(--ash);font-size:13px;font-weigh
     <div class="eyebrow reveal">02 — Inside my thesis · Scroll to develop</div>
     <h2 class="title reveal" style="max-width:20ch">Guiding stem cells toward a cardiac fate.</h2>
     <p class="lead reveal">Over six days I differentiate mouse embryonic stem cells (mESCs) by the hanging-drop method, tracking the lineage markers that appear at each stage by immunofluorescence — then test whether the phthalate metabolite <b class="amber">MEHP</b> disrupts commitment. Every cell you see forming the heart follows this real protocol. Scroll to build it, and switch the condition to see the comparison my work investigates.</p>
+
+    <figure class="mehp-fig reveal">
+      <figcaption class="cap"><span class="tag">The molecule</span><span class="nm">MEHP · mono(2-ethylhexyl) phthalate</span></figcaption>
+      <svg viewBox="45 10 330 155" role="img" aria-label="Skeletal structure of MEHP: an ortho-phthalate benzene ring bearing a free carboxylic acid and a 2-ethylhexyl ester.">
+        <!-- benzene ring -->
+        <polygon class="bond ring" points="126,120 108,151 72,151 54,120 72,89 108,89"/>
+        <circle class="ring" cx="90" cy="120" r="19"/>
+        <!-- free carboxylic acid (upper left) -->
+        <line class="bond" x1="108" y1="89" x2="108" y2="58"/>
+        <line class="bond" x1="108" y1="58" x2="108" y2="36"/>
+        <line class="bond" x1="108" y1="56" x2="83" y2="56"/>
+        <line class="bond" x1="108" y1="60" x2="83" y2="60"/>
+        <!-- 2-ethylhexyl ester (right) -->
+        <line class="bond" x1="126" y1="120" x2="158" y2="132"/>
+        <line class="bond" x1="156" y1="132" x2="156" y2="108"/>
+        <line class="bond" x1="160" y1="132" x2="160" y2="108"/>
+        <line class="bond" x1="158" y1="132" x2="184" y2="148"/>
+        <line class="bond" x1="184" y1="148" x2="210" y2="134"/>
+        <line class="bond" x1="210" y1="134" x2="238" y2="150"/>
+        <line class="bond" x1="238" y1="150" x2="266" y2="134"/>
+        <line class="bond" x1="266" y1="134" x2="294" y2="150"/>
+        <line class="bond" x1="294" y1="150" x2="322" y2="134"/>
+        <line class="bond" x1="322" y1="134" x2="350" y2="150"/>
+        <!-- ethyl branch at C2 -->
+        <line class="bond" x1="238" y1="150" x2="238" y2="118"/>
+        <line class="bond" x1="238" y1="118" x2="266" y2="102"/>
+        <!-- oxygen labels (masked so bonds don't cut through the glyphs) -->
+        <circle cx="74" cy="58" r="8" fill="#050506"/>
+        <ellipse cx="108" cy="30" rx="12" ry="9" fill="#050506"/>
+        <circle cx="158" cy="100" r="8" fill="#050506"/>
+        <circle cx="184" cy="148" r="8" fill="#050506"/>
+        <text class="atom" x="74" y="58" text-anchor="middle" dominant-baseline="central">O</text>
+        <text class="atom" x="108" y="30" text-anchor="middle" dominant-baseline="central">OH</text>
+        <text class="atom" x="158" y="100" text-anchor="middle" dominant-baseline="central">O</text>
+        <text class="atom" x="184" y="148" text-anchor="middle" dominant-baseline="central">O</text>
+      </svg>
+      <p class="desc">The active metabolite of the plasticiser <b>DEHP</b>. A free carboxylic acid and a branched <b>2-ethylhexyl</b> ester sit on adjacent (<b>ortho</b>) positions of a phthalate ring &mdash; this is the compound dosed in the treatment arm.</p>
+    </figure>
   </div>
 
   <!-- condition toggle -->
@@ -595,6 +646,11 @@ const HEART=(function(){
   let N=0,P=[],heartPts=[];
   let dev=0,devTarget=0;           // 0..1 development
   let burst=0,burstTarget=0;       // 0..1 post-conclusion explosion
+  let helixFade=0,helixFadeTarget=0;// 0..1 fade the reassembled helix out before the Toolkit
+  let helixOn=true;                // only reassemble the helix on wide screens
+  let helixScroll=0,helixScrollTarget=0;// 0..1 scroll position → helix rotation
+  let mehpMorph=0,mehpMorphTarget=0;    // 0..1 morph the cells into the MEHP molecule
+  let mehpPts=[];
   let condMode='control';
   const COLORS=[
     {c:[128,82,255],w:52},   // iris violet (dominant)
@@ -656,6 +712,31 @@ const HEART=(function(){
     return pts;
   }
 
+  /* draw the MEHP skeletal structure onto an offscreen canvas and sample it —
+     an ortho-phthalate ring with a free carboxylic acid and a 2-ethylhexyl ester. */
+  function buildMEHPPoints(count){
+    const W=400,Ht=240,oc=document.createElement('canvas');oc.width=W;oc.height=Ht;const o=oc.getContext('2d');
+    o.clearRect(0,0,W,Ht);o.strokeStyle='#fff';o.lineCap='round';o.lineJoin='round';o.lineWidth=6;
+    const L=(x1,y1,x2,y2)=>{o.beginPath();o.moveTo(x1,y1);o.lineTo(x2,y2);o.stroke();};
+    // benzene ring + aromatic circle
+    o.beginPath();o.moveTo(126,120);o.lineTo(108,151);o.lineTo(72,151);o.lineTo(54,120);o.lineTo(72,89);o.lineTo(108,89);o.closePath();o.stroke();
+    o.beginPath();o.arc(90,120,19,0,TAU);o.stroke();
+    // free carboxylic acid (C=O + OH)
+    L(108,89,108,58);L(108,58,108,36);L(108,56,83,56);L(108,60,83,60);
+    // 2-ethylhexyl ester + chain
+    L(126,120,158,132);L(156,132,156,108);L(160,132,160,108);
+    L(158,132,184,148);L(184,148,210,134);L(210,134,238,150);L(238,150,266,134);
+    L(266,134,294,150);L(294,150,322,134);L(322,134,350,150);
+    L(238,150,238,118);L(238,118,266,102);                 // ethyl branch at C2
+    const img=o.getImageData(0,0,W,Ht).data,op=[];
+    for(let y=0;y<Ht;y+=2)for(let x=0;x<W;x+=2){if(img[(y*W+x)*4+3]>40)op.push([x,y]);}
+    const cxp=202,cyp=94,norm=330;                          // centre + fit to ~0.9 wide
+    const pts=[];
+    if(!op.length){for(let i=0;i<count;i++)pts.push([0,0]);return pts;}
+    for(let i=0;i<count;i++){const s=op[(Math.random()*op.length)|0];pts.push([(s[0]-cxp)/norm,(s[1]-cyp)/norm]);}
+    return pts;
+  }
+
   function resize(){
     if(innerWidth<2||innerHeight<2)return;   // pane not laid out yet
     DPR=Math.min(devicePixelRatio||1,2);
@@ -666,9 +747,11 @@ const HEART=(function(){
     const vw=innerWidth,vh=innerHeight;
     cx = vw>900 ? vw*0.68 : vw*0.5;
     cy = vh*0.5;
+    helixOn = vw>900;
     scale = Math.min(vw,vh) * (vw>900?0.82:0.92);
     N = Math.round(Math.min(1700, Math.max(700, vw*vh/1300)));
     heartPts=buildHeartPoints(N);
+    mehpPts=buildMEHPPoints(N);
     const monoPts=buildTextPoints('AM', N);
     // colony centres for the mESC stage — a few compact rounded clumps
     const colN=6, colonies=[];
@@ -688,6 +771,11 @@ const HEART=(function(){
       // the heart's centre, with a little scatter so it doesn't look uniform.
       const hp=heartPts[i]||[0,0];
       const bAng=Math.atan2(hp[1]+0.08, hp[0]||1e-3)+(Math.random()-0.5)*0.6;
+      // DNA double-helix reassembly: strand A, strand B, or a base-pair rung
+      const hr=Math.random();
+      const hStrand = hr<0.42?0 : hr<0.84?1 : 2;
+      let hU=Math.random();
+      if(hStrand===2){ const nR=14; hU=(Math.floor(hU*nR)+0.5)/nR; }   // rungs sit on discrete rings
       P.push({
         form,
         col: pickColor(),
@@ -700,7 +788,11 @@ const HEART=(function(){
         death: 0.60+Math.random()*0.30,       // dev point where a vulnerable cell dies off
         twk: Math.random()*Math.PI*2,         // per-cell drift phase
         bdir: [Math.cos(bAng), Math.sin(bAng)],
-        bspd: 0.9+Math.random()*1.3           // how far/fast this cell flies out
+        bspd: 0.9+Math.random()*1.3,          // how far/fast this cell flies out
+        hStrand, hU, hV: Math.random(),        // which strand / where along the axis
+        hAmpJit:(Math.random()-0.5)*0.022,     // slight thickness on the strands
+        hAxJit:(Math.random()-0.5)*0.016,
+        hAngJit:(Math.random()-0.5)*0.10
       });
     }
   }
@@ -713,9 +805,27 @@ const HEART=(function(){
   // stage colours up to cardiac; the heart then blends to the per-cell spectrum
   const CK=[[210,202,255],[204,196,255],[188,178,242],[128,82,255],[150,110,255],[236,96,168]];
 
+  // DNA double helix the burst cells reassemble into (normalized units, like heartPts)
+  const H_TURNS=3.0, H_AMP=0.135, H_HEIGHT=1.18, H_ROT=0.2, H_SCROLL_TURNS=2.5;
+  function helixPos(p,t){
+    const axisY=(p.hU-0.5)*H_HEIGHT + p.hAxJit;
+    const ang=p.hU*H_TURNS*TAU + t*H_ROT + helixScroll*H_SCROLL_TURNS*TAU + p.hAngJit;
+    const amp=H_AMP+p.hAmpJit;
+    if(p.hStrand<2){                                   // one of the two backbones
+      const a=ang+(p.hStrand?Math.PI:0);
+      return [Math.cos(a)*amp, axisY, Math.sin(a)];    // z (-1..1) = depth toward viewer
+    }
+    const xA=Math.cos(ang)*amp, zA=Math.sin(ang);      // base-pair rung spans the two strands
+    const xB=Math.cos(ang+Math.PI)*amp, zB=Math.sin(ang+Math.PI);
+    return [xA+(xB-xA)*p.hV, axisY, zA+(zB-zA)*p.hV];
+  }
+
   function render(now){
     dev += (devTarget-dev)*0.08;
     burst += (burstTarget-burst)*0.08;
+    helixFade += (helixFadeTarget-helixFade)*0.1;
+    helixScroll += (helixScrollTarget-helixScroll)*0.08;
+    mehpMorph += (mehpMorphTarget-mehpMorph)*0.06;
     const t=now*0.001;
     const beat = 1 + (dev>0.8? Math.pow(Math.max(0,Math.sin(t*(condMode==='mehp'?1.7:2.6))),8)*0.05*smooth(clamp01((dev-0.8)/0.15)) : 0);
     ctx.clearRect(0,0,innerWidth,innerHeight);
@@ -746,22 +856,40 @@ const HEART=(function(){
       }else{
         const pe=CK[5];col=[pe[0]+(p.col[0]-pe[0])*heartBlend,pe[1]+(p.col[1]-pe[1])*heartBlend,pe[2]+(p.col[2]-pe[2])*heartBlend];
       }
-      // MEHP: vulnerable cells flare saffron then die off (visibly fewer cells)
-      if(condMode==='mehp' && p.vuln){
-        const dd=dev-p.death;
-        if(dd>0.05) continue;
-        if(dd>-0.05){ col=[255,184,41]; alpha*=clamp01((0.05-dd)/0.10); }
+      // MEHP toggle: the whole population assembles into the MEHP molecule and
+      // takes on its saffron. Releases as the heart later bursts, so the helix
+      // stays its normal colour regardless of the toggle.
+      if(mehpMorph>0.001){
+        const mm=smooth(mehpMorph)*(1-clamp01(burst*1.5)), mp=mehpPts[i]||[0,0];
+        x=x+(mp[0]-x)*mm; y=y+(mp[1]-y)*mm;
+        col=[col[0]+(255-col[0])*mm*0.85, col[1]+(184-col[1])*mm*0.85, col[2]+(41-col[2])*mm*0.85];
       }
-      // post-conclusion explosion: fling every cell radially off-screen and fade it out
+      // post-conclusion explosion: fling every cell radially outward...
       if(burst>0.0005){
         const be=smooth(burst);
-        x += p.bdir[0]*be*p.bspd*1.7;
-        y += p.bdir[1]*be*p.bspd*1.7 - be*0.05;
-        alpha *= (1-be);
+        const ex=x + p.bdir[0]*be*p.bspd*1.7;
+        const ey=y + p.bdir[1]*be*p.bspd*1.7 - be*0.05;
+        if(helixOn){
+          // ...then gather the scattered cells into a slowly rotating DNA double helix
+          const g=smooth(clamp01((burst-0.35)/0.65));
+          const hp=helixPos(p,t);
+          const hx=ex+(hp[0]-ex)*g, hy=ey+(hp[1]-ey)*g;
+          const depth=hp[2]*0.5+0.5;                       // 0 (back) .. 1 (front)
+          let a=0.72*((1-be)*(1-g) + (0.30+0.60*depth)*g); // dim while scattering, brighten into the helix
+          a*=(1-helixFade);                                // and fade out before the Toolkit
+          if(a<=0.01) continue;
+          const hsx=cx+hx*scale, hsy=cy+hy*scale, hr=Math.max(0.5,p.size*(0.5+0.55*depth));
+          ctx.globalAlpha=a;
+          ctx.fillStyle='rgb('+(col[0]|0)+','+(col[1]|0)+','+(col[2]|0)+')';
+          ctx.beginPath();ctx.arc(hsx,hsy,hr,0,TAU);ctx.fill();
+          continue;
+        }
+        x=ex; y=ey; alpha*=(1-be);
         if(alpha<=0.01) continue;
       }
       const sx=cx+x*scale*beat, sy=cy+y*scale*beat;
-      const rx=Math.max(0.5,p.size*elong), ry=Math.max(0.5,p.size*(elong>1?0.72:1));
+      let rx=Math.max(0.5,p.size*elong), ry=Math.max(0.5,p.size*(elong>1?0.72:1));
+      if(mehpMorph>0.001){const mm=smooth(mehpMorph);rx+=(p.size-rx)*mm;ry+=(p.size-ry)*mm;}
       const ang=p.randAng+((-0.45+p.alignJit)-p.randAng)*alignMix;
       ctx.globalAlpha=alpha;
       ctx.fillStyle='rgb('+(col[0]|0)+','+(col[1]|0)+','+(col[2]|0)+')';
@@ -777,7 +905,9 @@ const HEART=(function(){
 
   function setDev(v){devTarget=clamp01(v); if(prefersReduce){dev=devTarget;requestAnimationFrame(draw);} }
   function setBurst(v){burstTarget=clamp01(v); if(prefersReduce){burst=burstTarget;requestAnimationFrame(draw);} }
-  function setCond(c){condMode=c;}
+  function setHelixFade(v){helixFadeTarget=clamp01(v); if(prefersReduce){helixFade=helixFadeTarget;requestAnimationFrame(draw);} }
+  function setHelixScroll(v){helixScrollTarget=clamp01(v); if(prefersReduce){helixScroll=helixScrollTarget;requestAnimationFrame(draw);} }
+  function setCond(c){condMode=c; mehpMorphTarget=c==='mehp'?1:0; if(prefersReduce){mehpMorph=mehpMorphTarget;requestAnimationFrame(draw);} }
   function reflow(){const d=devTarget;resize();devTarget=d;}
   resize();
   addEventListener('resize',reflow);
@@ -785,7 +915,7 @@ const HEART=(function(){
   // pane may grow from 0 after init (embedded preview) — watch for it
   if(window.ResizeObserver){new ResizeObserver(()=>{ if(cv.width<2||Math.abs(cv.width/(Math.min(devicePixelRatio||1,2))-innerWidth)>2) reflow(); }).observe(document.documentElement);}
   requestAnimationFrame(draw);
-  return {setDev,setCond,setBurst};
+  return {setDev,setCond,setBurst,setHelixFade,setHelixScroll};
 })();
 
 /* ============================================================
@@ -807,14 +937,30 @@ function onScroll(){
   // which slide/stage is showing
   const idx=Math.min(STAGES.length-1, Math.round(local*(STAGES.length-1)));
   setStage(idx);
-  // once the reader scrolls past the thesis conclusion, burst the heart apart
+  // burst the heart as the thesis conclusion first rises into view — early enough
+  // that the helix has fully reassembled by the time the conclusion is being read.
   let bp=0;
   if(conclEl){
-    const cb=conclEl.getBoundingClientRect().bottom;
-    const startAt=innerHeight*0.55;               // begin as the conclusion's end rises past mid-screen
-    if(cb<startAt) bp=clamp((startAt-cb)/(innerHeight*0.85),0,1);
+    const ct=conclEl.getBoundingClientRect().top;
+    const startAt=innerHeight*1.0, endAt=innerHeight*0.15;
+    bp=clamp((startAt-ct)/(startAt-endAt),0,1);
   }
   HEART.setBurst(bp);
+  // scroll animation: advance the helix's rotation as the reader moves through
+  // Experience + Projects, so scrolling visibly turns the strands.
+  const expEl=document.getElementById('experience');
+  let hs=0;
+  if(expEl){ const et=expEl.getBoundingClientRect().top; hs=clamp((innerHeight-et)/(innerHeight*3),0,1); }
+  HEART.setHelixScroll(hs);
+  // the reassembled helix holds through Experience + Projects, then fades out as the
+  // Toolkit heading rises, so it never sits behind that text.
+  const skillsEl=document.getElementById('skills');
+  let hf=0;
+  if(skillsEl){
+    const st=skillsEl.getBoundingClientRect().top;
+    hf=clamp((innerHeight-st)/(innerHeight*0.42),0,1);
+  }
+  HEART.setHelixFade(hf);
 }
 function clamp(v,a,b){return v<a?a:v>b?b:v;}
 addEventListener('scroll',onScroll,{passive:true});
