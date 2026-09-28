@@ -202,12 +202,35 @@ h2.title{font-size:clamp(2.6rem,6.5vw,5rem);line-height:1.02;letter-spacing:-.04
 .proj.open .expand .ic{transform:rotate(45deg)}
 
 /* ---------- skills ---------- */
-.skill-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(30px,5vw,70px)}
-.skill h4{font-size:clamp(1.3rem,2.4vw,1.7rem);letter-spacing:-.02em;margin-bottom:20px;display:flex;align-items:center;gap:12px}
-.skill h4 .ic{font-size:1.3rem}
-.skill ul{list-style:none;display:flex;flex-direction:column;gap:12px}
-.skill li{color:var(--silver);font-size:15px;font-weight:200;padding-left:18px;position:relative}
-.skill li::before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--iris)}
+.skill-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2.4vw,28px);perspective:1200px}
+.skill{position:relative;border:1px solid #1f1f24;border-radius:20px;background:rgba(8,8,12,.72);overflow:hidden;
+  transform-style:preserve-3d;transition:border-color .4s,box-shadow .5s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.skill:hover{border-color:rgba(128,82,255,.55);box-shadow:0 30px 80px -30px rgba(128,82,255,.55)}
+.skill .kviz{position:relative;height:170px;border-bottom:1px solid #1a1a20;background:#050508}
+.skill .kviz canvas{display:block;width:100%;height:100%}
+.skill .kviz .klbl{position:absolute;left:14px;bottom:10px;font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#6f6f7a}
+.skill .kbody{padding:22px 22px 24px}
+.skill .knum{font-size:12px;font-weight:600;letter-spacing:.2em;color:var(--saffron)}
+.skill h4{font-size:clamp(1.3rem,2.2vw,1.6rem);letter-spacing:-.02em;margin:8px 0 18px}
+.skill ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.skill li{color:var(--silver);font-size:15px;font-weight:200;padding:8px 12px 8px 26px;position:relative;border-radius:10px;cursor:default}
+.skill li::before{content:"";position:absolute;left:10px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:var(--iris);
+  transition:transform .35s cubic-bezier(.3,1.6,.5,1),box-shadow .35s}
+.skill li:hover{background:rgba(128,82,255,.09)}
+.skill li:hover::before{transform:scale(1.8);box-shadow:0 0 10px var(--iris)}
+.skill[data-k="mol"] li::before{background:var(--saffron)}.skill[data-k="mol"] li:hover::before{box-shadow:0 0 10px var(--saffron)}
+.skill[data-k="bio"] li::before{background:#1fbe9f}.skill[data-k="bio"] li:hover::before{box-shadow:0 0 10px #1fbe9f}
+/* marquee of techniques */
+.kmarq{margin-top:clamp(40px,6vw,70px);overflow:hidden;border-top:1px solid #16161a;border-bottom:1px solid #16161a;padding:22px 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.kmarq .trk{display:flex;width:max-content;animation:marq 38s linear infinite}
+.kmarq:hover .trk{animation-play-state:paused}
+.kmarq span{font-size:clamp(1.6rem,3.6vw,2.8rem);letter-spacing:-.03em;white-space:nowrap;padding:0 .5em;color:transparent;
+  -webkit-text-stroke:1px #3a3a44;transition:color .3s,-webkit-text-stroke-color .3s}
+.kmarq span:nth-child(3n+2){color:var(--bone);-webkit-text-stroke:0}
+.kmarq span:hover{color:var(--iris);-webkit-text-stroke-color:var(--iris)}
+.kmarq i{font-style:normal;color:var(--iris);font-size:clamp(1rem,2vw,1.4rem);align-self:center}
+@keyframes marq{to{transform:translateX(-50%)}}
 
 /* ---------- more (tabs) ---------- */
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:38px}
@@ -245,16 +268,9 @@ html.lenis,html.lenis body{height:auto}
   transform-origin:0 50%;transform:scaleX(0)}
 
 /* custom cursor (fine pointers only) */
-.cur-dot,.cur-ring{position:fixed;top:0;left:0;z-index:100;pointer-events:none;border-radius:50%;
-  opacity:0;transition:opacity .3s,width .35s cubic-bezier(.2,.8,.2,1),height .35s cubic-bezier(.2,.8,.2,1),
-  background .3s,border-color .3s,margin .35s cubic-bezier(.2,.8,.2,1)}
-.cur-dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:#fff;mix-blend-mode:difference}
-.cur-ring{width:36px;height:36px;margin:-18px 0 0 -18px;border:1px solid rgba(183,162,255,.55)}
-body.cur-on .cur-dot,body.cur-on .cur-ring{opacity:1}
-body.cur-hover .cur-ring{width:64px;height:64px;margin:-32px 0 0 -32px;background:rgba(128,82,255,.12);border-color:rgba(128,82,255,.9)}
-body.cur-down .cur-ring{width:26px;height:26px;margin:-13px 0 0 -13px}
-body.cur-uv .cur-ring{width:18px;height:18px;margin:-9px 0 0 -9px;border-color:rgba(170,120,255,.9);background:rgba(120,60,255,.25)}
-body.cur-grab .cur-ring{width:54px;height:54px;margin:-27px 0 0 -27px;border-style:dashed;border-color:rgba(255,184,41,.8)}
+#curCell{position:fixed;top:0;left:0;width:140px;height:140px;margin:-70px 0 0 -70px;z-index:100;pointer-events:none;
+  opacity:0;transition:opacity .3s}
+body.cur-on #curCell{opacity:1}
 @media (pointer:fine){body.cur-on,body.cur-on a,body.cur-on button,body.cur-on .proj,body.cur-on canvas{cursor:none}}
 
 /* magnetic elements */
@@ -307,11 +323,10 @@ body.cur-grab .cur-ring{width:54px;height:54px;margin:-27px 0 0 -27px;border-sty
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
 /* skills stagger */
-.skill li{opacity:0;transform:translateX(-10px);transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1),color .25s;transition-delay:calc(var(--i,0)*70ms + 200ms)}
+.skill li{opacity:0;transform:translateX(-10px);transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1),color .25s,background .25s;transition-delay:calc(var(--i,0)*70ms + 250ms)}
 .skill.in li{opacity:1;transform:none}
-.skill li:hover{color:var(--bone)}
-.skill h4 .ic{display:inline-block;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
-.skill:hover h4 .ic{transform:translateY(-4px) rotate(-10deg) scale(1.15)}
+.skill.reveal.in{transition:opacity .9s,filter .9s,transform .5s cubic-bezier(.2,.8,.2,1),border-color .4s,box-shadow .5s}
+.skill li:hover{color:var(--bone);transition-delay:0s}
 .chip{transition:color .2s,border-color .2s,transform .4s cubic-bezier(.2,.8,.2,1),background .2s}
 .chip:hover{transform:translateY(-3px);background:rgba(128,82,255,.08)}
 
@@ -394,7 +409,7 @@ a.ghost.mag{display:inline-block}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .reveal{opacity:1!important;transform:none!important;filter:none!important}
   .hero h1 .ch,.sw .w>span,.slide-card,.skill li,.proj .details li{opacity:1;transform:none!important;filter:none!important}
-  .cur-dot,.cur-ring{display:none}
+  #curCell{display:none}
 }
 </style>
 </head>
@@ -402,7 +417,7 @@ a.ghost.mag{display:inline-block}
 <canvas id="heart-canvas"></canvas>
 <div class="washes"></div>
 <div class="progress" id="progress"></div>
-<div class="cur-ring" id="curRing"></div><div class="cur-dot" id="curDot"></div>
+<canvas id="curCell" aria-hidden="true"></canvas>
 
 <nav id="nav">
   <a href="#top" class="brand">
@@ -668,10 +683,23 @@ a.ghost.mag{display:inline-block}
   <div class="eyebrow reveal">05 — Toolkit</div>
   <h2 class="title reveal">Skills &amp; techniques.</h2>
   <div class="skill-cols">
-    <div class="skill reveal"><h4><span class="ic">🧫</span> Cell Culture</h4><ul><li>mESC culture</li><li>Embryoid body formation</li><li>Differentiation assays</li><li>Microbial culturing &amp; staining</li></ul></div>
-    <div class="skill reveal"><h4><span class="ic">🧬</span> Molecular Biology</h4><ul><li>PCR</li><li>Gel electrophoresis</li><li>Immunofluorescence</li><li>UV-Vis spectroscopy</li></ul></div>
-    <div class="skill reveal"><h4><span class="ic">💻</span> Bioinformatics</h4><ul><li>WGS analysis &amp; interpretation</li><li>AMR profiling</li><li>Genome annotation</li><li>BLAST · Fiji · genome platforms</li></ul></div>
+    <div class="skill reveal" data-k="cell">
+      <div class="kviz"><canvas data-viz="dish"></canvas><span class="klbl">Culture dish · live</span></div>
+      <div class="kbody"><span class="knum">01</span><h4>Cell culture</h4>
+        <ul><li>mESC culture</li><li>Embryoid body formation</li><li>Differentiation assays</li><li>Microbial culturing &amp; staining</li></ul></div>
+    </div>
+    <div class="skill reveal" data-k="mol">
+      <div class="kviz"><canvas data-viz="gel"></canvas><span class="klbl">Agarose gel · running</span></div>
+      <div class="kbody"><span class="knum">02</span><h4>Molecular biology</h4>
+        <ul><li>PCR</li><li>Gel electrophoresis</li><li>Immunofluorescence</li><li>UV-Vis spectroscopy</li></ul></div>
+    </div>
+    <div class="skill reveal" data-k="bio">
+      <div class="kviz"><canvas data-viz="seq"></canvas><span class="klbl">Sequence alignment</span></div>
+      <div class="kbody"><span class="knum">03</span><h4>Bioinformatics</h4>
+        <ul><li>WGS analysis &amp; interpretation</li><li>AMR profiling</li><li>Genome annotation</li><li>BLAST · Fiji · genome platforms</li></ul></div>
+    </div>
   </div>
+  <div class="kmarq reveal" aria-hidden="true"><div class="trk" id="kTrack"></div></div>
 </section>
 
 <!-- MORE -->
@@ -827,8 +855,7 @@ if(finePointer && !prefersReduce){
 }
 
 /* custom cursor + pointer → cells */
-const curDot=document.getElementById('curDot'),curRing=document.getElementById('curRing');
-let pX=innerWidth/2,pY=innerHeight/2,rX=pX,rY=pY;
+let pX=innerWidth/2,pY=innerHeight/2;
 addEventListener('pointermove',e=>{
   pX=e.clientX;pY=e.clientY;
   if(e.pointerType==='mouse'){HEART.pointer(pX,pY);if(finePointer&&!prefersReduce)document.body.classList.add('cur-on');}
@@ -840,16 +867,51 @@ document.addEventListener('pointerover',e=>{const b=document.body.classList;
   b.toggle('cur-hover',!!e.target.closest(HOVER_SEL));
   b.toggle('cur-uv',!!e.target.closest('#qdCanvas'));
   b.toggle('cur-grab',!!e.target.closest('#gnCanvas'));});
-addEventListener('pointerdown',e=>{document.body.classList.add('cur-down');
+addEventListener('pointerdown',e=>{document.body.classList.add('cur-down');if(e.pointerType==='mouse')CELL.divide();
   if(!e.target.closest('a,button,input,.lab,.proj'))HEART.shock(e.clientX,e.clientY);});
 addEventListener('pointerup',()=>document.body.classList.remove('cur-down'));
 
 /* one rAF for pointer-following bits */
 const heroTitle=document.getElementById('heroTitle');let hmX=0,hmY=0;
-(function motion(){
-  rX+=(pX-rX)*0.2;rY+=(pY-rY)*0.2;
-  curDot.style.transform='translate('+pX+'px,'+pY+'px)';
-  curRing.style.transform='translate('+rX+'px,'+rY+'px)';
+/* the cursor is a living cell: it chases the pointer on a soft spring, stretches
+   along its motion, grows over links, and divides (mitosis) on click. A bright
+   centrosome dot marks the exact click point. */
+const CELL=(function(){
+  const cv=document.getElementById('curCell'),c=cv.getContext('2d'),S=140,TAU=Math.PI*2;
+  const DPR=Math.min(devicePixelRatio||1,2);cv.width=cv.height=S*DPR;c.setTransform(DPR,0,0,DPR,0,0);
+  let x=pX,y=pY,vx=0,vy=0,r=10,split=0,axis=0,hov=0,grab=0,uv=0;
+  function blob(cx,cy,rad,ang,sx,sy,t,wob,fill,stroke){
+    c.save();c.translate(cx,cy);c.rotate(ang);c.scale(sx,sy);c.beginPath();
+    for(let i=0;i<=40;i++){const a=i/40*TAU,w=1+wob*Math.sin(a*3+t*4)+0.02*Math.sin(a*2-t*2.3);c.lineTo(Math.cos(a)*rad*w,Math.sin(a)*rad*w);}
+    c.closePath();c.fillStyle=fill;c.fill();c.lineWidth=1.4/Math.max(sx,sy);c.strokeStyle=stroke;c.stroke();c.restore();
+  }
+  function nucleus(cx,cy,rad){
+    c.fillStyle='rgba(58,160,255,.85)';c.beginPath();c.arc(cx,cy,rad*0.4,0,TAU);c.fill();
+    c.fillStyle='rgba(235,240,255,.9)';c.beginPath();c.arc(cx+rad*0.08,cy-rad*0.08,rad*0.12,0,TAU);c.fill();
+  }
+  function step(now){
+    const t=now*0.001,b=document.body.classList;
+    hov+=((b.contains('cur-hover')?1:0)-hov)*0.15;grab+=((b.contains('cur-grab')?1:0)-grab)*0.15;uv+=((b.contains('cur-uv')?1:0)-uv)*0.15;
+    const rT=(b.contains('cur-down')?8:10)+hov*10+grab*4-uv*5;r+=(rT-r)*0.2;
+    vx=(vx+(pX-x)*0.3)*0.58;vy=(vy+(pY-y)*0.3)*0.58;x+=vx;y+=vy;
+    const sp=Math.hypot(vx,vy),ang=Math.atan2(vy,vx),sx=1+Math.min(.6,sp/28),sy=1-Math.min(.25,sp/60);
+    let k=0;if(split>0){split+=0.02;k=Math.sin(Math.min(1,split)*Math.PI);if(split>=1)split=0;}
+    c.clearRect(0,0,S,S);
+    const col=grab>0.5?[255,184,41]:[183,162,255];
+    const fill='rgba(128,82,255,'+(0.2+hov*0.18-uv*0.12)+')',stroke='rgba('+col.join(',')+','+(0.95-uv*0.5)+')';
+    const ox=x-pX,oy=y-pY,C=S/2;                     // cell body lags; the canvas sits on the true pointer
+    if(k>0.02){                                        // mitosis: two daughters pull apart, then fuse back
+      const d=k*r*1.1,rr=r*(1-0.22*k);
+      [-1,1].forEach(sg=>{const dx=C+ox+Math.cos(axis)*d*sg,dy=C+oy+Math.sin(axis)*d*sg;
+        blob(dx,dy,rr,ang,sx,sy,t,0.04,fill,stroke);nucleus(dx,dy,rr);});
+    }else{blob(C+ox,C+oy,r,ang,sx,sy,t,0.03+hov*0.06,fill,stroke);nucleus(C+ox-vx*0.25,C+oy-vy*0.25,r);}
+    c.fillStyle='#fff';c.beginPath();c.arc(C,C,1.6,0,TAU);c.fill();
+    cv.style.transform='translate('+pX+'px,'+pY+'px)';
+  }
+  return {step,divide(){if(split===0){split=0.0001;axis=Math.random()*Math.PI;}}};
+})();
+(function motion(now){
+  if(document.body.classList.contains('cur-on'))CELL.step(now||performance.now());
   if(!prefersReduce && scrollY<innerHeight){                // hero name leans gently toward the pointer
     hmX+=((pX/innerWidth-0.5)-hmX)*0.06;hmY+=((pY/innerHeight-0.5)-hmY)*0.06;
     heroTitle.style.transform='translate('+(hmX*-18)+'px,'+(hmY*-10)+'px)';
@@ -949,7 +1011,7 @@ const HEART=(function(){
   let AG=[];                            // MEHP agent particles — the dosed molecule
   let condMode='control';
   let tint=[80,140,255],tintAmt=0,tintAmtTarget=0;// field fluoresces with the QD bench's emission colour
-  let ring=0,ringTarget=0;              // 0..1 the field condenses into a circular chromosome
+  let staph=0,staphTarget=0;            // 0..1 the field condenses into an S. aureus cluster
   let mx=-9999,my=-9999;                // pointer, in CSS px — cells shy away from it
   const MR=120, MR2=MR*MR;
   const COLORS=[
@@ -1093,7 +1155,7 @@ const HEART=(function(){
         fBob: Math.random()*Math.PI*2,         // vertical bob phase
         fSpin: 0.75+Math.random()*0.6,         // per-cell swirl speed
         node:(i%nodeStride===0),               // a constellation node, linked to its neighbours
-        strand:(i%2)?1:-1,                     // which strand of the chromosome ring it joins
+        coc:i%8,                               // which coccus of the S. aureus cluster it joins
         ox:0,oy:0,vx:0,vy:0,lx:0,ly:0          // pointer-push spring offset + last screen pos
       });
     }
@@ -1136,15 +1198,23 @@ const HEART=(function(){
     const y=uy*p.fR*F_RY + Math.sin(t*0.4+p.fBob)*0.02;
     return [x, y, uz];                                 // uz (-1..1) = depth toward viewer
   }
-  // the circular chromosome the field condenses into beside the genome card:
-  // a double-stranded ring, tilted and slowly turning, so it reads in 3D.
-  function ringPos(p,t){
-    const a=p.fTheta + t*0.14 + helixScroll*TAU*0.6;
-    const R=0.34 + p.strand*0.014 + (p.fR-0.56)*0.03;
-    const tilt=0.72+Math.sin(t*0.25)*0.2;
-    const x=Math.cos(a)*R + fieldOffX;
-    const y=Math.sin(a)*R*Math.cos(tilt) - 0.02;
-    return [x, y, Math.sin(a)];
+  // beside the genome card the field condenses into S. aureus itself: round cocci
+  // in a grape-like cluster (staphyle = bunch of grapes). Each coccus is a shell of
+  // cells; the whole cluster turns slowly in 3D, and scrolling adds to the turn.
+  const STAPH=(()=>{const c=[[0,0,0],[1.95,0.2,0.3],[-1.9,0.4,-0.2],[0.5,1.9,-0.3],[-0.7,-1.85,0.3],
+      [1.3,-1.5,-0.6],[-1.1,1.6,1.0],[2.9,1.9,0.2]];
+    const m=[0,1,2].map(j=>c.reduce((s,v)=>s+v[j],0)/c.length);return c.map(v=>v.map((x,j)=>x-m[j]));})();
+  const ST_R=0.1;
+  function staphRot(x,y,z,t){                                         // whole-cluster 3D turn
+    const yaw=t*0.12+helixScroll*TAU*0.5, pit=0.35+Math.sin(t*0.2)*0.1;
+    const x1=x*Math.cos(yaw)-z*Math.sin(yaw), z1=x*Math.sin(yaw)+z*Math.cos(yaw);
+    return [x1+fieldOffX, y*Math.cos(pit)-z1*Math.sin(pit)-0.02, y*Math.sin(pit)+z1*Math.cos(pit)];
+  }
+  function staphPos(p,t){
+    const k=p.coc, C=STAPH[k], br=1+0.03*Math.sin(t*1.2+k);            // each coccus breathes a little
+    const sp=Math.sin(p.fPhi), rr=(0.95+(p.fR-0.3)*0.12)*br;
+    const r=staphRot((C[0]+Math.cos(p.fTheta)*sp*rr)*ST_R,(C[1]+Math.cos(p.fPhi)*rr)*ST_R,(C[2]+Math.sin(p.fTheta)*sp*rr)*ST_R,t);
+    return [r[0], r[1], clamp01(r[2]/(ST_R*3.2)*0.5+0.5)*2-1];
   }
   // spring each cell away from the pointer; returns nothing, updates p.ox/p.oy
   function push(p,x,y){
@@ -1162,7 +1232,7 @@ const HEART=(function(){
     helixScroll += (helixScrollTarget-helixScroll)*0.08;
     mehpMorph += (mehpMorphTarget-mehpMorph)*0.06;
     tintAmt += (tintAmtTarget-tintAmt)*0.05;
-    ring += (ringTarget-ring)*0.035;
+    staph += (staphTarget-staph)*0.035;
     const t=now*0.001;
     const beat = 1 + (dev>0.8? Math.pow(Math.max(0,Math.sin(t*(condMode==='mehp'?1.7:2.6))),8)*0.05*smooth(clamp01((dev-0.8)/0.15)) : 0);
     ctx.clearRect(0,0,innerWidth,innerHeight);
@@ -1217,8 +1287,8 @@ const HEART=(function(){
           // ...then let the scattered cells settle into a slow, swirling field
           const g=smooth(clamp01((burst-0.30)/0.70));
           let fp=fieldPos(p,t);
-          if(ring>0.002){                                  // condense into the chromosome ring, staggered per cell
-            const rp=ringPos(p,t), rr=smooth(clamp01(ring*1.5-(p.twk/TAU)*0.5));
+          if(staph>0.002){                                 // condense into the S. aureus cluster, staggered per cell
+            const rp=staphPos(p,t), rr=smooth(clamp01(staph*1.5-(p.twk/TAU)*0.5));
             fp=[fp[0]+(rp[0]-fp[0])*rr, fp[1]+(rp[1]-fp[1])*rr, fp[2]+(rp[2]-fp[2])*rr];
           }
           const fx=ex+(fp[0]-ex)*g, fy=ey+(fp[1]-ey)*g;
@@ -1268,7 +1338,7 @@ const HEART=(function(){
           const b=nodeArr[j];
           const dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
           if(d2>=TH2) continue;
-          const le=(1-Math.sqrt(d2)/TH)*0.42*Math.min(a.a,b.a);
+          const le=(1-Math.sqrt(d2)/TH)*0.42*Math.min(a.a,b.a)*(1-smooth(staph)*0.85); // links quiet down while the cocci hold
           if(le<=0.008) continue;
           ctx.globalAlpha=le;
           ctx.strokeStyle='rgb(150,140,225)';
@@ -1306,6 +1376,23 @@ const HEART=(function(){
         }
       }
     }
+    // caption + faint cell walls for the S. aureus cluster
+    const capA=smooth(staph)*smooth(clamp01((burst-0.6)/0.4))*(1-helixFade);
+    if(fieldOn && capA>0.02){
+      ctx.globalCompositeOperation='source-over';ctx.lineWidth=1;
+      for(let k=0;k<STAPH.length;k++){const C=STAPH[k],br=1+0.03*Math.sin(t*1.2+k);
+        const r=staphRot(C[0]*ST_R,C[1]*ST_R,C[2]*ST_R,t),dep=clamp01(r[2]/(ST_R*3.2)*0.5+0.5);
+        ctx.globalAlpha=capA*(0.12+0.22*dep);ctx.strokeStyle='rgb(183,162,255)';
+        ctx.beginPath();ctx.arc(cx+r[0]*scale,cy+r[1]*scale,ST_R*br*scale,0,TAU);ctx.stroke();}
+      ctx.globalCompositeOperation='source-over';ctx.globalAlpha=capA*0.85;
+      ctx.fillStyle='rgb(183,162,255)';ctx.font='600 11px Inter,sans-serif';ctx.textAlign='center';
+      if('letterSpacing' in ctx)ctx.letterSpacing='2.5px';
+      const lx=cx+fieldOffX*scale, ly=cy+0.40*scale;
+      ctx.fillText('STAPHYLOCOCCUS AUREUS',lx,ly);
+      ctx.globalAlpha=capA*0.55;ctx.fillStyle='rgb(154,154,154)';ctx.font='300 12px Inter,sans-serif';
+      if('letterSpacing' in ctx)ctx.letterSpacing='0px';
+      ctx.fillText('cocci in grape-like clusters',lx,ly+18);
+    }
     ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
   }
   function draw(now){ render(now); if(!prefersReduce)requestAnimationFrame(draw); }
@@ -1316,7 +1403,7 @@ const HEART=(function(){
   function setHelixScroll(v){helixScrollTarget=clamp01(v); if(prefersReduce){helixScroll=helixScrollTarget;requestAnimationFrame(draw);} }
   function setCond(c){condMode=c; mehpMorphTarget=c==='mehp'?1:0; if(prefersReduce){mehpMorph=mehpMorphTarget;requestAnimationFrame(draw);} }
   function setTint(rgb,on){tint=rgb; tintAmtTarget=on?1:0;}
-  function setRing(v){ringTarget=clamp01(v);}
+  function setStaph(v){staphTarget=clamp01(v);}
   function pointer(x,y){mx=x;my=y;}
   // click shockwave: kick every nearby cell outward; the springs bring them home
   function shock(x,y){
@@ -1330,7 +1417,7 @@ const HEART=(function(){
   // pane may grow from 0 after init (embedded preview) — watch for it
   if(window.ResizeObserver){new ResizeObserver(()=>{ if(cv.width<2||Math.abs(cv.width/(Math.min(devicePixelRatio||1,2))-innerWidth)>2) reflow(); }).observe(document.documentElement);}
   requestAnimationFrame(draw);
-  return {setDev,setCond,setBurst,setHelixFade,setHelixScroll,setTint,setRing,pointer,shock};
+  return {setDev,setCond,setBurst,setHelixFade,setHelixScroll,setTint,setStaph,pointer,shock};
 })();
 
 /* ============================================================
@@ -1655,10 +1742,122 @@ const GENOME=(function(){
     if(inView&&!started){started=true;if(prefersReduce){T=END;LOCI.forEach(L=>L.lit=1);}else{T=0;playing=true;}}
     if(inView&&!was&&!prefersReduce)requestAnimationFrame(loop);
     if(prefersReduce)render();
-    HEART.setRing(inView?1:0);}),{threshold:.35}).observe(lab);
+    HEART.setStaph(inView?1:0);}),{threshold:.35}).observe(lab);
   addEventListener('resize',()=>{layout();render();});
   build();layout();render();
   return {layout};
+})();
+
+/* ============================================================
+   TOOLKIT — each skill card has a live bench scene in its header:
+   a culture dish of dividing cells, an agarose gel running, and a
+   sequence alignment scanning for hits. Hovering a card speeds it
+   up; cards tilt toward the pointer; techniques scroll in a marquee.
+   ============================================================ */
+(function(){
+  const TAU=Math.PI*2,sm=u=>u<=0?0:u>=1?1:u*u*(3-2*u);
+  const track=document.getElementById('kTrack');
+  if(track){
+    const items=['mESC culture','PCR','WGS analysis','Embryoid bodies','Gel electrophoresis','AMR profiling',
+      'Differentiation assays','Immunofluorescence','Genome annotation','Microbial staining','UV-Vis spectroscopy','BLAST','Fiji'];
+    const html=items.map(t=>'<span>'+t+'</span><i>✦</i>').join('');track.innerHTML=html+html;
+  }
+  const scenes=[];
+  document.querySelectorAll('.skill').forEach(card=>{
+    const cv=card.querySelector('canvas');if(!cv)return;
+    const sc={card,cv,ctx:cv.getContext('2d'),kind:cv.dataset.viz,boost:0,boostT:0,on:false,W:0,H:0,st:null,last:0};
+    card.addEventListener('pointerenter',()=>sc.boostT=1);
+    card.addEventListener('pointerleave',()=>{sc.boostT=0;card.style.transform='';});
+    if(finePointer&&!prefersReduce)card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width-0.5,py=(e.clientY-r.top)/r.height-0.5;
+      card.style.transform='rotateX('+(-py*7)+'deg) rotateY('+(px*9)+'deg) translateZ(0)';});
+    scenes.push(sc);
+  });
+  function size(sc){const w=sc.cv.clientWidth,h=sc.cv.clientHeight;if(w<2)return false;const d=Math.min(devicePixelRatio||1,2);
+    if(sc.W!==w||sc.H!==h){sc.W=w;sc.H=h;sc.cv.width=w*d;sc.cv.height=h*d;sc.ctx.setTransform(d,0,0,d,0,0);sc.st=null;}return true;}
+
+  /* 01 · culture dish — cells divide until confluent, then the dish is passaged */
+  function dish(sc,dt,t){
+    const c=sc.ctx,W=sc.W,H=sc.H,cx=W/2,cy=H/2,R=Math.min(W,H)*0.42;
+    if(!sc.st){sc.st={cells:[],fade:1};for(let i=0;i<5;i++)sc.st.cells.push(newCell(cx+(Math.random()-.5)*R,cy+(Math.random()-.5)*R*.8));}
+    function newCell(x,y){return {x,y,vx:0,vy:0,r:4.2+Math.random()*1.2,age:Math.random()*2,div:1.8+Math.random()*2.2,a:Math.random()*TAU};}
+    const S=sc.st,sp=1+sc.boost*3;
+    if(S.cells.length<130){for(const k of S.cells.slice()){k.age+=dt*sp;if(k.age>k.div){k.age=0;k.div=1.8+Math.random()*2.2;
+      const a=Math.random()*TAU,n=newCell(k.x+Math.cos(a)*k.r,k.y+Math.sin(a)*k.r);n.a=a;k.a=a;S.cells.push(n);}}}
+    else{S.fade-=dt*0.6;if(S.fade<=0){sc.st=null;return;}}                            // confluent → passage
+    for(let i=0;i<S.cells.length;i++){const a=S.cells[i];                              // gentle crowding
+      for(let j=i+1;j<S.cells.length;j++){const b=S.cells[j],dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy,m=a.r+b.r;
+        if(d2<m*m&&d2>0.01){const d=Math.sqrt(d2),f=(m-d)/d*0.08;a.vx+=dx*f;a.vy+=dy*f;b.vx-=dx*f;b.vy-=dy*f;}}
+      a.vx+=(Math.random()-.5)*0.06;a.vy+=(Math.random()-.5)*0.06;a.vx*=0.8;a.vy*=0.8;a.x+=a.vx;a.y+=a.vy;
+      const dx=a.x-cx,dy=(a.y-cy)/0.82,d=Math.hypot(dx,dy);if(d>R-a.r-4){a.x=cx+dx/d*(R-a.r-4);a.y=cy+dy/d*(R-a.r-4)*0.82;}}
+    c.clearRect(0,0,W,H);
+    c.strokeStyle='rgba(255,255,255,.14)';c.lineWidth=1.5;c.beginPath();c.ellipse(cx,cy,R,R*0.82,0,0,TAU);c.stroke();
+    c.strokeStyle='rgba(255,255,255,.06)';c.lineWidth=5;c.beginPath();c.ellipse(cx,cy,R-6,R*0.82-6,0,Math.PI*1.1,Math.PI*1.45);c.stroke();
+    c.globalAlpha=S.fade;
+    for(const k of S.cells){const g=sm(Math.min(1,k.age/0.4));                      // freshly divided cells swell in
+      c.fillStyle='rgba(128,82,255,.28)';c.strokeStyle='rgba(183,162,255,.7)';c.lineWidth=1;
+      c.beginPath();c.ellipse(k.x,k.y,k.r*(0.7+0.3*g)*1.25,k.r*(0.7+0.3*g),k.a,0,TAU);c.fill();c.stroke();
+      c.fillStyle='rgba(58,160,255,.9)';c.beginPath();c.arc(k.x,k.y,k.r*0.38,0,TAU);c.fill();}
+    c.globalAlpha=1;
+    c.fillStyle='#6f6f7a';c.font='500 10px Inter,sans-serif';c.textAlign='right';
+    c.fillText(Math.min(100,Math.round(S.cells.length/130*100))+'% confluent',W-12,H-11);
+  }
+
+  /* 02 · agarose gel — samples run from the wells; small fragments travel furthest */
+  function gel(sc,dt,t){
+    const c=sc.ctx,W=sc.W,H=sc.H,lanes=6,top=26,bot=H-26,lw=Math.min(34,(W-40)/lanes*0.62),gap=(W-40)/lanes;
+    if(!sc.st){const L=[];for(let i=0;i<lanes;i++){const bands=i===0?[0.12,0.22,0.33,0.45,0.58,0.72,0.86]:
+        Array.from({length:1+(Math.random()*3|0)},()=>0.2+Math.random()*0.7);L.push(bands);}sc.st={L,run:0,hold:0,fade:1};}
+    const S=sc.st;
+    if(S.run<1)S.run=Math.min(1,S.run+dt*0.22*(1+sc.boost*2.5));
+    else{S.hold+=dt*(1+sc.boost);if(S.hold>2.2){S.fade-=dt*1.2;if(S.fade<=0){sc.st=null;return;}}}
+    c.clearRect(0,0,W,H);
+    c.fillStyle='rgba(255,184,41,.035)';c.fillRect(14,top-10,W-28,bot-top+20);
+    c.fillStyle='#6f6f7a';c.font='600 11px Inter,sans-serif';c.textAlign='left';c.fillText('−',6,top-2);c.fillText('+',6,bot+6);
+    const p=sm(S.run);
+    for(let i=0;i<lanes;i++){const x=20+gap*(i+0.5)-lw/2;
+      c.fillStyle='#16161c';c.fillRect(x,top-6,lw,5);                                // well
+      c.globalAlpha=S.fade;
+      for(const b of S.L[i]){const y=top+(bot-top)*b*p, pulse=0.8+0.2*Math.sin(t*2+i+b*9);
+        c.save();c.shadowColor='rgba(255,170,60,.9)';c.shadowBlur=10;
+        c.fillStyle='rgba(255,'+(i===0?200:176)+','+(i===0?110:60)+','+(0.85*pulse)+')';
+        c.fillRect(x,y,lw,i===0?2.2:3.2);c.restore();}
+      c.fillStyle='rgba(120,90,255,.35)';c.fillRect(x,top+(bot-top)*Math.min(1,p*1.04),lw,2);  // dye front
+      c.globalAlpha=1;}
+    c.fillStyle='#6f6f7a';c.font='500 10px Inter,sans-serif';c.textAlign='right';c.fillText('L = ladder',W-12,H-11);
+    c.textAlign='center';c.fillText('L',20+gap*0.5,top-10);
+  }
+
+  /* 03 · sequence alignment — bases scroll past; a window scans for a matching hit */
+  const BC={A:'31,190,159',T:'255,93,176',G:'255,184,41',C:'58,160,255'},B='ATGC';
+  function seq(sc,dt,t){
+    const c=sc.ctx,W=sc.W,H=sc.H,cw=11,rh=18,cols=Math.floor((W-24)/cw),rows=Math.ceil(H/rh)+2;
+    if(!sc.st){sc.st={rows:[],off:0,scan:0,hitRow:3};for(let r=0;r<rows;r++)sc.st.rows.push(Array.from({length:cols},()=>B[Math.random()*4|0]));}
+    const S=sc.st;S.off+=dt*14*(1+sc.boost*3);
+    while(S.off>=rh){S.off-=rh;S.rows.shift();S.rows.push(Array.from({length:cols},()=>B[Math.random()*4|0]));}
+    S.scan+=dt*(0.35+sc.boost*0.6);if(S.scan>1){S.scan=0;S.hitRow=2+(Math.random()*3|0);}
+    const win=8,ws=Math.floor(S.scan*(cols-win)),hr=S.hitRow;
+    for(let k=0;k<win;k++)S.rows[hr+1][ws+k]=S.rows[hr][ws+k];                           // the hit: subject matches query
+    c.clearRect(0,0,W,H);c.font='500 12px ui-monospace,Menlo,Consolas,monospace';c.textAlign='center';c.textBaseline='middle';
+    const y0=-S.off+rh/2;
+    c.fillStyle='rgba(128,82,255,.16)';c.strokeStyle='rgba(128,82,255,.7)';c.lineWidth=1;
+    const bx=12+ws*cw-2,by=y0+hr*rh-rh/2+1;c.beginPath();c.roundRect?c.roundRect(bx,by,win*cw+4,rh*2-2,5):c.rect(bx,by,win*cw+4,rh*2-2);c.fill();c.stroke();
+    for(let r=0;r<S.rows.length;r++){const y=y0+r*rh;if(y<-rh||y>H+rh)continue;
+      for(let k=0;k<cols;k++){const ch=S.rows[r][k],hit=(r===hr||r===hr+1)&&k>=ws&&k<ws+win;
+        c.fillStyle='rgba('+BC[ch]+','+(hit?1:0.28)+')';c.fillText(ch,12+k*cw+cw/2,y);}}
+    c.fillStyle='#6f6f7a';c.font='500 10px Inter,sans-serif';c.textAlign='right';c.textBaseline='alphabetic';
+    c.fillText('hit · '+win+'/'+win+' identity',W-12,H-11);
+  }
+  const R={dish,gel,seq};
+  function loop(now){let any=false;
+    for(const sc of scenes){if(!sc.on)continue;any=true;if(!size(sc))continue;
+      const dt=Math.min(0.05,(now-(sc.last||now))/1000);sc.last=now;sc.boost+=(sc.boostT-sc.boost)*0.08;R[sc.kind](sc,dt,now/1000);}
+    if(any&&!prefersReduce)requestAnimationFrame(loop);else running=false;}
+  let running=false;
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{const sc=scenes.find(s=>s.card===e.target);if(!sc)return;sc.on=e.isIntersecting;sc.last=0;});
+    if(prefersReduce){scenes.forEach(sc=>{if(size(sc))for(let i=0;i<200;i++)R[sc.kind](sc,0.05,i*0.05);});return;}
+    if(!running&&scenes.some(s=>s.on)){running=true;requestAnimationFrame(loop);}},{threshold:.15});
+  scenes.forEach(sc=>io.observe(sc.card));
 })();
 
 /* ============================================================
