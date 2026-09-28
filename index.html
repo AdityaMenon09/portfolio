@@ -1011,7 +1011,7 @@ const HEART=(function(){
   let AG=[];                            // MEHP agent particles — the dosed molecule
   let condMode='control';
   let tint=[80,140,255],tintAmt=0,tintAmtTarget=0;// field fluoresces with the QD bench's emission colour
-  let staph=0,staphTarget=0;            // 0..1 the field condenses into an S. aureus cluster
+  let phage=0,phageTarget=0,phT=0,phLast=0;// 0..1 the field acts out phage infection; phT = story clock (s)
   let mx=-9999,my=-9999;                // pointer, in CSS px — cells shy away from it
   const MR=120, MR2=MR*MR;
   const COLORS=[
@@ -1155,7 +1155,8 @@ const HEART=(function(){
         fBob: Math.random()*Math.PI*2,         // vertical bob phase
         fSpin: 0.75+Math.random()*0.6,         // per-cell swirl speed
         node:(i%nodeStride===0),               // a constellation node, linked to its neighbours
-        coc:i%8,                               // which coccus of the S. aureus cluster it joins
+        role:(r=>r<0.42?'wall':r<0.62?'chrom':r<0.76?'capsid':r<0.84?'tail':'dna')(Math.random()), // part in the phage story
+        q:Math.random(),                       // its position along that part
         ox:0,oy:0,vx:0,vy:0,lx:0,ly:0          // pointer-push spring offset + last screen pos
       });
     }
@@ -1198,23 +1199,64 @@ const HEART=(function(){
     const y=uy*p.fR*F_RY + Math.sin(t*0.4+p.fBob)*0.02;
     return [x, y, uz];                                 // uz (-1..1) = depth toward viewer
   }
-  // beside the genome card the field condenses into S. aureus itself: round cocci
-  // in a grape-like cluster (staphyle = bunch of grapes). Each coccus is a shell of
-  // cells; the whole cluster turns slowly in 3D, and scrolling adds to the turn.
-  const STAPH=(()=>{const c=[[0,0,0],[1.95,0.2,0.3],[-1.9,0.4,-0.2],[0.5,1.9,-0.3],[-0.7,-1.85,0.3],
-      [1.3,-1.5,-0.6],[-1.1,1.6,1.0],[2.9,1.9,0.2]];
-    const m=[0,1,2].map(j=>c.reduce((s,v)=>s+v[j],0)/c.length);return c.map(v=>v.map((x,j)=>x-m[j]));})();
-  const ST_R=0.1;
-  function staphRot(x,y,z,t){                                         // whole-cluster 3D turn
-    const yaw=t*0.12+helixScroll*TAU*0.5, pit=0.35+Math.sin(t*0.2)*0.1;
-    const x1=x*Math.cos(yaw)-z*Math.sin(yaw), z1=x*Math.sin(yaw)+z*Math.cos(yaw);
-    return [x1+fieldOffX, y*Math.cos(pit)-z1*Math.sin(pit)-0.02, y*Math.sin(pit)+z1*Math.cos(pit)];
+  // beside the genome card the field acts out the JRF project: a PVL-carrying
+  // phage lands on an S. aureus cell, contracts its tail, injects its genome,
+  // and that genome splices into the host chromosome as a prophage. Each cell
+  // has a fixed part to play (p.role): cell wall, chromosome, capsid, tail, or
+  // phage DNA. Timeline T (s): 0-3 approach, 3-4 attach + contract,
+  // 4-8 inject + circularise, 8-10.5 integrate, 11.5+ the empty phage drifts off.
+  const PH={C:[0,0.07],Rb:0.2,th:-0.8,Rc:0.056,Lt:0.085,gap:0.5};
+  const PH_COL={wall:[175,170,215],chrom:[31,190,159],capsid:[255,184,41],tail:[235,150,40],dna:[165,120,255]};
+  const PH_FIB=[-0.055,-0.028,0.028,0.055];
+  let G=null;                                        // this frame's phage geometry
+  function phageGeo(T){
+    const th=PH.th,n=[Math.cos(th),Math.sin(th)],tg=[-n[1],n[0]];
+    const c0=[fieldOffX+PH.C[0],PH.C[1]],Wp=[c0[0]+n[0]*PH.Rb,c0[1]+n[1]*PH.Rb];
+    const off=1-smooth(clamp01(T/3)), leave=smooth(clamp01((T-11.5)/3));
+    const con=smooth(clamp01((T-3.1)/0.7))*(1-leave);
+    const dx=n[0]*(0.38*off+0.3*leave)+tg[0]*(0.14*off-0.08*leave), dy=n[1]*(0.38*off+0.3*leave)+tg[1]*(0.14*off-0.08*leave);
+    const wob=Math.sin(T*2.1)*0.35*off+leave*0.6, a=th+wob, ax=[Math.cos(a),Math.sin(a)], at=[-ax[1],ax[0]];
+    const Lt=PH.Lt*(1-0.4*con);
+    const tip=[Wp[0]+n[0]*0.012+dx,Wp[1]+n[1]*0.012+dy], top=[tip[0]+ax[0]*Lt,tip[1]+ax[1]*Lt];
+    const cap=[top[0]+ax[0]*PH.Rc*0.92,top[1]+ax[1]*PH.Rc*0.92];
+    return {T,n,tg,c0,Wp,tip,top,cap,ax,at,con,leave,open:smooth(clamp01((T-8)/1.2))};
   }
-  function staphPos(p,t){
-    const k=p.coc, C=STAPH[k], br=1+0.03*Math.sin(t*1.2+k);            // each coccus breathes a little
-    const sp=Math.sin(p.fPhi), rr=(0.95+(p.fR-0.3)*0.12)*br;
-    const r=staphRot((C[0]+Math.cos(p.fTheta)*sp*rr)*ST_R,(C[1]+Math.cos(p.fPhi)*rr)*ST_R,(C[2]+Math.sin(p.fTheta)*sp*rr)*ST_R,t);
-    return [r[0], r[1], clamp01(r[2]/(ST_R*3.2)*0.5+0.5)*2-1];
+  const lerp2=(A,B,u)=>[A[0]+(B[0]-A[0])*u,A[1]+(B[1]-A[1])*u];
+  function chromR(a){return 0.1*(1+0.12*Math.sin(3*a+0.7)+0.05*Math.sin(7*a));}
+  function chromAt(a,G){                              // host chromosome, a wobbly nucleoid loop that opens a gap
+    const d=((a-PH.th)%TAU+TAU*1.5)%TAU-Math.PI, w=PH.gap*G.open;
+    const aa=PH.th+Math.sign(d)*(w+Math.abs(d)*(1-w/Math.PI)), r=chromR(aa);
+    return [G.c0[0]+Math.cos(aa)*r,G.c0[1]+Math.sin(aa)*r];
+  }
+  function hexPt(s,G){const k=Math.floor(s*6),f=s*6-k,R=PH.Rc;
+    const v=j=>{const q=j*TAU/6;return [G.cap[0]+R*(Math.cos(q)*G.ax[0]+Math.sin(q)*G.at[0]),G.cap[1]+R*(Math.cos(q)*G.ax[1]+Math.sin(q)*G.at[1])];};
+    return lerp2(v(k),v(k+1),f);}
+  function fiberPt(s,G){const fi=Math.min(3,Math.floor(s*4)),u=s*4-fi,sp=PH_FIB[fi];
+    const joint=[G.tip[0]+G.at[0]*sp*0.6+G.ax[0]*0.014,G.tip[1]+G.at[1]*sp*0.6+G.ax[1]*0.014];
+    const end=[G.tip[0]+G.at[0]*sp-G.ax[0]*0.016,G.tip[1]+G.at[1]*sp-G.ax[1]*0.016];
+    return u<0.5?lerp2(G.tip,joint,u*2):lerp2(joint,end,(u-0.5)*2);}
+  // returns [x, y, depth(-1..1), alphaMul, colour]
+  function phagePos(p){
+    const T=G.T,j=(p.fR-0.56)*0.9;
+    if(p.role==='wall'){const r=PH.Rb*(p.q<0.4?0.92:1)+j*0.006,a=p.fTheta;
+      return [G.c0[0]+Math.cos(a)*r,G.c0[1]+Math.sin(a)*r,0.5,1,PH_COL.wall];}
+    if(p.role==='chrom'){const c=chromAt(p.fTheta,G);return [c[0]+j*0.005,c[1]+j*0.004,0.4,1,PH_COL.chrom];}
+    const fade=1-G.leave;
+    if(p.role==='capsid'){const h=hexPt(p.q,G);return [h[0]+j*0.003,h[1]+j*0.003,0.9,fade,PH_COL.capsid];}
+    if(p.role==='tail'){
+      if(p.q<0.6){const u=p.q/0.6,b=lerp2(G.tip,G.top,u),w=j*0.008;return [b[0]+G.at[0]*w,b[1]+G.at[1]*w,0.9,fade,PH_COL.tail];}
+      const f=fiberPt((p.q-0.6)/0.4,G);return [f[0],f[1],0.9,fade,PH_COL.tail];}
+    // phage DNA: packed in the head, down the tail, a loop inside the cell, then spliced into the chromosome
+    const rr=Math.sqrt(clamp01((p.fR-0.3)/0.52))*0.62*PH.Rc,packed=[G.cap[0]+Math.cos(p.fTheta)*rr,G.cap[1]+Math.sin(p.fTheta)*rr];
+    const u=clamp01((T-4-p.q*2.6)/0.9),ins=smooth(clamp01((T-8-p.q*0.9)/1.4));
+    const lc=[G.Wp[0]-G.n[0]*0.075,G.Wp[1]-G.n[1]*0.075],la=p.q*TAU+T*0.6,loop=[lc[0]+Math.cos(la)*0.028,lc[1]+Math.sin(la)*0.028];
+    let q;
+    if(u<0.35)q=lerp2(packed,G.top,smooth(u/0.35));
+    else if(u<0.6)q=lerp2(G.top,G.tip,(u-0.35)/0.25);
+    else q=lerp2(G.tip,loop,smooth((u-0.6)/0.4));
+    if(ins>0){const aa=PH.th+(p.q-0.5)*2*PH.gap*0.92,r=chromR(aa);
+      q=lerp2(q,[G.c0[0]+Math.cos(aa)*r,G.c0[1]+Math.sin(aa)*r],ins);}
+    return [q[0]+j*0.007*G.at[0],q[1]+j*0.007*G.at[1],1,1,PH_COL.dna];
   }
   // spring each cell away from the pointer; returns nothing, updates p.ox/p.oy
   function push(p,x,y){
@@ -1232,8 +1274,12 @@ const HEART=(function(){
     helixScroll += (helixScrollTarget-helixScroll)*0.08;
     mehpMorph += (mehpMorphTarget-mehpMorph)*0.06;
     tintAmt += (tintAmtTarget-tintAmt)*0.05;
-    staph += (staphTarget-staph)*0.035;
+    phage += (phageTarget-phage)*0.035;
     const t=now*0.001;
+    const pdt=Math.min(0.05,(now-(phLast||now))/1000);phLast=now;
+    if(phageTarget>0.5)phT+=pdt; else if(phage<0.01)phT=0;
+    if(prefersReduce&&phageTarget>0.5)phT=11;
+    G=phage>0.002?phageGeo(phT):null;
     const beat = 1 + (dev>0.8? Math.pow(Math.max(0,Math.sin(t*(condMode==='mehp'?1.7:2.6))),8)*0.05*smooth(clamp01((dev-0.8)/0.15)) : 0);
     ctx.clearRect(0,0,innerWidth,innerHeight);
     ctx.globalCompositeOperation='lighter';
@@ -1287,14 +1333,16 @@ const HEART=(function(){
           // ...then let the scattered cells settle into a slow, swirling field
           const g=smooth(clamp01((burst-0.30)/0.70));
           let fp=fieldPos(p,t);
-          if(staph>0.002){                                 // condense into the S. aureus cluster, staggered per cell
-            const rp=staphPos(p,t), rr=smooth(clamp01(staph*1.5-(p.twk/TAU)*0.5));
+          let pm=1;
+          if(G){                                           // take up a part in the phage story, staggered per cell
+            const rp=phagePos(p), rr=smooth(clamp01(phage*1.5-(p.twk/TAU)*0.5));
             fp=[fp[0]+(rp[0]-fp[0])*rr, fp[1]+(rp[1]-fp[1])*rr, fp[2]+(rp[2]-fp[2])*rr];
+            pm=1+(rp[3]-1)*rr; const c=rp[4]; col=[col[0]+(c[0]-col[0])*rr, col[1]+(c[1]-col[1])*rr, col[2]+(c[2]-col[2])*rr];
           }
           const fx=ex+(fp[0]-ex)*g, fy=ey+(fp[1]-ey)*g;
           const depth=fp[2]*0.5+0.5;                       // 0 (back) .. 1 (front)
           let a=0.72*((1-be)*(1-g) + (0.26+0.62*depth)*g); // dim while scattering, depth-shade in the field
-          a*=(1-helixFade)*(1-damage);                     // fade out before the Toolkit
+          a*=(1-helixFade)*(1-damage)*pm;                  // fade out before the Toolkit
           if(tintAmt>0.002){                               // fluoresce with the QD bench's emission
             const m=tintAmt*0.85; col=[col[0]+(tint[0]-col[0])*m, col[1]+(tint[1]-col[1])*m, col[2]+(tint[2]-col[2])*m];
             a=Math.min(1,a*(1+tintAmt*0.5));
@@ -1338,7 +1386,7 @@ const HEART=(function(){
           const b=nodeArr[j];
           const dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
           if(d2>=TH2) continue;
-          const le=(1-Math.sqrt(d2)/TH)*0.42*Math.min(a.a,b.a)*(1-smooth(staph)*0.85); // links quiet down while the cocci hold
+          const le=(1-Math.sqrt(d2)/TH)*0.42*Math.min(a.a,b.a)*(1-smooth(phage)*0.9);  // links quiet down during the phage story
           if(le<=0.008) continue;
           ctx.globalAlpha=le;
           ctx.strokeStyle='rgb(150,140,225)';
@@ -1376,22 +1424,37 @@ const HEART=(function(){
         }
       }
     }
-    // caption + faint cell walls for the S. aureus cluster
-    const capA=smooth(staph)*smooth(clamp01((burst-0.6)/0.4))*(1-helixFade);
+    // faint vector outlines so the cell and phage read clearly, plus a caption per stage
+    const capA=G?smooth(phage)*smooth(clamp01((burst-0.6)/0.4))*(1-helixFade):0;
     if(fieldOn && capA>0.02){
+      const X=v=>cx+v[0]*scale,Y=v=>cy+v[1]*scale;
       ctx.globalCompositeOperation='source-over';ctx.lineWidth=1;
-      for(let k=0;k<STAPH.length;k++){const C=STAPH[k],br=1+0.03*Math.sin(t*1.2+k);
-        const r=staphRot(C[0]*ST_R,C[1]*ST_R,C[2]*ST_R,t),dep=clamp01(r[2]/(ST_R*3.2)*0.5+0.5);
-        ctx.globalAlpha=capA*(0.12+0.22*dep);ctx.strokeStyle='rgb(183,162,255)';
-        ctx.beginPath();ctx.arc(cx+r[0]*scale,cy+r[1]*scale,ST_R*br*scale,0,TAU);ctx.stroke();}
-      ctx.globalCompositeOperation='source-over';ctx.globalAlpha=capA*0.85;
-      ctx.fillStyle='rgb(183,162,255)';ctx.font='600 11px Inter,sans-serif';ctx.textAlign='center';
+      ctx.globalAlpha=capA*0.28;ctx.strokeStyle='rgb(175,170,215)';
+      ctx.beginPath();ctx.arc(X(G.c0),Y(G.c0),PH.Rb*scale,0,TAU);ctx.stroke();
+      ctx.beginPath();ctx.arc(X(G.c0),Y(G.c0),PH.Rb*0.92*scale,0,TAU);ctx.stroke();
+      const pf=capA*(1-G.leave);
+      if(pf>0.02){ctx.globalAlpha=pf*0.4;ctx.strokeStyle='rgb(255,184,41)';ctx.beginPath();
+        for(let k=0;k<=6;k++){const h=hexPt((k%6)/6,G);k?ctx.lineTo(X(h),Y(h)):ctx.moveTo(X(h),Y(h));}ctx.stroke();
+        ctx.beginPath();ctx.moveTo(X(G.tip),Y(G.tip));ctx.lineTo(X(G.top),Y(G.top));ctx.stroke();}
+      const ig=smooth(clamp01((G.T-8.6)/1.8));          // the integrated prophage, marked on the chromosome
+      if(ig>0.01){
+        ctx.globalAlpha=capA*ig*0.55;ctx.strokeStyle='rgb(165,120,255)';ctx.lineWidth=3.5;ctx.lineCap='round';ctx.beginPath();
+        for(let i=0;i<=24;i++){const aa=PH.th+(i/24-0.5)*2*PH.gap*0.92,r=chromR(aa),px=cx+(G.c0[0]+Math.cos(aa)*r)*scale,py=cy+(G.c0[1]+Math.sin(aa)*r)*scale;
+          i?ctx.lineTo(px,py):ctx.moveTo(px,py);}
+        ctx.stroke();ctx.lineWidth=1;
+        const lr=chromR(PH.th)+0.042;ctx.globalAlpha=capA*ig*0.9;ctx.fillStyle='rgb(185,150,255)';ctx.font='600 10px Inter,sans-serif';ctx.textAlign='center';
+        if('letterSpacing' in ctx)ctx.letterSpacing='1.5px';
+        ctx.fillText('PROPHAGE',cx+(G.c0[0]+Math.cos(PH.th)*lr)*scale,cy+(G.c0[1]+Math.sin(PH.th)*lr)*scale);
+      }
+      const T=G.T,stage=T<3?'A phage approaches the cell':T<4.2?'Tail fibres attach \u00b7 the tail contracts':T<8?'Injecting its genome':
+        T<10.6?'Splicing into the host chromosome':'Integrated as a prophage \u2014 carried in the host genome';
+      ctx.globalAlpha=capA*0.85;ctx.fillStyle='rgb(183,162,255)';ctx.font='600 11px Inter,sans-serif';ctx.textAlign='center';
       if('letterSpacing' in ctx)ctx.letterSpacing='2.5px';
-      const lx=cx+fieldOffX*scale, ly=cy+0.40*scale;
-      ctx.fillText('STAPHYLOCOCCUS AUREUS',lx,ly);
-      ctx.globalAlpha=capA*0.55;ctx.fillStyle='rgb(154,154,154)';ctx.font='300 12px Inter,sans-serif';
+      const lx=X(G.c0), ly=Y(G.c0)+(PH.Rb+0.075)*scale;
+      ctx.fillText('PVL PHAGE \u2192 S. AUREUS',lx,ly);
+      ctx.globalAlpha=capA*0.6;ctx.fillStyle='rgb(154,154,154)';ctx.font='300 12px Inter,sans-serif';
       if('letterSpacing' in ctx)ctx.letterSpacing='0px';
-      ctx.fillText('cocci in grape-like clusters',lx,ly+18);
+      ctx.fillText(stage,lx,ly+18);
     }
     ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
   }
@@ -1403,7 +1466,8 @@ const HEART=(function(){
   function setHelixScroll(v){helixScrollTarget=clamp01(v); if(prefersReduce){helixScroll=helixScrollTarget;requestAnimationFrame(draw);} }
   function setCond(c){condMode=c; mehpMorphTarget=c==='mehp'?1:0; if(prefersReduce){mehpMorph=mehpMorphTarget;requestAnimationFrame(draw);} }
   function setTint(rgb,on){tint=rgb; tintAmtTarget=on?1:0;}
-  function setStaph(v){staphTarget=clamp01(v);}
+  function setPhage(v){v=clamp01(v); if(v>0.5&&phageTarget<0.5&&phage<0.05)phT=0; phageTarget=v;}
+  function replayPhage(){phT=0;}
   function pointer(x,y){mx=x;my=y;}
   // click shockwave: kick every nearby cell outward; the springs bring them home
   function shock(x,y){
@@ -1417,7 +1481,7 @@ const HEART=(function(){
   // pane may grow from 0 after init (embedded preview) — watch for it
   if(window.ResizeObserver){new ResizeObserver(()=>{ if(cv.width<2||Math.abs(cv.width/(Math.min(devicePixelRatio||1,2))-innerWidth)>2) reflow(); }).observe(document.documentElement);}
   requestAnimationFrame(draw);
-  return {setDev,setCond,setBurst,setHelixFade,setHelixScroll,setTint,setStaph,pointer,shock};
+  return {setDev,setCond,setBurst,setHelixFade,setHelixScroll,setTint,setPhage,replayPhage,pointer,shock};
 })();
 
 /* ============================================================
@@ -1718,7 +1782,7 @@ const GENOME=(function(){
   const stepBtns=STEPS.map(([n,a0],i)=>{const b=document.createElement('button');b.className='gn-step';
     b.innerHTML='<span>'+(i+1)+' · '+n+'</span>';b.addEventListener('click',()=>{T=a0;playing=true;if(prefersReduce){T=STEPS[i][2];render();}});
     stepsEl.appendChild(b);return b;});
-  document.getElementById('gnReplay').addEventListener('click',()=>{T=0;playing=true;LOCI.forEach(L=>L.lit=prefersReduce?1:0);if(prefersReduce){T=END;render();}});
+  document.getElementById('gnReplay').addEventListener('click',()=>{HEART.replayPhage();T=0;playing=true;LOCI.forEach(L=>L.lit=prefersReduce?1:0);if(prefersReduce){T=END;render();}});
   // drag to spin (with inertia) + hover hit-testing
   const pol=e=>{const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;return {x,y,a:Math.atan2(y-cy,x-cx),d:Math.hypot(x-cx,y-cy)};};
   cv.addEventListener('pointerdown',e=>{const p=pol(e);if(p.d<R*0.35)return;drag={a:p.a,t:performance.now()};cv.setPointerCapture(e.pointerId);});
@@ -1742,7 +1806,7 @@ const GENOME=(function(){
     if(inView&&!started){started=true;if(prefersReduce){T=END;LOCI.forEach(L=>L.lit=1);}else{T=0;playing=true;}}
     if(inView&&!was&&!prefersReduce)requestAnimationFrame(loop);
     if(prefersReduce)render();
-    HEART.setStaph(inView?1:0);}),{threshold:.35}).observe(lab);
+    HEART.setPhage(inView?1:0);}),{threshold:.35}).observe(lab);
   addEventListener('resize',()=>{layout();render();});
   build();layout();render();
   return {layout};
