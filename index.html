@@ -220,25 +220,10 @@ h2.title{font-size:clamp(2.6rem,6.5vw,5rem);line-height:1.02;letter-spacing:-.04
 .skill li:hover::before{transform:scale(1.8);box-shadow:0 0 10px var(--iris)}
 .skill[data-k="mol"] li::before{background:var(--saffron)}.skill[data-k="mol"] li:hover::before{box-shadow:0 0 10px var(--saffron)}
 .skill[data-k="bio"] li::before{background:#1fbe9f}.skill[data-k="bio"] li:hover::before{box-shadow:0 0 10px #1fbe9f}
-/* marquee of techniques */
-.kmarq{margin-top:clamp(40px,6vw,70px);overflow:hidden;border-top:1px solid #16161a;border-bottom:1px solid #16161a;padding:22px 0;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
-.kmarq .trk{display:flex;width:max-content;animation:marq 38s linear infinite}
-.kmarq:hover .trk{animation-play-state:paused}
-.kmarq span{font-size:clamp(1.6rem,3.6vw,2.8rem);letter-spacing:-.03em;white-space:nowrap;padding:0 .5em;color:transparent;
-  -webkit-text-stroke:1px #3a3a44;transition:color .3s,-webkit-text-stroke-color .3s}
-.kmarq span:nth-child(3n+2){color:var(--bone);-webkit-text-stroke:0}
-.kmarq span:hover{color:var(--iris);-webkit-text-stroke-color:var(--iris)}
-.kmarq i{font-style:normal;color:var(--iris);font-size:clamp(1rem,2vw,1.4rem);align-self:center}
-@keyframes marq{to{transform:translateX(-50%)}}
 
 /* ---------- more (tabs) ---------- */
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:38px}
-.tab{padding:9px 18px;border-radius:999px;border:1px solid #232323;background:transparent;color:var(--ash);font-family:var(--font);font-weight:500;font-size:13px;letter-spacing:.03em;cursor:pointer;transition:.25s}
-.tab.active{background:var(--iris);color:#fff;border-color:transparent}
-.tab:hover:not(.active){color:var(--bone);border-color:var(--iris)}
 .tab-panel{display:none}
-.tab-panel.active{display:block;animation:fade .5s}
+.tab-panel.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .list-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px) clamp(30px,5vw,70px)}
 .list-item{padding-bottom:18px;border-bottom:1px solid #161616}
@@ -251,8 +236,17 @@ h2.title{font-size:clamp(2.6rem,6.5vw,5rem);line-height:1.02;letter-spacing:-.04
 .contact .big .hl{color:var(--iris)}
 .contact p{color:var(--silver);font-weight:200;font-size:clamp(1.05rem,1.8vw,1.3rem);max-width:52ch;margin-bottom:40px;line-height:1.55}
 .contact-links{display:flex;gap:24px;flex-wrap:wrap;align-items:center}
-.ref{margin-top:70px;padding-top:30px;border-top:1px solid #1c1c1c;color:var(--ash);font-size:14px;font-weight:200;max-width:70ch;line-height:1.6}
+.ref{margin-top:70px;padding-top:30px;border-top:1px solid #1c1c1c;color:var(--ash);font-size:14px;font-weight:200;line-height:1.6}
 .ref b{color:var(--bone);font-weight:400}
+.ref-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:18px}
+.ref-h span{font-size:13px;color:#6f6f7a}
+.ref-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.ref-card{border:1px solid #1d1d23;border-radius:14px;padding:16px 18px;background:rgba(8,8,12,.5);transition:border-color .3s,transform .4s cubic-bezier(.2,.8,.2,1)}
+.ref-card:hover{border-color:rgba(128,82,255,.55);transform:translateY(-3px)}
+.ref-card .rn{font-size:15px;font-weight:400;color:var(--bone);margin-bottom:4px}
+.ref-card .rr{font-size:13px;color:var(--silver)}
+.ref-card .ri{font-size:12.5px;color:var(--ash);margin-top:2px}
+@media(max-width:860px){.ref-grid{grid-template-columns:1fr}}
 footer{text-align:center;padding:44px;color:var(--ash);font-size:13px;font-weight:200;position:relative;z-index:2}
 
 /* ============================================================
@@ -313,13 +307,6 @@ body.cur-on #curCell{opacity:1}
 .tl-item .node{transition:transform .6s cubic-bezier(.2,.8,.2,1),background .4s,box-shadow .4s;transform:scale(.5);background:#2a2a2a;box-shadow:none}
 .tl-item.lit .node{transform:scale(1);background:var(--iris);box-shadow:0 0 0 5px rgba(128,82,255,.15),0 0 18px rgba(128,82,255,.9)}
 
-/* tabs: sliding indicator */
-.tabs{position:relative}
-.tab-ind{position:absolute;top:0;left:0;height:0;border-radius:999px;background:var(--iris);z-index:0;
-  transition:transform .55s cubic-bezier(.2,.8,.2,1),width .55s cubic-bezier(.2,.8,.2,1),height .3s;box-shadow:0 8px 30px -8px rgba(128,82,255,.9)}
-.tabs .tab{position:relative;z-index:1}
-.tabs.has-ind .tab.active{background:transparent}
-.tab-panel.active .list-item,.tab-panel.active .chip{animation:rise .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*55ms)}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
 /* skills stagger */
@@ -392,6 +379,53 @@ a.ghost.mag{display:inline-block}
 .gn-legend span{display:inline-flex;align-items:center;gap:7px;cursor:default;transition:opacity .25s}
 .gn-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
 .gn-legend.dim span:not(.hi){opacity:.35}
+
+/* prophage animation */
+.pro-lab svg{display:block;width:100%;height:auto;overflow:hidden}
+.pro-cap{padding:2px 18px 12px;font-size:13.5px;font-weight:200;color:var(--silver);line-height:1.55;min-height:4.7em;transition:opacity .35s}
+.pro-cap b{color:var(--bone);font-weight:500}
+.pro-cap.swap{opacity:0}
+.prib{animation:prib 3.4s ease-in-out infinite}
+@keyframes prib{50%{opacity:.12}}
+@media (min-width:1180px){
+  #projWgs{max-width:none;display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);column-gap:clamp(32px,4vw,60px);align-items:start}
+  #projWgs>*{grid-column:1}
+  #projWgs>.pro-lab{grid-column:2;grid-row:1/span 12;margin-top:0;max-width:520px;width:100%}
+}
+@media (min-width:1180px) and (min-height:820px){#projWgs>.pro-lab{position:sticky;top:90px}}
+
+/* Beyond the lab — a microscope nosepiece chooses what's in the field of view */
+.scope{display:grid;grid-template-columns:300px minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:start}
+.tur-stage{width:260px;height:260px;margin:0 auto 18px}
+.tur-stage svg{width:100%;height:100%;display:block;overflow:visible}
+.tur-obj{cursor:pointer}
+.tur-list{display:flex;flex-direction:column;gap:6px}
+.tur-btn{display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;border-radius:12px;border:1px solid #1d1d23;background:transparent;
+  color:var(--ash);font-family:var(--font);font-size:14px;font-weight:400;text-align:left;cursor:pointer;transition:border-color .3s,color .3s,background .3s}
+.tur-btn i{width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px rgba(255,255,255,.04);transition:box-shadow .3s,transform .4s cubic-bezier(.3,1.6,.5,1)}
+.tur-btn span{flex:1}
+.tur-btn em{font-style:normal;font-size:11px;color:#5d5d66;font-variant-numeric:tabular-nums}
+.tur-btn:hover{color:var(--bone);border-color:#2c2c36}
+.tur-btn.active{color:var(--bone);border-color:var(--c);background:rgba(255,255,255,.025)}
+.tur-btn.active i{transform:scale(1.3);box-shadow:0 0 12px var(--c)}
+.scope-view{position:relative;border:1px solid #1d1d23;border-radius:24px;padding:26px clamp(18px,3vw,34px) 30px;min-height:330px;overflow:hidden;
+  background:radial-gradient(circle at 50% 55%,rgba(128,82,255,.08),transparent 68%),rgba(8,8,12,.55)}
+.scope-view::before,.scope-view::after{content:"";position:absolute;background:rgba(183,162,255,.07);pointer-events:none}
+.scope-view::before{left:50%;top:18px;bottom:18px;width:1px}
+.scope-view::after{top:50%;left:18px;right:18px;height:1px}
+.fov-head{display:flex;align-items:baseline;gap:12px;margin-bottom:22px;position:relative;z-index:1}
+.fov-k{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+.fov-name{font-size:15px;color:var(--bone);transition:opacity .25s}
+.scope-view .tab-panel{position:relative;z-index:1;transition:filter .22s,opacity .22s,transform .22s}
+.scope-view.defocus .tab-panel.active{filter:blur(9px);opacity:0;transform:scale(.985)}
+.scope-view.defocus .fov-name{opacity:0}
+.tab-panel.active .list-item,.tab-panel.active .chip{animation:focusIn .75s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms + 40ms)}
+@keyframes focusIn{from{opacity:0;filter:blur(10px);transform:scale(1.05)}to{opacity:1;filter:none;transform:none}}
+@media(max-width:860px){
+  .scope{grid-template-columns:1fr}
+  .tur-stage{width:210px;height:210px}
+  .tur-list{display:grid;grid-template-columns:1fr 1fr}
+}
 
 /* ---------- responsive ---------- */
 @media(max-width:860px){
@@ -642,6 +676,32 @@ a.ghost.mag{display:inline-block}
       </div>
       <div class="lab-foot">Schematic circular chromosome (~2.8&nbsp;Mb). Locus positions are illustrative, not to scale. <button class="lab-btn" id="gnReplay" style="margin-left:6px">↻ Re-run pipeline</button></div>
     </div>
+    <div class="lab pro-lab" id="proLab">
+      <div class="lab-head"><span class="lab-tag">Animated · Lysogeny</span></div>
+      <svg id="proSvg" viewBox="0 0 560 580" role="img" aria-label="Animation: a PVL-carrying phage adsorbs to an S. aureus cell, injects its genome, which circularises and is integrated into the host chromosome by integrase (attP × attB), leaving a prophage that carries lukS-PV and lukF-PV.">
+        <defs>
+          <radialGradient id="proCyto" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#2a2150" stop-opacity=".55"/><stop offset="1" stop-color="#15122a" stop-opacity=".5"/></radialGradient>
+          <pattern id="proPG" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(22)"><path d="M0 3.5H7M3.5 0V7" stroke="#b9b0e6" stroke-opacity=".32" stroke-width="1"/></pattern>
+          <linearGradient id="proHead" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd36b"/><stop offset="1" stop-color="#a86c08"/></linearGradient>
+          <filter id="proGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
+          <marker id="proArrow" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="2.4" markerHeight="2.4" orient="auto"><path d="M0 0L6 3L0 6z" fill="#ff5db0"/></marker>
+        </defs>
+        <g id="proCell"></g>
+        <g id="proChrom"><path id="proChrGlow" fill="none" stroke="#1fbe9f" stroke-width="6" stroke-opacity=".18" filter="url(#proGlow)"/>
+          <path id="proChrA" fill="none" stroke="#1fbe9f" stroke-width="2.2" stroke-linejoin="round"/>
+          <path id="proChrB" fill="none" stroke="#7fe8d0" stroke-width="1" stroke-opacity=".55" stroke-linejoin="round"/></g>
+        <g id="proDnaG"><path id="proDnaGlow" fill="none" stroke="#a578ff" stroke-width="7" stroke-opacity=".35" filter="url(#proGlow)" stroke-linecap="round"/>
+          <path id="proDna" fill="none" stroke="#b58cff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path id="proLukS" fill="none" stroke="#ff5db0" stroke-width="6" stroke-linecap="butt" marker-end="url(#proArrow)"/>
+          <path id="proLukF" fill="none" stroke="#ff5db0" stroke-width="6" stroke-linecap="butt" marker-end="url(#proArrow)"/></g>
+        <g id="proInt"></g>
+        <g id="proLbls" font-family="Inter,sans-serif"></g>
+        <g id="proPhage"></g>
+      </svg>
+      <div class="gn-steps" id="proSteps"></div>
+      <p class="pro-cap" id="proCap"></p>
+      <div class="lab-foot">Schematic of lysogeny by site-specific recombination (<i>attP</i> × <i>attB</i>). Not to scale. <button class="lab-btn" id="proReplay" style="margin-left:6px">↻ Replay</button></div>
+    </div>
     <div class="details"><ul>
       <li>Bioinformatic analysis of <b>whole genome sequencing (WGS)</b> data of <i>Staphylococcus aureus</i> using genome analysis tools.</li>
       <li>Identified <b>antimicrobial resistance (AMR)</b> patterns and profiles using genome-based approaches.</li>
@@ -689,7 +749,7 @@ a.ghost.mag{display:inline-block}
         <ul><li>mESC culture</li><li>Embryoid body formation</li><li>Differentiation assays</li><li>Microbial culturing &amp; staining</li></ul></div>
     </div>
     <div class="skill reveal" data-k="mol">
-      <div class="kviz"><canvas data-viz="gel"></canvas><span class="klbl">Agarose gel · running</span></div>
+      <div class="kviz"><canvas data-viz="pcr"></canvas><span class="klbl">Thermocycler · qPCR</span></div>
       <div class="kbody"><span class="knum">02</span><h4>Molecular biology</h4>
         <ul><li>PCR</li><li>Gel electrophoresis</li><li>Immunofluorescence</li><li>UV-Vis spectroscopy</li></ul></div>
     </div>
@@ -699,19 +759,24 @@ a.ghost.mag{display:inline-block}
         <ul><li>WGS analysis &amp; interpretation</li><li>AMR profiling</li><li>Genome annotation</li><li>BLAST · Fiji · genome platforms</li></ul></div>
     </div>
   </div>
-  <div class="kmarq reveal" aria-hidden="true"><div class="trk" id="kTrack"></div></div>
 </section>
 
 <!-- MORE -->
 <section id="more">
   <div class="eyebrow reveal">06 — Beyond the lab</div>
   <h2 class="title reveal">Learning, events &amp; community.</h2>
-  <div class="tabs reveal">
-    <button class="tab active" data-tab="courses">Courses &amp; Workshops</button>
-    <button class="tab" data-tab="events">Events</button>
-    <button class="tab" data-tab="extra">Extracurriculars</button>
-    <button class="tab" data-tab="interests">Interests</button>
-  </div>
+  <div class="scope reveal">
+    <div class="turret">
+      <div class="tur-stage"><svg id="turSvg" viewBox="0 0 300 300" aria-hidden="true"></svg></div>
+      <div class="tur-list" role="tablist" aria-label="Beyond the lab">
+        <button class="tur-btn active" role="tab" aria-selected="true" data-tab="courses" style="--c:#8052ff"><i></i><span>Courses &amp; workshops</span><em>4</em></button>
+        <button class="tur-btn" role="tab" aria-selected="false" data-tab="events" style="--c:#ffb829"><i></i><span>Events</span><em>4</em></button>
+        <button class="tur-btn" role="tab" aria-selected="false" data-tab="extra" style="--c:#1fbe9f"><i></i><span>Extracurriculars</span><em>5</em></button>
+        <button class="tur-btn" role="tab" aria-selected="false" data-tab="interests" style="--c:#ff5db0"><i></i><span>Interests</span><em>5</em></button>
+      </div>
+    </div>
+    <div class="scope-view" id="scopeView">
+      <div class="fov-head"><span class="fov-k">In focus</span><span class="fov-name" id="fovName">Courses &amp; workshops</span></div>
   <div class="tab-panel active" id="courses"><div class="list-grid">
     <div class="list-item"><div class="t">Gene Expression Analysis using Real-Time PCR</div><div class="d">SRM-DBT, SRMIST · 03/2025</div></div>
     <div class="list-item"><div class="t">Introduction to Bioinformatics</div><div class="d">Dept. of Biotech &amp; IQAC, NMAMIT · 08/2022</div></div>
@@ -734,6 +799,8 @@ a.ghost.mag{display:inline-block}
   <div class="tab-panel" id="interests"><div class="chips" style="gap:12px">
     <span class="chip">🧩 Solving puzzles</span><span class="chip">✈ Travelling</span><span class="chip">✏ Drawing</span><span class="chip">🥾 Trekking</span><span class="chip">💪 Fitness</span>
   </div></div>
+    </div>
+  </div>
 </section>
 
 <!-- CONTACT -->
@@ -747,7 +814,14 @@ a.ghost.mag{display:inline-block}
     <a href="https://www.linkedin.com/in/adityamenon09" target="_blank" rel="noopener" class="ghost">LinkedIn</a>
     <a href="https://github.com/AdityaMenon09" target="_blank" rel="noopener" class="ghost">GitHub</a>
   </div>
-  <div class="ref reveal"><b>Reference</b> · Dr. Ujwal P — Professor &amp; Head, Dept. of Biotechnology Engineering, NMAM Institute of Technology, Nitte · ujwal.p@nitte.edu.in</div>
+  <div class="ref reveal">
+    <div class="ref-h"><b>Referees</b><span>Contact details available on request</span></div>
+    <div class="ref-grid">
+      <div class="ref-card"><div class="rn">Dr. Nitya Nandkishore</div><div class="rr">Assistant Professor · M.Tech thesis supervisor</div><div class="ri">SRM Institute of Science and Technology</div></div>
+      <div class="ref-card"><div class="rn">Varun Shamanna</div><div class="rr">Senior Bioinformatician · JRF supervisor</div><div class="ri">Central Research Laboratory, KIMS</div></div>
+      <div class="ref-card"><div class="rn">Dr. Ujwal P</div><div class="rr">Professor · former Head of Department</div><div class="ri">NMAM Institute of Technology, Nitte</div></div>
+    </div>
+  </div>
 </section>
 </main>
 
@@ -785,10 +859,7 @@ document.querySelectorAll('#about').forEach(s=>counted.observe(s));
 document.querySelectorAll('.proj').forEach(p=>p.addEventListener('click',e=>{
   if(e.target.closest('.lab'))return;                 // interacting with a figure never toggles the card
   p.classList.toggle('open');}));
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');moveTabInd();}));
+
 
 /* ============================================================
    MOTION LAYER — smooth scroll, cursor, magnetism, split text
@@ -832,14 +903,6 @@ document.querySelectorAll('h2.title,.contact .big').forEach(el=>{
 document.querySelectorAll('.skill').forEach(s=>s.querySelectorAll('li').forEach((li,i)=>li.style.setProperty('--i',i)));
 document.querySelectorAll('.tab-panel').forEach(p=>p.querySelectorAll('.list-item,.chip').forEach((el,i)=>el.style.setProperty('--i',i)));
 
-/* tabs: sliding indicator */
-const tabsEl=document.querySelector('.tabs');let tabInd=null;
-function moveTabInd(){if(!tabInd)return;const a=tabsEl.querySelector('.tab.active');if(!a)return;
-  tabInd.style.width=a.offsetWidth+'px';tabInd.style.height=a.offsetHeight+'px';
-  tabInd.style.transform='translate('+a.offsetLeft+'px,'+a.offsetTop+'px)';}
-if(tabsEl){tabInd=document.createElement('div');tabInd.className='tab-ind';tabsEl.prepend(tabInd);tabsEl.classList.add('has-ind');
-  moveTabInd();addEventListener('resize',moveTabInd);addEventListener('load',moveTabInd);}
-
 /* cursor spotlight */
 document.querySelectorAll('.proj,.list-item,.skill,.mehp-fig').forEach(el=>{el.classList.add('spot');
   el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();
@@ -862,7 +925,7 @@ addEventListener('pointermove',e=>{
 },{passive:true});
 document.addEventListener('pointerleave',()=>{HEART.pointer(-9999,-9999);document.body.classList.remove('cur-on');});
 addEventListener('blur',()=>HEART.pointer(-9999,-9999));
-const HOVER_SEL='a,button,.proj h3,.expand,.chip,input[type=range]';
+const HOVER_SEL='a,button,.proj h3,.expand,.chip,input[type=range],.tur-obj';
 document.addEventListener('pointerover',e=>{const b=document.body.classList;
   b.toggle('cur-hover',!!e.target.closest(HOVER_SEL));
   b.toggle('cur-uv',!!e.target.closest('#qdCanvas'));
@@ -1011,7 +1074,7 @@ const HEART=(function(){
   let AG=[];                            // MEHP agent particles — the dosed molecule
   let condMode='control';
   let tint=[80,140,255],tintAmt=0,tintAmtTarget=0;// field fluoresces with the QD bench's emission colour
-  let phage=0,phageTarget=0,phT=0,phLast=0;// 0..1 the field acts out phage infection; phT = story clock (s)
+  let hush=0,hushTarget=0;              // 0..1 the field steps aside for an in-page animation
   let mx=-9999,my=-9999;                // pointer, in CSS px — cells shy away from it
   const MR=120, MR2=MR*MR;
   const COLORS=[
@@ -1155,8 +1218,6 @@ const HEART=(function(){
         fBob: Math.random()*Math.PI*2,         // vertical bob phase
         fSpin: 0.75+Math.random()*0.6,         // per-cell swirl speed
         node:(i%nodeStride===0),               // a constellation node, linked to its neighbours
-        role:(r=>r<0.42?'wall':r<0.62?'chrom':r<0.76?'capsid':r<0.84?'tail':'dna')(Math.random()), // part in the phage story
-        q:Math.random(),                       // its position along that part
         ox:0,oy:0,vx:0,vy:0,lx:0,ly:0          // pointer-push spring offset + last screen pos
       });
     }
@@ -1199,65 +1260,6 @@ const HEART=(function(){
     const y=uy*p.fR*F_RY + Math.sin(t*0.4+p.fBob)*0.02;
     return [x, y, uz];                                 // uz (-1..1) = depth toward viewer
   }
-  // beside the genome card the field acts out the JRF project: a PVL-carrying
-  // phage lands on an S. aureus cell, contracts its tail, injects its genome,
-  // and that genome splices into the host chromosome as a prophage. Each cell
-  // has a fixed part to play (p.role): cell wall, chromosome, capsid, tail, or
-  // phage DNA. Timeline T (s): 0-3 approach, 3-4 attach + contract,
-  // 4-8 inject + circularise, 8-10.5 integrate, 11.5+ the empty phage drifts off.
-  const PH={C:[0,0.07],Rb:0.2,th:-0.8,Rc:0.056,Lt:0.085,gap:0.5};
-  const PH_COL={wall:[175,170,215],chrom:[31,190,159],capsid:[255,184,41],tail:[235,150,40],dna:[165,120,255]};
-  const PH_FIB=[-0.055,-0.028,0.028,0.055];
-  let G=null;                                        // this frame's phage geometry
-  function phageGeo(T){
-    const th=PH.th,n=[Math.cos(th),Math.sin(th)],tg=[-n[1],n[0]];
-    const c0=[fieldOffX+PH.C[0],PH.C[1]],Wp=[c0[0]+n[0]*PH.Rb,c0[1]+n[1]*PH.Rb];
-    const off=1-smooth(clamp01(T/3)), leave=smooth(clamp01((T-11.5)/3));
-    const con=smooth(clamp01((T-3.1)/0.7))*(1-leave);
-    const dx=n[0]*(0.38*off+0.3*leave)+tg[0]*(0.14*off-0.08*leave), dy=n[1]*(0.38*off+0.3*leave)+tg[1]*(0.14*off-0.08*leave);
-    const wob=Math.sin(T*2.1)*0.35*off+leave*0.6, a=th+wob, ax=[Math.cos(a),Math.sin(a)], at=[-ax[1],ax[0]];
-    const Lt=PH.Lt*(1-0.4*con);
-    const tip=[Wp[0]+n[0]*0.012+dx,Wp[1]+n[1]*0.012+dy], top=[tip[0]+ax[0]*Lt,tip[1]+ax[1]*Lt];
-    const cap=[top[0]+ax[0]*PH.Rc*0.92,top[1]+ax[1]*PH.Rc*0.92];
-    return {T,n,tg,c0,Wp,tip,top,cap,ax,at,con,leave,open:smooth(clamp01((T-8)/1.2))};
-  }
-  const lerp2=(A,B,u)=>[A[0]+(B[0]-A[0])*u,A[1]+(B[1]-A[1])*u];
-  function chromR(a){return 0.1*(1+0.12*Math.sin(3*a+0.7)+0.05*Math.sin(7*a));}
-  function chromAt(a,G){                              // host chromosome, a wobbly nucleoid loop that opens a gap
-    const d=((a-PH.th)%TAU+TAU*1.5)%TAU-Math.PI, w=PH.gap*G.open;
-    const aa=PH.th+Math.sign(d)*(w+Math.abs(d)*(1-w/Math.PI)), r=chromR(aa);
-    return [G.c0[0]+Math.cos(aa)*r,G.c0[1]+Math.sin(aa)*r];
-  }
-  function hexPt(s,G){const k=Math.floor(s*6),f=s*6-k,R=PH.Rc;
-    const v=j=>{const q=j*TAU/6;return [G.cap[0]+R*(Math.cos(q)*G.ax[0]+Math.sin(q)*G.at[0]),G.cap[1]+R*(Math.cos(q)*G.ax[1]+Math.sin(q)*G.at[1])];};
-    return lerp2(v(k),v(k+1),f);}
-  function fiberPt(s,G){const fi=Math.min(3,Math.floor(s*4)),u=s*4-fi,sp=PH_FIB[fi];
-    const joint=[G.tip[0]+G.at[0]*sp*0.6+G.ax[0]*0.014,G.tip[1]+G.at[1]*sp*0.6+G.ax[1]*0.014];
-    const end=[G.tip[0]+G.at[0]*sp-G.ax[0]*0.016,G.tip[1]+G.at[1]*sp-G.ax[1]*0.016];
-    return u<0.5?lerp2(G.tip,joint,u*2):lerp2(joint,end,(u-0.5)*2);}
-  // returns [x, y, depth(-1..1), alphaMul, colour]
-  function phagePos(p){
-    const T=G.T,j=(p.fR-0.56)*0.9;
-    if(p.role==='wall'){const r=PH.Rb*(p.q<0.4?0.92:1)+j*0.006,a=p.fTheta;
-      return [G.c0[0]+Math.cos(a)*r,G.c0[1]+Math.sin(a)*r,0.5,1,PH_COL.wall];}
-    if(p.role==='chrom'){const c=chromAt(p.fTheta,G);return [c[0]+j*0.005,c[1]+j*0.004,0.4,1,PH_COL.chrom];}
-    const fade=1-G.leave;
-    if(p.role==='capsid'){const h=hexPt(p.q,G);return [h[0]+j*0.003,h[1]+j*0.003,0.9,fade,PH_COL.capsid];}
-    if(p.role==='tail'){
-      if(p.q<0.6){const u=p.q/0.6,b=lerp2(G.tip,G.top,u),w=j*0.008;return [b[0]+G.at[0]*w,b[1]+G.at[1]*w,0.9,fade,PH_COL.tail];}
-      const f=fiberPt((p.q-0.6)/0.4,G);return [f[0],f[1],0.9,fade,PH_COL.tail];}
-    // phage DNA: packed in the head, down the tail, a loop inside the cell, then spliced into the chromosome
-    const rr=Math.sqrt(clamp01((p.fR-0.3)/0.52))*0.62*PH.Rc,packed=[G.cap[0]+Math.cos(p.fTheta)*rr,G.cap[1]+Math.sin(p.fTheta)*rr];
-    const u=clamp01((T-4-p.q*2.6)/0.9),ins=smooth(clamp01((T-8-p.q*0.9)/1.4));
-    const lc=[G.Wp[0]-G.n[0]*0.075,G.Wp[1]-G.n[1]*0.075],la=p.q*TAU+T*0.6,loop=[lc[0]+Math.cos(la)*0.028,lc[1]+Math.sin(la)*0.028];
-    let q;
-    if(u<0.35)q=lerp2(packed,G.top,smooth(u/0.35));
-    else if(u<0.6)q=lerp2(G.top,G.tip,(u-0.35)/0.25);
-    else q=lerp2(G.tip,loop,smooth((u-0.6)/0.4));
-    if(ins>0){const aa=PH.th+(p.q-0.5)*2*PH.gap*0.92,r=chromR(aa);
-      q=lerp2(q,[G.c0[0]+Math.cos(aa)*r,G.c0[1]+Math.sin(aa)*r],ins);}
-    return [q[0]+j*0.007*G.at[0],q[1]+j*0.007*G.at[1],1,1,PH_COL.dna];
-  }
   // spring each cell away from the pointer; returns nothing, updates p.ox/p.oy
   function push(p,x,y){
     const dx=x+p.ox-mx, dy=y+p.oy-my, d2=dx*dx+dy*dy;
@@ -1274,12 +1276,8 @@ const HEART=(function(){
     helixScroll += (helixScrollTarget-helixScroll)*0.08;
     mehpMorph += (mehpMorphTarget-mehpMorph)*0.06;
     tintAmt += (tintAmtTarget-tintAmt)*0.05;
-    phage += (phageTarget-phage)*0.035;
+    hush += (hushTarget-hush)*0.06;
     const t=now*0.001;
-    const pdt=Math.min(0.05,(now-(phLast||now))/1000);phLast=now;
-    if(phageTarget>0.5)phT+=pdt; else if(phage<0.01)phT=0;
-    if(prefersReduce&&phageTarget>0.5)phT=11;
-    G=phage>0.002?phageGeo(phT):null;
     const beat = 1 + (dev>0.8? Math.pow(Math.max(0,Math.sin(t*(condMode==='mehp'?1.7:2.6))),8)*0.05*smooth(clamp01((dev-0.8)/0.15)) : 0);
     ctx.clearRect(0,0,innerWidth,innerHeight);
     ctx.globalCompositeOperation='lighter';
@@ -1333,12 +1331,7 @@ const HEART=(function(){
           // ...then let the scattered cells settle into a slow, swirling field
           const g=smooth(clamp01((burst-0.30)/0.70));
           let fp=fieldPos(p,t);
-          let pm=1;
-          if(G){                                           // take up a part in the phage story, staggered per cell
-            const rp=phagePos(p), rr=smooth(clamp01(phage*1.5-(p.twk/TAU)*0.5));
-            fp=[fp[0]+(rp[0]-fp[0])*rr, fp[1]+(rp[1]-fp[1])*rr, fp[2]+(rp[2]-fp[2])*rr];
-            pm=1+(rp[3]-1)*rr; const c=rp[4]; col=[col[0]+(c[0]-col[0])*rr, col[1]+(c[1]-col[1])*rr, col[2]+(c[2]-col[2])*rr];
-          }
+          const pm=1-smooth(hush);                         // fades while an in-page animation has the stage
           const fx=ex+(fp[0]-ex)*g, fy=ey+(fp[1]-ey)*g;
           const depth=fp[2]*0.5+0.5;                       // 0 (back) .. 1 (front)
           let a=0.72*((1-be)*(1-g) + (0.26+0.62*depth)*g); // dim while scattering, depth-shade in the field
@@ -1386,7 +1379,7 @@ const HEART=(function(){
           const b=nodeArr[j];
           const dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
           if(d2>=TH2) continue;
-          const le=(1-Math.sqrt(d2)/TH)*0.42*Math.min(a.a,b.a)*(1-smooth(phage)*0.9);  // links quiet down during the phage story
+          const le=(1-Math.sqrt(d2)/TH)*0.42*Math.min(a.a,b.a)*(1-smooth(hush));
           if(le<=0.008) continue;
           ctx.globalAlpha=le;
           ctx.strokeStyle='rgb(150,140,225)';
@@ -1404,7 +1397,8 @@ const HEART=(function(){
     // MEHP agent molecule: the dosed metabolite assembles beside the cells, then
     // breaks up and streams into the cell mass once development clears the EB stage.
     if(mehpMorph>0.001){
-      const gate=smooth(mehpMorph)*(1-clamp01(burst*1.6));   // present until the burst clears it
+      // only inside the thesis track (dev ≥ 0.12), never up by the hero; gone once the burst clears it
+      const gate=smooth(mehpMorph)*smooth(clamp01((dev-0.115)/0.03))*(1-clamp01(burst*1.6));
       if(gate>0.002){
         for(let i=0;i<AG.length;i++){
           const ag=AG[i];
@@ -1424,38 +1418,6 @@ const HEART=(function(){
         }
       }
     }
-    // faint vector outlines so the cell and phage read clearly, plus a caption per stage
-    const capA=G?smooth(phage)*smooth(clamp01((burst-0.6)/0.4))*(1-helixFade):0;
-    if(fieldOn && capA>0.02){
-      const X=v=>cx+v[0]*scale,Y=v=>cy+v[1]*scale;
-      ctx.globalCompositeOperation='source-over';ctx.lineWidth=1;
-      ctx.globalAlpha=capA*0.28;ctx.strokeStyle='rgb(175,170,215)';
-      ctx.beginPath();ctx.arc(X(G.c0),Y(G.c0),PH.Rb*scale,0,TAU);ctx.stroke();
-      ctx.beginPath();ctx.arc(X(G.c0),Y(G.c0),PH.Rb*0.92*scale,0,TAU);ctx.stroke();
-      const pf=capA*(1-G.leave);
-      if(pf>0.02){ctx.globalAlpha=pf*0.4;ctx.strokeStyle='rgb(255,184,41)';ctx.beginPath();
-        for(let k=0;k<=6;k++){const h=hexPt((k%6)/6,G);k?ctx.lineTo(X(h),Y(h)):ctx.moveTo(X(h),Y(h));}ctx.stroke();
-        ctx.beginPath();ctx.moveTo(X(G.tip),Y(G.tip));ctx.lineTo(X(G.top),Y(G.top));ctx.stroke();}
-      const ig=smooth(clamp01((G.T-8.6)/1.8));          // the integrated prophage, marked on the chromosome
-      if(ig>0.01){
-        ctx.globalAlpha=capA*ig*0.55;ctx.strokeStyle='rgb(165,120,255)';ctx.lineWidth=3.5;ctx.lineCap='round';ctx.beginPath();
-        for(let i=0;i<=24;i++){const aa=PH.th+(i/24-0.5)*2*PH.gap*0.92,r=chromR(aa),px=cx+(G.c0[0]+Math.cos(aa)*r)*scale,py=cy+(G.c0[1]+Math.sin(aa)*r)*scale;
-          i?ctx.lineTo(px,py):ctx.moveTo(px,py);}
-        ctx.stroke();ctx.lineWidth=1;
-        const lr=chromR(PH.th)+0.042;ctx.globalAlpha=capA*ig*0.9;ctx.fillStyle='rgb(185,150,255)';ctx.font='600 10px Inter,sans-serif';ctx.textAlign='center';
-        if('letterSpacing' in ctx)ctx.letterSpacing='1.5px';
-        ctx.fillText('PROPHAGE',cx+(G.c0[0]+Math.cos(PH.th)*lr)*scale,cy+(G.c0[1]+Math.sin(PH.th)*lr)*scale);
-      }
-      const T=G.T,stage=T<3?'A phage approaches the cell':T<4.2?'Tail fibres attach \u00b7 the tail contracts':T<8?'Injecting its genome':
-        T<10.6?'Splicing into the host chromosome':'Integrated as a prophage \u2014 carried in the host genome';
-      ctx.globalAlpha=capA*0.85;ctx.fillStyle='rgb(183,162,255)';ctx.font='600 11px Inter,sans-serif';ctx.textAlign='center';
-      if('letterSpacing' in ctx)ctx.letterSpacing='2.5px';
-      const lx=X(G.c0), ly=Y(G.c0)+(PH.Rb+0.075)*scale;
-      ctx.fillText('PVL PHAGE \u2192 S. AUREUS',lx,ly);
-      ctx.globalAlpha=capA*0.6;ctx.fillStyle='rgb(154,154,154)';ctx.font='300 12px Inter,sans-serif';
-      if('letterSpacing' in ctx)ctx.letterSpacing='0px';
-      ctx.fillText(stage,lx,ly+18);
-    }
     ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
   }
   function draw(now){ render(now); if(!prefersReduce)requestAnimationFrame(draw); }
@@ -1466,8 +1428,7 @@ const HEART=(function(){
   function setHelixScroll(v){helixScrollTarget=clamp01(v); if(prefersReduce){helixScroll=helixScrollTarget;requestAnimationFrame(draw);} }
   function setCond(c){condMode=c; mehpMorphTarget=c==='mehp'?1:0; if(prefersReduce){mehpMorph=mehpMorphTarget;requestAnimationFrame(draw);} }
   function setTint(rgb,on){tint=rgb; tintAmtTarget=on?1:0;}
-  function setPhage(v){v=clamp01(v); if(v>0.5&&phageTarget<0.5&&phage<0.05)phT=0; phageTarget=v;}
-  function replayPhage(){phT=0;}
+  function setHush(v){hushTarget=clamp01(v); if(prefersReduce){hush=hushTarget;requestAnimationFrame(draw);}}
   function pointer(x,y){mx=x;my=y;}
   // click shockwave: kick every nearby cell outward; the springs bring them home
   function shock(x,y){
@@ -1481,7 +1442,7 @@ const HEART=(function(){
   // pane may grow from 0 after init (embedded preview) — watch for it
   if(window.ResizeObserver){new ResizeObserver(()=>{ if(cv.width<2||Math.abs(cv.width/(Math.min(devicePixelRatio||1,2))-innerWidth)>2) reflow(); }).observe(document.documentElement);}
   requestAnimationFrame(draw);
-  return {setDev,setCond,setBurst,setHelixFade,setHelixScroll,setTint,setPhage,replayPhage,pointer,shock};
+  return {setDev,setCond,setBurst,setHelixFade,setHelixScroll,setTint,setHush,pointer,shock};
 })();
 
 /* ============================================================
@@ -1782,7 +1743,7 @@ const GENOME=(function(){
   const stepBtns=STEPS.map(([n,a0],i)=>{const b=document.createElement('button');b.className='gn-step';
     b.innerHTML='<span>'+(i+1)+' · '+n+'</span>';b.addEventListener('click',()=>{T=a0;playing=true;if(prefersReduce){T=STEPS[i][2];render();}});
     stepsEl.appendChild(b);return b;});
-  document.getElementById('gnReplay').addEventListener('click',()=>{HEART.replayPhage();T=0;playing=true;LOCI.forEach(L=>L.lit=prefersReduce?1:0);if(prefersReduce){T=END;render();}});
+  document.getElementById('gnReplay').addEventListener('click',()=>{T=0;playing=true;LOCI.forEach(L=>L.lit=prefersReduce?1:0);if(prefersReduce){T=END;render();}});
   // drag to spin (with inertia) + hover hit-testing
   const pol=e=>{const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;return {x,y,a:Math.atan2(y-cy,x-cx),d:Math.hypot(x-cx,y-cy)};};
   cv.addEventListener('pointerdown',e=>{const p=pol(e);if(p.d<R*0.35)return;drag={a:p.a,t:performance.now()};cv.setPointerCapture(e.pointerId);});
@@ -1806,26 +1767,272 @@ const GENOME=(function(){
     if(inView&&!started){started=true;if(prefersReduce){T=END;LOCI.forEach(L=>L.lit=1);}else{T=0;playing=true;}}
     if(inView&&!was&&!prefersReduce)requestAnimationFrame(loop);
     if(prefersReduce)render();
-    HEART.setPhage(inView?1:0);}),{threshold:.35}).observe(lab);
+    }),{threshold:.35}).observe(lab);
   addEventListener('resize',()=>{layout();render();});
   build();layout();render();
   return {layout};
 })();
 
 /* ============================================================
+   JRF — LYSOGENY, ANIMATED
+   A hand-built SVG of a PVL-carrying siphophage infecting S. aureus:
+   adsorption → genome injection → circularisation → integrase-mediated
+   attP × attB recombination → a prophage carrying lukS-PV / lukF-PV.
+   Plays when in view and loops; click a step to jump; Replay restarts.
+   ============================================================ */
+const PROPHAGE=(function(){
+  const lab=document.getElementById('proLab'),svg=document.getElementById('proSvg');if(!svg)return null;
+  const NS='http://www.w3.org/2000/svg',TAU=Math.PI*2,$=id=>document.getElementById(id);
+  const mk=(tag,at,par)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e;};
+  const cl=u=>u<0?0:u>1?1:u,sm=u=>{u=cl(u);return u*u*(3-2*u);},eo=u=>1-Math.pow(1-cl(u),3),seg=(T,a,b)=>cl((T-a)/(b-a));
+  const lerp=(A,B,u)=>[A[0]+(B[0]-A[0])*u,A[1]+(B[1]-A[1])*u];
+  // geometry, in SVG units
+  const CX=280,CY=380,RW=170,RWI=154,RM=150,TH=-58*Math.PI/180;       // cell centre, wall out/in, membrane, dock angle
+  const n=[Math.cos(TH),Math.sin(TH)],tg=[-n[1],n[0]];
+  const pt=(a,r)=>[CX+Math.cos(a)*r,CY+Math.sin(a)*r];
+  const rC=a=>82+7*Math.sin(7*a+0.5)+4*Math.sin(13*a+1.3);              // supercoiled nucleoid loop
+  const K=90,W=0.72;                                                     // prophage points; half-width (rad) of the insert
+  const STAGES=[['Adsorption',0,3.4],['Injection',3.4,6.9],['Circularisation',6.9,8.7],['Integration',8.7,11.9],['Lysogeny',11.9,16.4]];
+  const CAPS=[
+    '<b>Adsorption.</b> A PVL-carrying phage lands tail-first; its tail tip binds receptors on the thick peptidoglycan cell wall.',
+    '<b>Injection.</b> The linear phage genome is ejected down the tail, through the wall and membrane, into the cytoplasm. The capsid is left empty.',
+    '<b>Circularisation.</b> The phage genome closes into a circle, presenting its attachment site, <i>attP</i>.',
+    '<b>Integration.</b> Phage integrase (Int) recombines <i>attP</i> with the bacterial <i>attB</i> site: site-specific recombination.',
+    '<b>Lysogeny.</b> The prophage now sits in the host chromosome between <i>attL</i> and <i>attR</i>, carrying the PVL toxin genes <i>lukS-PV</i> and <i>lukF-PV</i>.'];
+  const END=17.2;
+  const D=(pts,close)=>pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join('')+(close?'Z':'');
+  const circ=r=>'M'+(CX+r)+' '+CY+'A'+r+' '+r+' 0 1 1 '+(CX-r)+' '+CY+'A'+r+' '+r+' 0 1 1 '+(CX+r)+' '+CY+'Z';
+
+  // ---- static cell: wall (peptidoglycan + teichoic-acid fringe), membrane, cytoplasm, ribosomes
+  const cell=$('proCell');
+  mk('circle',{cx:CX,cy:CY,r:RM,fill:'url(#proCyto)'},cell);
+  let rs=7;const rnd=()=>(rs=(rs*16807)%2147483647)/2147483647;         // seeded, so the layout never jumps
+  for(let i=0;i<48;i++){const a=rnd()*TAU,r=Math.sqrt(rnd())*(RM-14),q=pt(a,r);
+    if(Math.abs(r-rC(a))<14)continue;
+    mk('circle',{cx:q[0].toFixed(1),cy:q[1].toFixed(1),r:(1.6+rnd()*1.2).toFixed(1),fill:'#b8c0ff','fill-opacity':'.3',class:'prib',style:'animation-delay:-'+(rnd()*3.4).toFixed(2)+'s'},cell);}
+  mk('path',{d:circ(RW)+circ(RWI),'fill-rule':'evenodd',fill:'#7a6fb0','fill-opacity':'.2'},cell);
+  mk('path',{d:circ(RW)+circ(RWI),'fill-rule':'evenodd',fill:'url(#proPG)'},cell);
+  mk('circle',{cx:CX,cy:CY,r:RW,fill:'none',stroke:'#c4bcef','stroke-opacity':'.55','stroke-width':'1.2'},cell);
+  mk('circle',{cx:CX,cy:CY,r:RWI,fill:'none',stroke:'#c4bcef','stroke-opacity':'.35','stroke-width':'1'},cell);
+  let hair='';for(let d=0;d<360;d+=5){const a=d*Math.PI/180,l=5+rnd()*4,p0=pt(a,RW+0.5),p1=pt(a+0.03,RW+l);hair+='M'+p0[0].toFixed(1)+' '+p0[1].toFixed(1)+'L'+p1[0].toFixed(1)+' '+p1[1].toFixed(1);}
+  mk('path',{d:hair,stroke:'#c4bcef','stroke-opacity':'.28','stroke-width':'1',fill:'none'},cell);
+  mk('circle',{cx:CX,cy:CY,r:RM,fill:'none',stroke:'#8fc3ff','stroke-opacity':'.55','stroke-width':'1'},cell);
+  mk('circle',{cx:CX,cy:CY,r:RM-5,fill:'none',stroke:'#8fc3ff','stroke-opacity':'.4','stroke-width':'1'},cell);
+  mk('circle',{cx:CX,cy:CY,r:RM-2.5,fill:'none',stroke:'#8fc3ff','stroke-opacity':'.5','stroke-width':'2.4','stroke-dasharray':'0.1 3.4','stroke-linecap':'round'},cell);
+  const ripples=[0,1].map(()=>mk('circle',{fill:'none',stroke:'#ffb829','stroke-width':'1.4',opacity:0},cell));
+
+  // ---- labels
+  const L=$('proLbls');
+  const txt=(x,y,t,at)=>{const e=mk('text',Object.assign({x,y,fill:'#9a9a9a','font-size':'11'},at||{}),L);e.innerHTML=t;return e;};
+  const line=(a,b,col)=>mk('path',{d:'M'+a[0]+' '+a[1]+'L'+b[0]+' '+b[1],stroke:col||'#6a6a74','stroke-width':'1',fill:'none'},L);
+  txt(22,38,'<tspan font-style="italic" fill="#e6e6ea" font-size="15" font-weight="500">Staphylococcus aureus</tspan>');
+  txt(22,56,'Gram-positive coccus · infected by a PVL phage',{'font-size':'10.5'});
+  const wp=pt(3.93,RW-8);line(wp,[92,214]);txt(22,210,'Cell wall · peptidoglycan',{'font-size':'10.5'});
+  const mp=pt(2.8,RM-2);line(mp,[70,470]);txt(22,484,'Membrane',{'font-size':'10.5'});
+  txt(CX,CY+4,'host chromosome',{'text-anchor':'middle','font-size':'10.5',fill:'#1fbe9f','fill-opacity':'.8'});
+  const lbl={};
+  const pL=(k,t,at)=>{lbl[k]=txt(0,0,t,Object.assign({'text-anchor':'middle','font-size':'10.5','font-style':'italic',opacity:0},at||{}));};
+  pL('attB','attB',{fill:'#7fe8d0'});pL('attP','attP',{fill:'#c9a8ff'});pL('attL','attL',{fill:'#c9a8ff'});pL('attR','attR',{fill:'#c9a8ff'});
+  pL('pro','PVL prophage',{fill:'#c9a8ff','font-style':'normal','font-weight':'600','letter-spacing':'1'});
+  pL('genes','lukS-PV · lukF-PV',{fill:'#ff8cc6','font-size':'10'});
+  pL('phage','PVL phage',{fill:'#ffcf6a','font-style':'normal','font-weight':'600','text-anchor':'end'});
+  pL('int','integrase',{fill:'#ff8cc6','font-style':'normal','font-size':'10'});
+  const geneLead=mk('path',{stroke:'#ff8cc6','stroke-opacity':'.6','stroke-width':'1',fill:'none',opacity:0},L);
+
+  // ---- integrase: two protein blobs that clamp the att sites
+  const IG=$('proInt');
+  const ints=[0,1].map(()=>mk('ellipse',{rx:6.5,ry:5,fill:'#ff5db0','fill-opacity':'.85',stroke:'#ffc2e1','stroke-width':'1',opacity:0},IG));
+
+  // ---- the phage, drawn tail-tip at the origin, pointing down its local +y into the cell
+  const PG=$('proPhage'),ph=mk('g',{},PG);
+  const fibL=mk('g',{},ph),fibR=mk('g',{},ph);
+  mk('path',{d:'M0 0L-10 6L-13 14',stroke:'#ffb829','stroke-width':'1.4',fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},fibL);
+  mk('path',{d:'M0 0L10 6L13 14',stroke:'#ffb829','stroke-width':'1.4',fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},fibR);
+  mk('path',{d:'M0 -1V7',stroke:'#ffb829','stroke-width':'1.2'},ph);
+  mk('path',{d:'M-9 -2L9 -2L5 -9L-5 -9Z',fill:'#3a2f14',stroke:'#ffb829','stroke-width':'1'},ph);
+  mk('rect',{x:-3.5,y:-112,width:7,height:103,rx:2,fill:'#241e12',stroke:'#ffb829','stroke-width':'1'},ph);
+  let str='';for(let y=-104;y<-10;y+=6)str+='M-3.5 '+y+'H3.5';mk('path',{d:str,stroke:'#ffb829','stroke-opacity':'.5','stroke-width':'1'},ph);
+  const tailDna=mk('path',{d:'M0 -114V-4',stroke:'#c9a8ff','stroke-width':'2.2','stroke-dasharray':'7 5','stroke-linecap':'round',opacity:0},ph);
+  mk('rect',{x:-7,y:-119,width:14,height:7,rx:2,fill:'#3a2f14',stroke:'#ffb829','stroke-width':'1'},ph);
+  const HC=-152,HR=34,hv=[];for(let k=0;k<6;k++){const a=-Math.PI/2+k*TAU/6;hv.push([Math.cos(a)*HR,HC+Math.sin(a)*HR]);}
+  const head=mk('path',{d:D(hv,true),fill:'url(#proHead)','fill-opacity':'.24',stroke:'#ffb829','stroke-width':'1.6','stroke-linejoin':'round'},ph);
+  let sp='';for(let i=0;i<=260;i++){const u=i/260,a=u*TAU*6.5,r=27-u*24;sp+=(i?'L':'M')+(Math.cos(a)*r).toFixed(1)+' '+(HC+Math.sin(a)*r).toFixed(1);}
+  const headDna=mk('path',{d:sp,stroke:'#b58cff','stroke-width':'1.6',fill:'none','stroke-linecap':'round'},ph);
+  const inner=[hv[0],[0,HC],hv[2],[0,HC],hv[4]],tri=[hv[1],hv[3],hv[5]];
+  mk('path',{d:D(inner)+D(tri,true),stroke:'#ffd36b','stroke-opacity':'.45','stroke-width':'1',fill:'none','stroke-linejoin':'round'},ph);
+  const spLen=headDna.getTotalLength?headDna.getTotalLength():600;
+  const PHI=Math.atan2(n[0],-n[1])*180/Math.PI;                       // local +y → toward the cell centre
+  const DOCK=pt(TH,RW+1);
+
+  // ---- phage genome paths: linear strand in the cytoplasm → circle → insert in the chromosome
+  const Lin=[],Bi=[];
+  const E=pt(TH,RM-3);
+  for(let i=0;i<=K;i++){const s=i/K;
+    Lin.push([E[0]-n[0]*s*56+tg[0]*(Math.sin(s*TAU*1.6)*12*s+s*8),E[1]-n[1]*s*56+tg[1]*(Math.sin(s*TAU*1.6)*12*s+s*8)]);
+    const a=TH-W+s*2*W;Bi.push(pt(a,rC(a)+20*Math.sin(Math.PI*s)));}
+  const Cc0=pt(TH,118),CR=21,CcA=pt(TH,rC(TH)+CR+1);
+  const circPts=c=>{const o=[];for(let i=0;i<=K;i++){const f=TH+Math.PI+i/K*TAU;o.push([c[0]+Math.cos(f)*CR,c[1]+Math.sin(f)*CR]);}return o;};
+  const C0=circPts(Cc0);
+  const slice=(A,s0,s1)=>A.slice(Math.round(s0*K),Math.round(s1*K)+1);
+
+  const chromPts=(g,off)=>{const o=[],N=240;for(let i=0;i<=N;i++){const a=TH+g+(TAU-2*g)*i/N;o.push(pt(a,rC(a)+off));}return o;};
+  const place=(e,q,dy)=>{e.setAttribute('x',q[0].toFixed(1));e.setAttribute('y',(q[1]+(dy||0)).toFixed(1));};
+
+  // ---- steps + caption
+  const stepsEl=$('proSteps'),cap=$('proCap');let capI=-1;
+  const stepBtns=STAGES.map(([nm,a0,a1],i)=>{const b=document.createElement('button');b.className='gn-step';b.innerHTML='<span>'+(i+1)+' · '+nm+'</span>';
+    b.addEventListener('click',()=>{T=prefersReduce?a1-0.05:a0;playing=true;if(prefersReduce)render();});stepsEl.appendChild(b);return b;});
+
+  let T=0,playing=false,inView=false,started=false,last=0;
+  function render(){
+    // loop fade: dip out at the very end, fade back in at the start
+    svg.style.opacity=String(Math.min(sm(T/0.5),1-sm(seg(T,16.4,END))));
+    // 1 · adsorption: the phage drifts in tumbling, docks tail-first, fibres splay, the wall ripples
+    const e=eo(seg(T,0,2.8)),off=1-e,lv=sm(seg(T,13.4,16));
+    const px=DOCK[0]+n[0]*(230*off+190*lv)+tg[0]*(70*off-50*lv),py=DOCK[1]+n[1]*(230*off+190*lv)+tg[1]*(70*off-50*lv);
+    const rot=PHI+28*Math.sin(T*1.9)*off+35*lv;
+    ph.setAttribute('transform','translate('+px.toFixed(1)+' '+py.toFixed(1)+') rotate('+rot.toFixed(2)+')');
+    ph.setAttribute('opacity',(1-lv).toFixed(3));
+    const f=sm(seg(T,2.5,3.3));
+    fibL.setAttribute('transform','translate(-6 -4) rotate('+(62*(1-f)).toFixed(1)+')');
+    fibR.setAttribute('transform','translate(6 -4) rotate('+(-62*(1-f)).toFixed(1)+')');
+    ripples.forEach((c,k)=>{const u=seg(T,2.7+k*0.35,3.9+k*0.35);c.setAttribute('cx',DOCK[0]);c.setAttribute('cy',DOCK[1]);
+      c.setAttribute('r',(3+30*u).toFixed(1));c.setAttribute('opacity',(u>0&&u<1?0.7*(1-u):0).toFixed(3));});
+    const hp=[px+Math.sin(rot*Math.PI/180)*(-HC),py-Math.cos(rot*Math.PI/180)*(-HC)];
+    place(lbl.phage,[hp[0]-HR-10,hp[1]],4);lbl.phage.setAttribute('opacity',(sm(seg(T,0.8,2))*(1-lv)).toFixed(3));
+    // 2 · injection: the head unwinds, DNA flows down the tail, a strand snakes into the cytoplasm
+    const inj=seg(T,3.6,6.6);
+    headDna.setAttribute('stroke-dasharray',(spLen*(1-inj)).toFixed(1)+' '+spLen.toFixed(1));
+    head.setAttribute('fill-opacity',(0.24-0.14*inj).toFixed(3));
+    tailDna.setAttribute('opacity',(sm(seg(T,3.5,3.8))*(1-sm(seg(T,6.5,6.9)))).toFixed(3));
+    tailDna.setAttribute('stroke-dashoffset',(-T*60).toFixed(1));
+    const ins=seg(T,3.9,6.7),cu=sm(seg(T,6.9,8.4)),mv=sm(seg(T,8.7,9.6)),iu=sm(seg(T,9.7,11.4));
+    const Cc=lerp(Cc0,CcA,mv),Ci=circPts(Cc);
+    let P=null;
+    if(ins>0){P=[];for(let i=0;i<=K;i++){let q=lerp(Lin[i],C0[i],cu);if(mv>0)q=lerp(q,Ci[i],mv);if(iu>0)q=lerp(q,Bi[i],iu);P.push(q);}
+      if(cu===0)P=P.slice(0,Math.max(2,Math.round(ins*K)+1));}
+    const dd=P?D(P):'';$('proDna').setAttribute('d',dd);$('proDnaGlow').setAttribute('d',dd);
+    // 3 · circularisation: attP appears on the circle
+    const attPq=lerp(lerp(Lin[0],C0[0],cu),Ci[0],mv);
+    place(lbl.attP,[attPq[0]+tg[0]*26,attPq[1]+tg[1]*26],4);
+    lbl.attP.setAttribute('opacity',(sm(seg(T,7.6,8.2))*(1-sm(seg(T,9.8,10.3)))).toFixed(3));
+    // 4 · integration: integrase clamps attP×attB, the chromosome opens, the circle opens into it
+    const g=W*iu;
+    $('proChrA').setAttribute('d',D(chromPts(g,0)));$('proChrB').setAttribute('d',D(chromPts(g,2.2)));$('proChrGlow').setAttribute('d',D(chromPts(g,0)));
+    const attB=pt(TH,rC(TH));place(lbl.attB,pt(TH,rC(TH)-15),4);
+    lbl.attB.setAttribute('opacity',(sm(seg(T,0.6,1.6))*(1-sm(seg(T,9.8,10.4)))).toFixed(3));
+    const ip=sm(seg(T,9.1,9.6))*(1-sm(seg(T,10.9,11.5))),jig=Math.sin(T*18)*0.8*ip;
+    ints.forEach((el,k)=>{const q=[attB[0]+tg[0]*(k?8:-8)+n[0]*(3+jig),attB[1]+tg[1]*(k?8:-8)+n[1]*(3+jig)];
+      el.setAttribute('cx',q[0].toFixed(1));el.setAttribute('cy',q[1].toFixed(1));el.setAttribute('opacity',ip.toFixed(3));
+      el.setAttribute('transform','rotate('+(TH*180/Math.PI).toFixed(1)+' '+q[0].toFixed(1)+' '+q[1].toFixed(1)+') scale(1)');});
+    place(lbl.int,[attB[0]-tg[0]*30-n[0]*24,attB[1]-tg[1]*30-n[1]*24],4);lbl.int.setAttribute('opacity',ip.toFixed(3));
+    const ae=sm(seg(T,11,11.8));
+    place(lbl.attL,pt(TH-W,rC(TH-W)-15),4);place(lbl.attR,pt(TH+W,rC(TH+W)-15),4);
+    lbl.attL.setAttribute('opacity',ae.toFixed(3));lbl.attR.setAttribute('opacity',ae.toFixed(3));
+    // 5 · lysogeny: the PVL genes light up on the prophage; the empty phage leaves
+    const ge=sm(seg(T,12.2,13.2));
+    const gS=slice(Bi,0.26,0.47),gF=slice(Bi,0.53,0.74);
+    [[ 'proLukS',gS],['proLukF',gF]].forEach(([id,pts])=>{const el=$(id);el.setAttribute('d',D(pts));el.setAttribute('opacity',ge.toFixed(3));});
+    const mid=Bi[Math.round(K/2)],gl=pt(TH,44);
+    geneLead.setAttribute('d','M'+mid[0].toFixed(1)+' '+mid[1].toFixed(1)+'L'+gl[0].toFixed(1)+' '+(gl[1]-8).toFixed(1));geneLead.setAttribute('opacity',(ge*0.9).toFixed(3));
+    place(lbl.genes,gl,4);lbl.genes.setAttribute('opacity',ge.toFixed(3));
+    place(lbl.pro,pt(TH-0.1,132),0);lbl.pro.setAttribute('opacity',sm(seg(T,11.6,12.4)).toFixed(3));
+    // steps + caption
+    let si=0;while(si<STAGES.length-1&&T>=STAGES[si][2])si++;
+    stepBtns.forEach((b,i)=>{const [,a0,a1]=STAGES[i],fr=cl((T-a0)/(a1-a0));b.style.setProperty('--f',fr);b.classList.toggle('done',fr>=1);b.classList.toggle('now',fr>0&&fr<1);});
+    if(si!==capI){capI=si;cap.classList.add('swap');setTimeout(()=>{cap.innerHTML=CAPS[si];cap.classList.remove('swap');},prefersReduce?0:180);}
+  }
+  function loop(now){
+    const dt=Math.min(0.05,(now-(last||now))/1000);last=now;
+    if(playing){T+=dt;if(T>=END)T=0;}
+    render();
+    if(inView)requestAnimationFrame(loop);else last=0;
+  }
+  $('proReplay').addEventListener('click',()=>{T=prefersReduce?13:0;playing=true;if(prefersReduce)render();});
+  new IntersectionObserver(es=>es.forEach(e=>{const was=inView;inView=e.isIntersecting;
+    if(inView&&!started){started=true;T=prefersReduce?13:0;playing=!prefersReduce;}
+    if(inView&&!was&&!prefersReduce)requestAnimationFrame(loop);
+    if(prefersReduce)render();}),{threshold:.25}).observe(lab);
+  // the background cell field steps aside while this card is on screen
+  const card=document.getElementById('projWgs');
+  if(card)new IntersectionObserver(es=>es.forEach(e=>HEART.setHush(e.isIntersecting?1:0)),{threshold:.08}).observe(card);
+  T=prefersReduce?13:0;render();
+  return {render};
+})();
+
+/* ============================================================
+   BEYOND THE LAB — MICROSCOPE NOSEPIECE
+   Four objectives, one per category. Picking one swings the turret
+   (with a little spring overshoot) until that objective sits in the
+   light path, while the field of view defocuses and refocuses on it.
+   ============================================================ */
+(function(){
+  const svg=document.getElementById('turSvg');if(!svg)return;
+  const NS='http://www.w3.org/2000/svg',mk=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;};
+  const btns=[...document.querySelectorAll('.tur-btn')],view=document.getElementById('scopeView'),fov=document.getElementById('fovName');
+  const COLS=btns.map(b=>getComputedStyle(b).getPropertyValue('--c').trim()||'#8052ff');
+  const defs=mk('defs',{},svg);
+  const rg=(id,stops)=>{const g=mk('radialGradient',{id},defs);stops.forEach(([o,c,a])=>mk('stop',{offset:o,'stop-color':c,'stop-opacity':a},g));};
+  rg('turMetal',[['0','#2a2740','1'],['.8','#15131f','1'],['1','#0d0c14','1']]);
+  rg('turGlass',[['0','#cfd8ff','.9'],['.35','#5f6fb0','.8'],['1','#141626','1']]);
+  rg('turLight',[['0','#ffffff','.9'],['.3','#c9b8ff','.55'],['1','#8052ff','0']]);
+  const C=150,RO=70;
+  mk('circle',{cx:C,cy:C+6,r:126,fill:'#000','fill-opacity':'.55'},svg);                          // drop shadow
+  const light=mk('circle',{cx:C,cy:C+RO,r:44,fill:'url(#turLight)'},svg);                          // light path, fixed
+  const disc=mk('g',{},svg);
+  mk('circle',{cx:C,cy:C,r:118,fill:'url(#turMetal)',stroke:'#3a3652','stroke-width':'1.5'},disc);
+  mk('circle',{cx:C,cy:C,r:115,fill:'none',stroke:'#4a4566','stroke-width':'5','stroke-dasharray':'1.6 3.2'},disc); // knurled rim
+  mk('circle',{cx:C,cy:C,r:98,fill:'none',stroke:'#2d2a42','stroke-width':'1'},disc);
+  mk('circle',{cx:C,cy:C,r:16,fill:'#1d1b2b',stroke:'#4a4566','stroke-width':'1.2'},disc);
+  mk('circle',{cx:C,cy:C,r:5,fill:'#4a4566'},disc);
+  const objs=btns.map((b,k)=>{const a=(-90+k*90)*Math.PI/180,x=C+Math.cos(a)*RO,y=C+Math.sin(a)*RO;
+    const g=mk('g',{class:'tur-obj'},disc);
+    mk('circle',{cx:x,cy:y,r:31,fill:'#17151f',stroke:'#4d4864','stroke-width':'1.5'},g);
+    mk('circle',{cx:x,cy:y,r:25.5,fill:'none',stroke:COLS[k],'stroke-width':'3.2'},g);           // colour band, like real objectives
+    const lens=mk('circle',{cx:x,cy:y,r:15,fill:'url(#turGlass)',stroke:'#0b0b12','stroke-width':'2'},g);
+    mk('path',{d:'M'+(x-8)+' '+(y-6)+'A10 10 0 0 1 '+(x+2)+' '+(y-11),stroke:'#fff','stroke-opacity':'.5','stroke-width':'1.6',fill:'none','stroke-linecap':'round'},g);
+    const halo=mk('circle',{cx:x,cy:y,r:15,fill:'none',stroke:COLS[k],'stroke-width':'2',opacity:0},g);
+    g.addEventListener('click',()=>select(k));
+    return {g,lens,halo};});
+  mk('circle',{cx:C,cy:C+RO,r:40,fill:'url(#turLight)',opacity:'.35','pointer-events':'none'},svg);          // light path glow, on top
+  mk('circle',{cx:C,cy:C+RO,r:37,fill:'none',stroke:'#c9b8ff','stroke-opacity':'.7','stroke-width':'1.2','stroke-dasharray':'2 3','pointer-events':'none'},svg);
+  let cur=180,vel=0,tgt=180,sel=0,swapT=0;                                                         // disc rotation (deg)
+  function select(k,focus){
+    if(k===sel)return;sel=k;
+    let want=180-k*90;while(want-cur>180)want-=360;while(cur-want>180)want+=360;tgt=want;
+    btns.forEach((b,i)=>{const on=i===k;b.classList.toggle('active',on);b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;});
+    if(focus)btns[k].focus();
+    clearTimeout(swapT);view.classList.add('defocus');
+    const swap=()=>{document.querySelectorAll('.scope-view .tab-panel').forEach(p=>p.classList.toggle('active',p.id===btns[k].dataset.tab));
+      fov.textContent=btns[k].querySelector('span').textContent;view.classList.remove('defocus');};
+    if(prefersReduce){swap();cur=tgt;paint();}else{swapT=setTimeout(swap,230);kick();}
+  }
+  btns.forEach((b,k)=>{b.tabIndex=k?-1:0;b.addEventListener('click',()=>select(k));
+    b.addEventListener('keydown',e=>{const d=e.key==='ArrowDown'||e.key==='ArrowRight'?1:e.key==='ArrowUp'||e.key==='ArrowLeft'?-1:0;
+      if(d){e.preventDefault();select((sel+d+btns.length)%btns.length,true);}});
+    b.addEventListener('pointerenter',()=>objs[k].halo.setAttribute('opacity','.8'));
+    b.addEventListener('pointerleave',()=>objs[k].halo.setAttribute('opacity','0'));});
+  function paint(){
+    disc.setAttribute('transform','rotate('+cur.toFixed(2)+' '+C+' '+C+')');
+    objs.forEach((o,k)=>{const a=((-90+k*90+cur)%360+360)%360,d=Math.min(Math.abs(a-90),360-Math.abs(a-90));
+      o.lens.setAttribute('fill-opacity',(1).toString());o.lens.style.filter=d<12?'brightness('+(1.9-d/12*0.9).toFixed(2)+')':'';});
+    light.setAttribute('opacity',(0.55+0.45*Math.min(1,Math.abs(vel)<0.3?1:0.6)).toFixed(2));
+  }
+  let running=false;
+  function kick(){if(!running){running=true;requestAnimationFrame(step);}}
+  function step(){vel=(vel+(tgt-cur)*0.12)*0.72;cur+=vel;paint();
+    if(Math.abs(tgt-cur)>0.05||Math.abs(vel)>0.05)requestAnimationFrame(step);else{cur=tgt;paint();running=false;}}
+  paint();
+})();
+
+/* ============================================================
    TOOLKIT — each skill card has a live bench scene in its header:
-   a culture dish of dividing cells, an agarose gel running, and a
+   a culture dish of dividing cells, a thermocycler running qPCR, and a
    sequence alignment scanning for hits. Hovering a card speeds it
-   up; cards tilt toward the pointer; techniques scroll in a marquee.
+   up; cards tilt toward the pointer.
    ============================================================ */
 (function(){
   const TAU=Math.PI*2,sm=u=>u<=0?0:u>=1?1:u*u*(3-2*u);
-  const track=document.getElementById('kTrack');
-  if(track){
-    const items=['mESC culture','PCR','WGS analysis','Embryoid bodies','Gel electrophoresis','AMR profiling',
-      'Differentiation assays','Immunofluorescence','Genome annotation','Microbial staining','UV-Vis spectroscopy','BLAST','Fiji'];
-    const html=items.map(t=>'<span>'+t+'</span><i>✦</i>').join('');track.innerHTML=html+html;
-  }
   const scenes=[];
   document.querySelectorAll('.skill').forEach(card=>{
     const cv=card.querySelector('canvas');if(!cv)return;
@@ -1867,29 +2074,60 @@ const GENOME=(function(){
     c.fillText(Math.min(100,Math.round(S.cells.length/130*100))+'% confluent',W-12,H-11);
   }
 
-  /* 02 · agarose gel — samples run from the wells; small fragments travel furthest */
-  function gel(sc,dt,t){
-    const c=sc.ctx,W=sc.W,H=sc.H,lanes=6,top=26,bot=H-26,lw=Math.min(34,(W-40)/lanes*0.62),gap=(W-40)/lanes;
-    if(!sc.st){const L=[];for(let i=0;i<lanes;i++){const bands=i===0?[0.12,0.22,0.33,0.45,0.58,0.72,0.86]:
-        Array.from({length:1+(Math.random()*3|0)},()=>0.2+Math.random()*0.7);L.push(bands);}sc.st={L,run:0,hold:0,fade:1};}
+  /* 02 · thermocycler (qPCR) — each cycle the duplex melts (95 °C), primers anneal (55 °C)
+     and polymerase extends the new strands (72 °C): copies double, and the real-time
+     amplification curve climbs past the threshold toward its plateau */
+  function pcr(sc,dt,t){
+    const c=sc.ctx,W=sc.W,H=sc.H;
+    if(!sc.st)sc.st={cyc:0,ph:0,fade:1};
     const S=sc.st;
-    if(S.run<1)S.run=Math.min(1,S.run+dt*0.22*(1+sc.boost*2.5));
-    else{S.hold+=dt*(1+sc.boost);if(S.hold>2.2){S.fade-=dt*1.2;if(S.fade<=0){sc.st=null;return;}}}
-    c.clearRect(0,0,W,H);
-    c.fillStyle='rgba(255,184,41,.035)';c.fillRect(14,top-10,W-28,bot-top+20);
-    c.fillStyle='#6f6f7a';c.font='600 11px Inter,sans-serif';c.textAlign='left';c.fillText('−',6,top-2);c.fillText('+',6,bot+6);
-    const p=sm(S.run);
-    for(let i=0;i<lanes;i++){const x=20+gap*(i+0.5)-lw/2;
-      c.fillStyle='#16161c';c.fillRect(x,top-6,lw,5);                                // well
-      c.globalAlpha=S.fade;
-      for(const b of S.L[i]){const y=top+(bot-top)*b*p, pulse=0.8+0.2*Math.sin(t*2+i+b*9);
-        c.save();c.shadowColor='rgba(255,170,60,.9)';c.shadowBlur=10;
-        c.fillStyle='rgba(255,'+(i===0?200:176)+','+(i===0?110:60)+','+(0.85*pulse)+')';
-        c.fillRect(x,y,lw,i===0?2.2:3.2);c.restore();}
-      c.fillStyle='rgba(120,90,255,.35)';c.fillRect(x,top+(bot-top)*Math.min(1,p*1.04),lw,2);  // dye front
-      c.globalAlpha=1;}
-    c.fillStyle='#6f6f7a';c.font='500 10px Inter,sans-serif';c.textAlign='right';c.fillText('L = ladder',W-12,H-11);
-    c.textAlign='center';c.fillText('L',20+gap*0.5,top-10);
+    S.ph+=dt*0.8*(1+sc.boost*2.5);if(S.ph>=1){S.ph-=1;S.cyc++;}   // ~1.25 s per cycle; faster on hover
+    if(S.cyc>=40){S.fade-=dt*1.4;if(S.fade<=0){sc.st=null;return;}}
+    const ph=S.cyc>=40?0.99:S.ph,n=Math.min(S.cyc,40);
+    const temp=ph<0.08?72+23*sm(ph/0.08):ph<0.3?95:ph<0.38?95-40*sm((ph-0.3)/0.08):ph<0.55?55:ph<0.62?55+17*sm((ph-0.55)/0.07):72;
+    const step=ph<0.3?'Denature':ph<0.55?'Anneal':'Extend';
+    const tcol=temp>85?'255,93,120':temp<62?'58,160,255':'255,184,41';
+    c.clearRect(0,0,W,H);c.globalAlpha=S.fade;
+    // ---- DNA (left): one duplex per cycle view
+    const x0=16,x1=Math.max(120,Math.min(W*0.56,200)),y0=H*0.45,L=x1-x0;
+    const a0=(S.cyc>0?sm(ph/0.06):1)*(1-sm((ph-0.93)/0.07));        // crossfade to "follow one copy" each cycle
+    const sep=ph<0.25?sm(ph/0.25)*19:19;
+    const yT=y0-8-sep,yB=y0+8+sep;
+    c.globalAlpha=S.fade*a0;c.lineCap='round';
+    if(sep<17){c.strokeStyle='rgba(200,190,255,'+(0.5*(1-sep/17))+')';c.lineWidth=1;c.beginPath();   // base pairs
+      for(let x=x0+4;x<x1-2;x+=6){c.moveTo(x,yT+1.5);c.lineTo(x,yB-1.5);}c.stroke();}
+    const wob=ph<0.3?Math.sin(t*30)*sm(ph/0.1)*(1-sm((ph-0.2)/0.1))*1.2:0;           // thermal jitter as it melts
+    c.lineWidth=2.4;c.strokeStyle='#b7a2ff';c.beginPath();c.moveTo(x0,yT+wob);c.lineTo(x1,yT-wob);c.stroke();
+    c.strokeStyle='#8fa8ff';c.beginPath();c.moveTo(x0,yB-wob);c.lineTo(x1,yB+wob);c.stroke();
+    const pa=sm((ph-0.3)/0.2),ext=sm((ph-0.56)/0.34),PL=22;
+    if(pa>0){const dy=(1-pa)*12;c.lineWidth=3;c.strokeStyle='rgba(255,184,41,'+pa+')';          // primers
+      c.beginPath();c.moveTo(x1-PL,yT+7+dy);c.lineTo(x1,yT+7+dy);c.moveTo(x0,yB-7-dy);c.lineTo(x0+PL,yB-7-dy);c.stroke();}
+    if(ext>0){const e1=x1-PL-(L-PL)*ext,e2=x0+PL+(L-PL)*ext;                                    // new strands
+      c.lineWidth=2.4;c.strokeStyle='#1fbe9f';c.beginPath();c.moveTo(x1-PL,yT+7);c.lineTo(e1,yT+7);c.moveTo(x0+PL,yB-7);c.lineTo(e2,yB-7);c.stroke();
+      c.strokeStyle='rgba(31,190,159,.45)';c.lineWidth=1;c.beginPath();
+      for(let x=x1-PL;x>e1;x-=6){c.moveTo(x,yT+1.5);c.lineTo(x,yT+5.5);}for(let x=x0+PL;x<e2;x+=6){c.moveTo(x,yB-1.5);c.lineTo(x,yB-5.5);}c.stroke();
+      if(ext<1){c.fillStyle='#ff5db0';c.beginPath();c.ellipse(e1,yT+7,5,3.6,0,0,TAU);c.ellipse(e2,yB-7,5,3.6,0,0,TAU);c.fill();}}  // polymerase
+    if(ph>0.86){c.globalAlpha=S.fade*a0*sm((ph-0.86)/0.05);c.fillStyle='#1fbe9f';c.font='600 11px Inter,sans-serif';c.textAlign='left';
+      c.fillText('×2',x1+6,y0+4);}
+    c.globalAlpha=S.fade;
+    c.fillStyle='rgb('+tcol+')';c.font='600 10px Inter,sans-serif';c.textAlign='left';
+    if('letterSpacing' in c)c.letterSpacing='1.5px';c.fillText(step.toUpperCase(),x0,20);if('letterSpacing' in c)c.letterSpacing='0px';
+    const sw=c.measureText(step.toUpperCase()).width+step.length*1.5;
+    c.font='500 10px Inter,sans-serif';c.fillStyle='#9a9a9a';c.fillText(Math.round(temp)+' °C',x0+sw+8,20);
+    // ---- amplification plot (right)
+    const px0=x1+30,px1=W-12,py0=16,py1=H-34;
+    if(px1-px0>50){
+      c.strokeStyle='#2a2a33';c.lineWidth=1;c.beginPath();c.moveTo(px0,py0);c.lineTo(px0,py1);c.lineTo(px1,py1);c.stroke();
+      const thy=py1-(py1-py0)*0.2;c.setLineDash([3,4]);c.strokeStyle='rgba(255,184,41,.45)';c.beginPath();c.moveTo(px0,thy);c.lineTo(px1,thy);c.stroke();c.setLineDash([]);
+      const F=k=>0.03+0.92/(1+Math.exp(-(k-22)/2.3)),X=k=>px0+(k/40)*(px1-px0),Y=v=>py1-v*(py1-py0);
+      const cur=n+ph;c.save();c.shadowColor='rgba(31,190,159,.9)';c.shadowBlur=8;c.strokeStyle='#1fbe9f';c.lineWidth=1.8;c.beginPath();
+      for(let k=0;k<=cur;k+=0.25)k?c.lineTo(X(k),Y(F(k))):c.moveTo(X(k),Y(F(k)));c.stroke();c.restore();
+      c.fillStyle='#e6fff7';c.beginPath();c.arc(X(cur),Y(F(cur)),2.4,0,TAU);c.fill();
+      c.fillStyle='#6f6f7a';c.font='500 9px Inter,sans-serif';c.textAlign='left';c.fillText('fluorescence',px0+4,py0+6);
+      c.textAlign='right';c.fillText('threshold',px1,thy-4);c.textAlign='left';c.fillText('cycles →',px0+4,py1+11);
+    }
+    c.fillStyle='#6f6f7a';c.font='500 10px Inter,sans-serif';c.textAlign='right';c.fillText('cycle '+Math.min(40,n+1)+' / 40',W-12,H-11);
+    c.globalAlpha=1;
   }
 
   /* 03 · sequence alignment — bases scroll past; a window scans for a matching hit */
@@ -1912,7 +2150,7 @@ const GENOME=(function(){
     c.fillStyle='#6f6f7a';c.font='500 10px Inter,sans-serif';c.textAlign='right';c.textBaseline='alphabetic';
     c.fillText('hit · '+win+'/'+win+' identity',W-12,H-11);
   }
-  const R={dish,gel,seq};
+  const R={dish,pcr,seq};
   function loop(now){let any=false;
     for(const sc of scenes){if(!sc.on)continue;any=true;if(!size(sc))continue;
       const dt=Math.min(0.05,(now-(sc.last||now))/1000);sc.last=now;sc.boost+=(sc.boostT-sc.boost)*0.08;R[sc.kind](sc,dt,now/1000);}
